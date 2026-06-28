@@ -1,0 +1,523 @@
+{
+  "title": "Outcome error-profile per endpoint (triggered vs missed)",
+  "description": "Mỗi endpoint: answer-key (hành vi lỗi nào tồn tại) + arm nào kích được / bỏ sót. Từ 785 request thật.",
+  "generated_by": "experiment/scripts/results_json.py",
+  "suts": {
+    "features": {
+      "UNKNOWN": {
+        "answer_key_codes": "404",
+        "by_arm": {
+          "llm": {
+            "triggered": "404",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "-",
+            "missed": "404"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "404"
+          }
+        }
+      },
+      "addConfiguration": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "addExcludesConstraintToProduct": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "addFeatureToConfiguration": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "addFeatureToProduct": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "addRequiresConstraintToProduct": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "-",
+            "missed": "500"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "deleteConfiguration": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "deleteConstraint": {
+        "answer_key_codes": "404",
+        "by_arm": {
+          "llm": {
+            "triggered": "404",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "404",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "404"
+          }
+        }
+      },
+      "deleteFeature": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "deleteFeatureOfProduct": {
+        "answer_key_codes": "400;500",
+        "by_arm": {
+          "llm": {
+            "triggered": "400;500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "400"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "400"
+          }
+        }
+      },
+      "deleteProductByName": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "getAllProducts": {
+        "answer_key_codes": "405;406",
+        "by_arm": {
+          "llm": {
+            "triggered": "405;406",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "-",
+            "missed": "405;406"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "405;406"
+          }
+        }
+      },
+      "getConfigurationActivedFeatures": {
+        "answer_key_codes": "405;500",
+        "by_arm": {
+          "llm": {
+            "triggered": "405;500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "405"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "405"
+          }
+        }
+      },
+      "getConfigurationsForProduct": {
+        "answer_key_codes": "405",
+        "by_arm": {
+          "llm": {
+            "triggered": "405",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "-",
+            "missed": "405"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "405"
+          }
+        }
+      },
+      "getFeaturesForProduct": {
+        "answer_key_codes": "405;500",
+        "by_arm": {
+          "llm": {
+            "triggered": "405;500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "405"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "405"
+          }
+        }
+      },
+      "getProductByName": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      },
+      "updateFeatureOfProduct": {
+        "answer_key_codes": "500",
+        "by_arm": {
+          "llm": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "500",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "500",
+            "missed": "-"
+          }
+        }
+      }
+    },
+    "ncs": {
+      "UNKNOWN": {
+        "answer_key_codes": "400;404",
+        "by_arm": {
+          "llm": {
+            "triggered": "404",
+            "missed": "400"
+          },
+          "manual": {
+            "triggered": "400;404",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "400;404"
+          }
+        }
+      },
+      "bessjUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "400",
+            "missed": "-"
+          }
+        }
+      },
+      "checkTriangleUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "400"
+          }
+        }
+      },
+      "expintUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "400",
+            "missed": "-"
+          }
+        }
+      },
+      "fisherUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "400",
+            "missed": "-"
+          }
+        }
+      },
+      "gammqUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "400",
+            "missed": "-"
+          }
+        }
+      },
+      "remainderUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "400",
+            "missed": "-"
+          }
+        }
+      }
+    },
+    "scs": {
+      "UNKNOWN": {
+        "answer_key_codes": "404",
+        "by_arm": {
+          "llm": {
+            "triggered": "404",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "404",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "404"
+          }
+        }
+      },
+      "calcUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "400"
+          }
+        }
+      },
+      "costfunsUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "400"
+          }
+        }
+      },
+      "fileSuffixUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "-",
+            "missed": "400"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "400"
+          }
+        }
+      },
+      "notyPevarUsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "400"
+          }
+        }
+      },
+      "ordered4UsingGET": {
+        "answer_key_codes": "400",
+        "by_arm": {
+          "llm": {
+            "triggered": "400",
+            "missed": "-"
+          },
+          "manual": {
+            "triggered": "-",
+            "missed": "400"
+          },
+          "evomaster": {
+            "triggered": "-",
+            "missed": "400"
+          }
+        }
+      }
+    }
+  }
+}

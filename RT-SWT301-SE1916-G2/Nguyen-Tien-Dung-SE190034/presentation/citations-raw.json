@@ -1,0 +1,1129 @@
+{
+  "summary": "Mine page/line/sentence citations from 13 REST-API-testing papers and adversarially verify each quote exists at the cited page",
+  "agentCount": 26,
+  "logs": [
+    "[stall] agent \"verify:LogiAgent\" stalled (no progress) after 403s — retrying (1/5)",
+    "[stall] agent \"verify:EvoMaster\" stalled (no progress) after 400s — retrying (1/5)",
+    "Papers processed: 13/13 · citations: 104 · verified: 102 · flagged-not-present: 1"
+  ],
+  "result": {
+    "papers": [
+      {
+        "paper_short": "RESTGPT",
+        "citations": [
+          {
+            "claim": "rule extraction 97% precision, 92% recall, 94% F1 (vs NLP2REST 79/91/85)",
+            "page": 4,
+            "location": "Table 1: Effectiveness of NLP2REST and RESTGPT, and surrounding text page 193-194",
+            "quote": "RESTGPT excels in precision, recall, and the F1 score across a majority of the REST services. ... RESTGPT's precision of 97% surpasses even the precision of NLP2REST post-validation, which stands at 79%.",
+            "why": "RESTGPT uses GPT-3.5 Turbo with few-shot prompting to extract rules from natural language descriptions, enabling superior contextual understanding compared to keyword-driven NLP2REST; the LLM's semantic awareness captures nuanced constraints that traditional NLP techniques miss, delivering 97% precision versus 79% for NLP2REST even with validation.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified on page 4 (line 194). Exact substring 'precision of 97% surpasses even the precision' found in text."
+          },
+          {
+            "claim": "value generation 72.68% valid inputs",
+            "page": 4,
+            "location": "Table 2: Accuracy of ARTE and RESTGPT, Average row",
+            "quote": "Average: ARTE 16.93%, RESTGPT 72.68%",
+            "why": "RESTGPT's LLM-based approach understands semantic context of parameters (e.g., generating language codes like 'en-US' and 'de-DE' instead of language names), allowing it to generate syntactically and semantically valid inputs at 72.68% accuracy, far exceeding ARTE's 16.93% which relies on DBPedia lookups without contextual awareness.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified on page 4 (lines 189-191). Table 2 shows 'Average' row with '16.93% 72.68%' appearing on line 191."
+          },
+          {
+            "claim": "+329% improvement over ARTE (16.93%)",
+            "page": 4,
+            "location": "Table 2: Accuracy of ARTE and RESTGPT, page 191",
+            "quote": "RESTGPT consistently achieves higher accuracy than ARTE across all services. ... the context-awareness capabilities of LLMs",
+            "why": "72.68% / 16.93% = 4.29x improvement (329 percentage point gain in relative terms); RESTGPT's context-awareness from LLMs generates semantically valid inputs by understanding parameter semantics, whereas ARTE's DBPedia-based approach generates unrelated values like 'List of colonial heads of Portuguese Timor' for parameters like sort_order.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Data verified on page 4 (line 191). The specific values 72.68% and 16.93% are confirmed in Table 2. Quote fragment 'context-awareness capabilities of LLMs' found on line 195."
+          },
+          {
+            "claim": "approach: extracts rules + generates values from OpenAPI + NL descriptions",
+            "page": 1,
+            "location": "Abstract, lines 19-20",
+            "quote": "RESTGPT takes as input an API specification, extracts machine-interpretable rules, and generates example parameter values from natural-language descriptions in the specification. It then augments the original specification with these rules and values.",
+            "why": "The two-stage pipeline (rule extraction followed by value generation) operates on both machine-readable OpenAPI keywords and unstructured natural-language descriptions in parameters, enabling the LLM to leverage semantic insights unavailable to prior tools.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified on page 1 (line 20). Exact text found in abstract. Note: source shows 'machineinterpretable' concatenated without hyphen."
+          },
+          {
+            "claim": "limitation: depends on description quality / not end-to-end scripts",
+            "page": 1,
+            "location": "Abstract, final sentence",
+            "quote": "Given these promising results, we outline future research directions for advancing REST API testing through LLMs.",
+            "why": "The paper does not explicitly state descriptions of limitations in the abstract, but Section 5 'Future Plans' outlines expansions (model improvement, expanding fault detection beyond 500 codes, LLM-based testing from server messages), implicitly indicating the current version is constrained to rule extraction and value generation from specification text alone, not end-to-end automated test generation.",
+            "present": false,
+            "verified": true,
+            "verify_note": "Quote verified on page 1 (line 20), but it does NOT state limitations about description quality or lack of end-to-end scripts. The quote is the abstract's final sentence about future directions, not an explicit limitation statement. Claim requires inference from Section 5."
+          },
+          {
+            "claim": "73% valid inputs (preliminary results stated in introduction)",
+            "page": 1,
+            "location": "Introduction, page 33, final paragraph",
+            "quote": "RESTGPT successfully generates both syntactically and semantically valid inputs for 73% of the parameters over the analyzed services and their operations, a considerable improvement over ARTE, which could generate valid inputs for 17% of the parameters only.",
+            "why": "The LLM-based approach with few-shot prompting enables contextual understanding of parameter semantics from descriptions; for instance, understanding 'sort_order' context yields 'ASC'/'DESC', whereas ARTE's keyword and DBPedia-based approaches fail to capture such context-dependent valid values.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified on page 1 (line 33). Exact text found in Introduction final paragraph."
+          },
+          {
+            "claim": "uses GPT-3.5 Turbo with few-shot learning for rule extraction",
+            "page": 3,
+            "location": "Section 3.1 Overview, lines 65-66",
+            "quote": "The Rule Generator, using a set of crafted prompts, extracts these four rules. We selected GPT-3.5 Turbo as the LLM for this work, given its accuracy and efficiency, as highlighted in a recent report by OpenAI [24]. The inclusion of few-shot learning further refines the model's output.",
+            "why": "Few-shot prompting provides the LLM with examples and structured instructions (Chain-of-Thought style decomposition into cases), enabling precise extraction of operational constraints, parameter constraints, type/format, and examples from natural language without requiring expensive validation or fine-tuning.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified on page 3 (line 65). Exact text found in Section 3.1 Overview."
+          }
+        ]
+      },
+      {
+        "paper_short": "KAT",
+        "citations": [
+          {
+            "claim": "+15.7% overall status-code coverage (59.2% -> 74.9%)",
+            "page": 8,
+            "quote": "Specifically, we noted a 15.7% increase in overall coverage, a 18.1% improvement in 2xx coverage, and a 8.4% increase in 4xx coverage, on average, over RTG.",
+            "location": "Section V.B, Experimental Results",
+            "why": "KAT uses GPT to construct operation dependency graphs (ODG) that capture semantic relationships heuristics miss (e.g., flightId to id field mapping), enabling correct operation sequencing and test data generation that respects inter-parameter constraints. This allows generation of valid test cases that trigger documented status codes.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 994, confirmed on PAGE 8 (between page marker at line 805 and line 1006)"
+          },
+          {
+            "claim": "+18.1% on 2xx (56.4 -> 74.5)",
+            "page": 8,
+            "quote": "Specifically, we noted a 15.7% increase in overall coverage, a 18.1% improvement in 2xx coverage, and a 8.4% increase in 4xx coverage, on average, over RTG.",
+            "location": "Section V.B, Experimental Results",
+            "why": "GPT identifies operation prerequisites and constraints expressed in natural language descriptions that RestTestGen's heuristic name-matching cannot detect. This enables KAT to construct sequences that properly prepare test data (e.g., executing GET /flights before POST /booking to obtain flightId), resulting in valid 2xx responses.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 994, confirmed on PAGE 8 - exact phrase '18.1% improvement in 2xx coverage' is present"
+          },
+          {
+            "claim": "+8.4% on 4xx (67.5 -> 75.9)",
+            "page": 8,
+            "quote": "Specifically, we noted a 15.7% increase in overall coverage, a 18.1% improvement in 2xx coverage, and a 8.4% increase in 4xx coverage, on average, over RTG.",
+            "location": "Section V.B, Experimental Results",
+            "why": "GPT detects inter-parameter dependencies and generates invalid test data that systematically violates these constraints (e.g., arrivalDate before departureDate), allowing controlled 4xx failure testing. RestTestGen lacks this constraint awareness.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 994, confirmed on PAGE 8 - exact phrase '8.4% increase in 4xx coverage' is present"
+          },
+          {
+            "claim": "24 additional undocumented status codes",
+            "page": 10,
+            "quote": "In the realm of undocumented status code detection, KAT surpasses RTG, detecting 24 more status codes than RTG.",
+            "location": "Section VII.B, Experimental Results",
+            "why": "By correctly identifying operation dependencies, KAT generates test sequences that reach code paths RestTestGen cannot access due to failed prerequisite operations or missing test data. This enables discovery of status codes (304, 400, 422, etc.) not specified in OAS files.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 1547, confirmed on PAGE 10 (between page marker at line 1552 - the quote is on the previous page at line 1547)"
+          },
+          {
+            "claim": "fewer false positives (94 vs 119); equal 500-errors (23 each)",
+            "page": 10,
+            "quote": "Table IV reveals a notable difference in the average number of mismatches detected between RTG and our approach, KAT. RTG detects totally 119 mismatches, whereas KAT identifies 94 mismatches... Table IV shows an equal number of errors detected by both RTG and KAT.",
+            "location": "Section VII.B, Experimental Results and Table IV",
+            "why": "KAT's constraint-aware approach generates valid test cases by respecting inter-parameter dependencies and operation sequencing, reducing false-positive 2xx cases. For 500 errors, both tools trigger real server errors equally, as error detection depends on server behavior, not test generation logic.",
+            "present": true,
+            "verified": true,
+            "verify_note": "First part '119 mismatches, whereas KAT identifies 94 mismatches' found at line 1554 on PAGE 10. Second part confirmed at line 1546: 'Table IV shows an equal number of errors detected by both RTG and KAT' with both showing 23 errors in the table at lines 1439."
+          },
+          {
+            "claim": "baseline RestTestGen; LLM infers operation dependencies + test data",
+            "page": 2,
+            "quote": "Through harnessing the excellent capabilities of GPT [8] in interpreting the natural language content embedded within Swagger files for RESTful APIs, our proposed approach, KAT (KATalon API Testing), leverages a powerful tool for comprehending intricate dependencies... In contrast, stateof-the-art methods, which mainly rely on heuristic approaches, fall short in capturing those dependencies.",
+            "location": "Section I, Introduction",
+            "why": "The paper explicitly contrasts KAT (GPT-based LLM inferring dependencies) against RestTestGen (baseline state-of-the-art using heuristic name-matching for inter-operation dependencies and without automatic constraint detection). KAT's LLM enables understanding of semantic relationships and natural-language constraints that heuristics cannot access.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 38 on PAGE 2 (between page marker at line 35 and line 60). The exact phrase 'Through harnessing the excellent capabilities of GPT [8] in interpreting the natural language content embedded within Swagger files' is present."
+          },
+          {
+            "claim": "GPT-3.5-turbo-1106 with temperature 0 to reduce hallucination",
+            "page": 10,
+            "quote": "One threat is the hallucination issue of GPT that results in inconsistent outputs when generating ODG, validation scripts, test cases, and test data. We alleviated this threat by using detailed and narrow instructions in prompts and by setting GPT's temperature parameter to zero to control the model's randomness.",
+            "location": "Section VIII, Threats to Validity",
+            "why": "Temperature=0 ensures deterministic outputs from the LLM by selecting the highest-probability tokens rather than sampling, reducing variance in generated test scripts, data, and dependency inferences. This supports reproducible and consistent test generation across multiple runs.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 1557 on PAGE 10. The exact phrase 'setting GPT's temperature parameter to zero to control the model's randomness' is present. The model name 'gpt-3.5-turbo-1106' is mentioned at line 354 on PAGE 4."
+          },
+          {
+            "claim": "ODG construction uses GPT to bridge name mismatches via Operation-Schema and Schema-Schema dependencies",
+            "page": 5,
+            "quote": "flightId (line 22, input of POST /booking) and id (existed in the schema \"Flight\", the output of GET /flights, on line 16) do not exhibit a perfect match, a significant dependency persists due to the presence of id within the \"Flight\" schema, semantically aligning with flightId. To resolve this, we use GPT to analyze such pairs in a two-step process, involving the establishment of Operation-Schema dependencies (line 3) and Schema-Schema dependencies (line 4), thereby acting as a bridge to identify the dependencies between operations.",
+            "location": "Section III.B, ODG Construction Algorithm",
+            "why": "RestTestGen's heuristic fails when output field names (id) do not exactly match input parameter names (flightId). KAT uses GPT to infer that flightId semantically corresponds to the id field in the Flight schema, then traces that schema back to the GET /flights operation. This semantic bridging enables correct dependency detection that name-matching alone cannot achieve.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 587 on PAGE 5 (between page marker at line 388 and line 601). The exact phrase 'flightId (line 22, input of POST /booking) and id (existed in the schema \"Flight\", the output of GET /flights, on line 16)' is present with the two-step process description following."
+          }
+        ]
+      },
+      {
+        "paper_short": "RESTSpecIT",
+        "citations": [
+          {
+            "claim": "route discovery 88.62% avg (DeepSeek V3), 81.16% (GPT-4.1), 79.84% (GPT-3.5)",
+            "page": 14,
+            "location": "Section 4.3.1, Route Inference results",
+            "quote": "As shown, the DeepSeek model inferred the best percentages of routes on average (88.62%), followed by the GPT-4.1 model (81.16%), and then the GPT-3.5 model (79.84%).",
+            "why": "The approach leverages three different LLMs with in-context prompt masking to iteratively discover routes: it generates initial seed routes via LLM prompts, sends mutations to the API server, validates 2xx responses, and decomposes valid requests into routes. DeepSeek V3 outperforms GPT models because of superior performance across online benchmarks in pattern recognition from API naming conventions.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 302 on PAGE 14. Substring '88.62%, followed by the GPT-4.1 model (81.16%)' verified in text."
+          },
+          {
+            "claim": "parameter discovery up to 89.25%",
+            "page": 16,
+            "location": "Section 4.3.3, Overall Effectiveness",
+            "quote": "The results demonstrate that our tool is effective at inferring specifications of REST APIs, with an average route discovery rate of 88.62% and an average query parameter discovery rate of 89.25%.",
+            "why": "Parameters are discovered through LLM-guided masking: for each discovered route, the tool asks the LLM to list all query parameters, mutates requests with LLM-suggested parameter values, validates responses via status codes and content checks, then adds parameters to the OAS specification. The LLM's training data on naming conventions enables high parameter inference rates.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 333 on PAGE 16. Substring 'query parameter discovery rate of 89.25%' verified in text."
+          },
+          {
+            "claim": "found 10 undocumented routes + 4 undocumented parameters",
+            "page": 17,
+            "location": "Section 4.4, RQ.2 - Undocumented API Data",
+            "quote": "As shown, a total of 10 undocumented routes and 4 undocumented query parameters were found.",
+            "why": "RESTSpecIT's mutation process discovers valid API endpoints beyond official documentation because it systematically mutates all seed requests using LLM-suggested values. These undocumented routes and parameters return valid 2xx responses when sent to the API server, proving they are functional despite being absent from baseline documentation.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 351 on PAGE 17. Substring '10 undocumented routes and 4 undocumented query parameters' verified in text."
+          },
+          {
+            "claim": "triggered 5xx errors in 4 APIs",
+            "page": 21,
+            "location": "Section 4.6.1, Server Errors Found by RESTSpecIT",
+            "quote": "As displayed, RESTSpecIT generated requests triggering server errors in four different APIs. The errors were manually replicated after the runs, which proved to be valid server errors. (1) For instance, when sending an error-triggering request to the Datamuse API, a 5xx status code was observed along with the following response data: {\"code\":500,\"message\":\"There was an error processing your request. It has been logged.\"}.",
+            "why": "The tool's comprehensive mutation strategy exercises diverse API behaviors by replacing masked sections with LLM-suggested values. These mutations generate inputs that trigger edge cases in API implementations (e.g., Datamuse, CheapShark, Spring Petclinic, REST Countries), causing server errors. Status code analysis identifies these 5xx responses as implicit testing oracles.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 557 on PAGE 22, not page 21. Substring 'RESTSpecIT generated requests triggering server errors in four' verified in text. Correct page is 22."
+          },
+          {
+            "claim": "cost as low as $0.004 per run",
+            "page": 20,
+            "location": "Section 4.5.3, Model Costs",
+            "quote": "Considering the average input and output tokens consumed, we can calculate the average cost of executing an API with RESTSpecIT (per LLM) : · DeepSeek V3 (deepseek-chat): 4841 (input) + 2569 (output) = $0.004",
+            "why": "DeepSeek V3 achieves the lowest cost because it has the lowest token pricing as of July 2025 and also requires fewer total tokens than GPT models (4841 input + 2569 output tokens) due to superior prompt comprehension, reducing the number of re-prompts needed when the LLM initially misunderstands masking instructions.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 509 on PAGE 20. Substring '4841 (input) + 2569 (output) = $0.004' verified in text."
+          },
+          {
+            "claim": "method: in-context prompt masking mutates HTTP requests, infers the spec while testing",
+            "page": 2,
+            "location": "Section 1, Introduction, paragraph describing approach",
+            "quote": "RESTSpecIT generates and mutates HTTP requests, without prior complex API knowledge. To do so, the tool utilizes an in-context prompt masking strategy, leveraging an LLM without fine-tuning. The strategy consists of masking a HTTP request (i.e., hiding a section of it) and prompting the model for possible values that can replace the mask. RESTSpecIT generates mutated requests by replacing the mask of the request with values returned by the LLM. The mutated requests are then sent to the API server. By analyzing the HTTP responses returned, the tool can verify if the mutated requests are valid. If a request is valid, it is decomposed and inferred into an OAS documentation file.",
+            "why": "Masking enables in-context learning without fine-tuning: the LLM learns from the structure of partial HTTP requests and applies its training knowledge of REST API conventions to fill placeholders. Simultaneous inference and testing occur because each valid mutation both discovers new specification elements (routes/parameters) and exercises the API's behavior, creating a unified workflow where documentation emerges from test execution.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 33 on PAGE 2. Substring 'masking a HTTP request (i.e., hiding a section of it)' verified in text."
+          },
+          {
+            "claim": "RESTSpecIT is the first automated approach that infers documentation and performs black-box testing of REST APIs by leveraging LLMs",
+            "page": 1,
+            "location": "Abstract, Contributions",
+            "quote": "In this paper, we present RESTSpecIT, the first automated approach that infers documentation and performs black-box testing of REST APIs by leveraging LLMs.",
+            "why": "This is the core contribution statement establishing RESTSpecIT's novelty: prior tools required extensive prior knowledge (source code, HTML pages, proxies, or existing documentation), whereas RESTSpecIT requires only the API name and LLM key, making it the first to combine LLM-driven specification inference with simultaneous black-box testing via request mutations.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 7 in abstract on PAGE 1. Substring 'first automated approach that infers documentation and performs black-box testing' verified in text."
+          },
+          {
+            "claim": "OpenAPI Specification outputs are syntactically valid and correctly rendered",
+            "page": 16,
+            "location": "Section 4.3.4, OpenAPI Specification Validity",
+            "quote": "We inserted the specifications generated by RESTSpecIT in the Swagger Editor, and all of them were correctly validated. We verified this as no errors were reported by the editor, and the interactive viewer mirrored the documentation in the provided OAS files correctly.",
+            "why": "RESTSpecIT's inference process structures discovered routes and parameters according to OpenAPI specification schema (path items, parameter objects, response schemas) during decomposition of valid requests. Because the tool adheres to the official OAS structure when constructing the specification document, all generated files pass validation by the standard Swagger Editor tool.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found at line 335 on PAGE 16. Substring 'inserted the specifications generated by RESTSpecIT in the Swagger Editor' verified in text."
+          }
+        ]
+      },
+      {
+        "paper_short": "APITestGenie",
+        "citations": [
+          {
+            "claim": "57.3% valid scripts on a single attempt (43/75)",
+            "page": 4,
+            "quote": "APITestGenie successfully generated valid test scripts 57.3% of the time, with 12.0% invalid due to external factors and 30.7% due to generator limitations. The 75 scripts contained 90 test cases, 68% of which were valid.",
+            "location": "Table 1 and Results section, Page 4",
+            "why": "The approach uses GPT-4-Turbo with RAG to process business requirements and OpenAPI specs. The 57.3% success rate reflects valid test scripts that execute and pass after the LLM generates them from the combined inputs, with the remaining failures attributed to external environment issues (12%) or LLM limitations like hallucinations (30.7%).",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on page 4, line 133. All percentages and statistics verified."
+          },
+          {
+            "claim": "80% chance of >=1 valid script within 3 attempts",
+            "page": 4,
+            "quote": "Figure 3 shows that the probability of generating a valid test script increases from 57.3% with one attempt to 80% with three attempts.",
+            "location": "Results section and Figure 3, Page 4",
+            "why": "The paper generated 3 test scripts per prompt (75 total from 25 prompts) and calculated valid@3, which aggregates the probability of obtaining at least one valid script across three consecutive generations. The compounding effect of multiple attempts increases the cumulative success probability from single-shot to 80%.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on page 4, line 134. Figure 3 also confirms 'valid@3 ≈ 80%'."
+          },
+          {
+            "claim": "~126 s and EUR 0.37 per script",
+            "page": 3,
+            "quote": "Using GPT-4-Turbo with a 128k token Window, the average time and cost per test generation were 126s and AC0.37, respectively.",
+            "location": "Experimental Evaluation section, Page 3-4",
+            "why": "The costs derive directly from GPT-4-Turbo API pricing at the time; 126 seconds reflects the average latency for a single full cycle through test generation, parsing, and execution across all 10 APIs in the study.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 3, line 90. Note: citation says 'EUR 0.37' but text shows 'AC0.37' (likely a currency symbol encoding issue in the source)."
+          },
+          {
+            "claim": "68% of individual test cases valid",
+            "page": 4,
+            "quote": "The 75 scripts contained 90 test cases, 68% of which were valid.",
+            "location": "Results section, Page 4",
+            "why": "Of the 90 test cases extracted from the 75 generated scripts, 68% executed without errors and passed manual validation. This granular metric shows that even invalid scripts often contain individually valid test cases within them, reflecting partial utility even from unsuccessful script generations.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on page 4, line 133."
+          },
+          {
+            "claim": "12 real API defects surfaced; 19 hallucinations",
+            "page": 5,
+            "quote": "Result type Pass & valid a API defect ... Test Scripts 31 12 7 2 19 3 1 75",
+            "location": "Table 2 (Assessment of generated test scripts), Page 5",
+            "why": "Table 2 categorizes all 75 test script results: 12 scripts revealed genuine API defects (inconsistencies with requirements or implementation bugs), while 19 scripts failed due to LLM hallucinations (incorrect imports, wrong attributes, or fabricated response structures). The hallucinations demonstrate a key limitation of the approach.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Table 2 data structure confirmed on page 5, lines 159-162. '12' appears as count for 'API defect' and '19' for 'Hallucination' rows."
+          },
+          {
+            "claim": "input: business requirements (user stories) + OpenAPI spec",
+            "page": 2,
+            "quote": "we present APITestGenie – a tool that leverages LLMs to generate executable API test scripts from business requirements written in natural language and API specifications documented using OpenAPI4 the most widely adopted standard for documenting API services.",
+            "location": "Solution introduction, Page 2",
+            "why": "The paper explicitly defines the two core inputs: natural language business requirements (formulated as user stories at three detail levels) and OpenAPI specifications. The prompt engineering strategy in Section 'System and User Prompt' structures the LLM call around these two input types.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on page 2, line 16."
+          },
+          {
+            "claim": "RAG used to handle large API specs",
+            "page": 3,
+            "quote": "Additionally, we use RAG15 to filter relevant information, allowing us to test APIs of any size. To do so, we first slice the API specifications into chunks according to JSON syntax. Then, we expand the business requirement into five versions used in the RAG process to retrieve a set of similar chunks.",
+            "location": "Prompt with the API Specification section, Page 3",
+            "why": "RAG (retrieval-augmented generation) addresses the context window limitation by chunking large OpenAPI specs and retrieving only the most relevant chunks based on the expanded business requirement. This mechanism allows APITestGenie to handle APIs with specs up to 5M+ tokens, as shown in Table 1.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on page 3, line 70."
+          },
+          {
+            "claim": "Industry workshop with 11 participants showed strong interest in adoption",
+            "page": 5,
+            "quote": "Overall, APITestGenie was well received, with most collaborators finding the tests complete and relevant and showing interest in using the tool daily.",
+            "location": "User Feedback section, Page 5",
+            "why": "The automotive industry partner conducted a hands-on workshop where 11 of 15 technical staff responded to a survey. The positive reception and daily-use interest validate the practical applicability of the approach, though the paper acknowledges that adoption faces challenges from security concerns and integration requirements.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on page 5, line 140. Context confirms '11 responded to an anonymous survey' (line 139)."
+          }
+        ]
+      },
+      {
+        "paper_short": "RestTSLLM",
+        "citations": [
+          {
+            "claim": "Claude 3.5 Sonnet outperformed all other LLMs across success rate, coverage and mutation score",
+            "page": 1,
+            "location": "Abstract",
+            "quote": "Claude 3.5 Sonnet outperformed all other models across every metric, emerging in this study as the most suitable model for this task.",
+            "why": "The LLM integration with few-shot and decomposed prompting enabled Claude to more accurately understand business logic from OpenAPI specs through structured examples and intermediate TSL generation, resulting in superior success rate (100%), coverage (71.7%), and mutation score (40.8%) across all six REST API projects.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found in Abstract on page 1, line 18. The quote accurately represents the claim."
+          },
+          {
+            "claim": "branch coverage figure (~71.7%?)",
+            "page": 9,
+            "location": "Table 3: Average of the metrics for the tests generated by LLMs",
+            "quote": "Claude 3.5 Sonnet 70,9% 100% 71,7% 40,8%",
+            "why": "Branch coverage measures control-flow exploration at decision points; Claude's superior understanding of API specifications through the TSL intermediate representation enabled it to generate tests that exercise more code paths effectively.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Table 3 data found on page 9, line 234, with exact values Claude 3.5 Sonnet 70,9% 100% 71,7% 40,8%."
+          },
+          {
+            "claim": "mutation score figure (~40.8%?)",
+            "page": 9,
+            "location": "Table 3: Average of the metrics for the tests generated by LLMs",
+            "quote": "Claude 3.5 Sonnet 70,9% 100% 71,7% 40,8%",
+            "why": "Mutation score tests sensitivity to small logic changes; Claude's tests were more effective at detecting artificial faults (mutants) injected by Stryker.NET because its prompt-engineered understanding of business rules and context produced more semantically meaningful test cases.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Table 3 data found on page 9, line 234, with exact mutation score value 40,8%."
+          },
+          {
+            "claim": "success rate / number of test cases (100% over 230?)",
+            "page": 9,
+            "location": "Table 3 and Table 5: Average of the metrics for the tests generated by LLMs; Failed tests produced by the LLMs",
+            "quote": "Claude 3.5 Sonnet 70,9% 100% 71,7% 40,8% 38,3 $0,47 [Table 3] ... Model Claude 3.5 Sonnet ... Total of Tests 230 Failed Tests 0",
+            "why": "Claude 3.5 Sonnet achieved 100% success rate by generating 230 test cases with zero failures (0.0% failed), because the decomposed prompting technique separated test case reasoning from implementation, allowing the model to focus exclusively on understanding API business logic before translating to executable code.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Table 3 success rate (100%) found on page 9, line 234. Table 5 data with 230 tests and 0 failures confirmed through context on page 10."
+          },
+          {
+            "claim": "6 REST API projects used (Todo, Supermarket, Books, Hotels, Restaurants, URL-Shortener)",
+            "page": 6,
+            "location": "Table 2: Selected Projects",
+            "quote": "Name: todo-api [15] supermarket-api [18] books-api [46] hotels-api [54] restaurants-api [27] shortener-api [12]",
+            "why": "These six projects were selected to evaluate the RestTSLLM approach because they met strict criteria: MIT license compliance, .NET implementation, OpenAPI specifications, at least one database/API integration, and sufficient GitHub relevance (>100 stars+forks combined) to ensure functional codebases suitable for testing the method.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Table 2 project names found on page 6, line 166, listing all six projects exactly as quoted."
+          },
+          {
+            "claim": "method: TSL (Test Specification Language) intermediate representation -> xUnit",
+            "page": 2,
+            "location": "Introduction section, methodology explanation",
+            "quote": "First, we convert an OpenAPI specification into test cases using the TSL. Then, we convert the TSL test cases into functional integration tests using xUnit (.NET) [32].",
+            "why": "The two-stage pipeline uses TSL as an intermediate abstraction layer to reduce cognitive load on the LLM: Prompt 1 converts OpenAPI to TSL (business logic focus), then Prompt 2 converts TSL to xUnit code (implementation focus). This decomposition improves output quality by separating concerns and allowing each stage to concentrate on a single aspect of the problem.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on page 2, line 45. The methodology statement accurately describes the two-stage TSL-to-xUnit pipeline."
+          },
+          {
+            "claim": "Best-performing LLMs identified as Claude 3.5 Sonnet, Deepseek R1, Qwen 2.5-32B, and Sabia-3 with calculated scores 65.5%-70.9%",
+            "page": 9,
+            "location": "Section 5.2 RQ2 and Table 3",
+            "quote": "The top-performing models were Claude 3.5 Sonnet, Deepseek R1, Qwen 2.5 32b, and Sabi� 3, with calculated scores ranging from 65,5% to 70,9%.",
+            "why": "These four models achieved superior results because they better understood the complex business logic and integration testing context through the few-shot and decomposed prompting technique, producing tests with higher success rates and more effective fault detection compared to other evaluated LLMs.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 9, line 271, with exact range 65,5% to 70,9%. Note: 'Sabi' in source text has character encoding issue but refers to Sabia-3."
+          },
+          {
+            "claim": "Total of 1,635 tests generated across all models, with only 39 failures (2.38% failure rate)",
+            "page": 10,
+            "location": "Section 5.3 Analysis of test failures",
+            "quote": "Out of the 1.635 tests generated, 39 failed to execute correctly, representing 2,38%.",
+            "why": "The structured prompt engineering approach combined with the TSL intermediate representation enabled LLMs to generate mostly valid tests; the few failures were categorized into six recurring error patterns (Property Length, Misinterpretation, Authentication, Property Requirement, Required Characters, JSON Deserialization), indicating systematic but addressable gaps rather than fundamental model limitations.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 10, line 312. Note: In the source, uses comma as decimal separator (1.635 tests, 2,38%) consistent with European formatting."
+          }
+        ]
+      },
+      {
+        "paper_short": "AutoRestTest",
+        "citations": [
+          {
+            "claim": "58.3% method, 58.3% line, 32.1% branch coverage",
+            "page": 2,
+            "location": "Abstract and RQ1 Results, Figure 4 summary",
+            "quote": "AutoRestTest demonstrated superior performance across all coverage metrics compared to existing tools. It achieved 58.3% method coverage, 32.1% branch coverage, and 58.3% line coverage, significantly outperforming ARAT-RL, EvoMaster, RESTler, and MoRest by margins of 12–27%.",
+            "why": "The multi-agent reinforcement learning approach enables specialized agents (operation, parameter, value, dependency) to coordinate testing decisions, the SPDG reduces the search space for dependencies using semantic similarity, and LLM-based value generation creates valid, diverse inputs—together these mechanisms allow AutoRestTest to explore more code paths and execute a higher proportion of API operations than baseline tools.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 2 (line 26). Exact match: '58.3% method coverage, 32.1% branch coverage, and 58.3% line coverage'"
+          },
+          {
+            "claim": "15.2-26.8 percentage points above best baseline",
+            "page": 9,
+            "location": "RQ1: Effectiveness, code coverage comparison",
+            "quote": "AutoRestTest achieves considerable gains in code coverage, with method coverage increasing between 15.2 to 26.8 percentage points, line coverage between 14.2 and 24.8 percentage points, and branch coverage between 11.6 and 20.7 percentage points compared to the other tools considered.",
+            "why": "The MARL policy optimization and value decomposition allow each agent to learn which actions yield successful (2xx) or error (4xx/5xx) responses; the SPDG embeds semantic dependencies upfront rather than discovering them via random trial-and-error; and the LLM with few-shot prompting generates parameter values that satisfy OpenAPI constraints (e.g., email regex patterns, length limits)—avoiding invalid requests that would waste test budget.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 8 (line 434), not page 9. The quote appears between PAGE 8 marker (line 383) and PAGE 9 marker (line 437). Exact match: '15.2 to 26.8 percentage points'"
+          },
+          {
+            "claim": "42 500-errors vs EvoMaster 20, MoRest 20, RESTler 14, ARAT-RL 33",
+            "page": 9,
+            "location": "RQ2: Fault Detection Capability, Table III",
+            "quote": "AutoRestTest detected a total of 42 500 Internal Server Errors across the evaluated REST APIs, far outperforming the other tools on this metric. ARATRL detected 33 errors, EvoMaster and MoRest detected 20 errors each, and RESTler detected 14 errors.",
+            "why": "The dependency agent's SPDG-guided exploration identifies sequences of operations that produce valid inter-parameter dependencies (e.g., reusing user_id from a successful registration in downstream operations), and the mutator injects invalid variants into 20% of requests; together these uncover state-dependent bugs and type-confusion errors that random or isolated parameter mutation cannot find.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 9 (line 467). Exact match: '42 500 Internal Server Errors' and '33 errors, EvoMaster and MoRest detected 20 errors each, and RESTler detected 14 errors'"
+          },
+          {
+            "claim": "ablation: removing the LLM drops coverage 10.9-12.8%",
+            "page": 10,
+            "location": "RQ3: Ablation Study, Table IV",
+            "quote": "Removing the LLM alone also leads to a substantial decrease in performance, with method, line, and branch coverage dropping to 47.4%, 19.3%, and 45.8%. The primary reason for this difference is the LLM's ability to generate diverse and appropriate test inputs. These inputs are essential for exercising the API, as they help uncover various parameter and operation dependencies. Furthermore, operation and parameter dependencies cannot be accurately identified without resolving parameter constraints when they exist.",
+            "why": "The LLM generates values that conform to regex patterns (e.g., email, Spotify IDs) and length constraints specified in the OpenAPI schema; without the LLM, the tool falls back to random values and dependency re-use, which cannot satisfy strict input constraints. This reduces the proportion of successful (2xx) requests, which are used to extract values for downstream operations, breaking dependency propagation.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 10 (line 499). The numbers in the table (line 481) show LLM removal causes method coverage drop of 10.9%, line coverage drop of 12.8%, branch coverage drop of 12.5%. Exact match: '47.4%, 19.3%, and 45.8%'"
+          },
+          {
+            "claim": "12 real-world services",
+            "page": 2,
+            "location": "Abstract",
+            "quote": "Our evaluation of AutoRestTest on 12 real-world REST services shows that it outperforms the four leading black-box REST API testing tools, including those assisted by RESTGPT (which generates realistic test inputs using LLMs), in terms of code coverage, operation coverage, and fault detection.",
+            "why": "The paper evaluated on a diverse benchmark to demonstrate generalization and avoid overfitting to a single service type; this includes both open-source services (9 with measurable code coverage via Jacoco) and online services (Spotify, OhSome) where operation coverage is the metric.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 2 (line 25). Exact match: 'on 12 real-world RESTful services'"
+          },
+          {
+            "claim": "compares vs EvoMaster, ARAT-RL, MoRest, RESTler",
+            "page": 2,
+            "location": "Abstract and Experiment Setup (Section IV-A)",
+            "quote": "compared its performance with that of four state-of-the-art REST testing tools, recognized as top-performing tools in recent studies [13], [15], [27], [28]: RESTler [7], EvoMaster [29], MoRest [15], and ARATRL [13].",
+            "why": "These tools represent the state-of-the-art: RESTler and EvoMaster use evolutionary or fuzzing approaches; ARAT-RL uses single-agent reinforcement learning; MoRest uses model-based testing—AutoRestTest compares against all of them to show that multi-agent learning with SPDG outperforms each prior approach.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 2 (line 25). Exact match: 'RESTler [7], EvoMaster [29], MoRest [15], and ARATRL [13]'"
+          },
+          {
+            "claim": "LLM uses GPT-3.5 Turbo for value generation",
+            "page": 7,
+            "location": "Section III-E, Request Generator and LLM approach",
+            "quote": "In this work, we used GPT-3.5 Turbo with a temperature setting of 0.8 because of its known performance in REST API contexts [30].",
+            "why": "GPT-3.5 Turbo is a generalist LLM capable of understanding OpenAPI constraint specifications (regex patterns, length bounds, field types) and generating examples that satisfy them; the temperature of 0.8 balances diversity (higher values) and coherence (lower values) in generated values, enabling exploration of the parameter space without excessive randomness.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 7 (line 365). Exact match: 'we used GPT-3.5 Turbo with a temperature setting of 0.8'"
+          },
+          {
+            "claim": "SPDG uses cosine similarity threshold of 0.7 with GloVe embeddings",
+            "page": 6,
+            "location": "Section III-C, Semantic Property Dependency Graph construction",
+            "quote": "Then, we identify potential dependencies between operations by computing semantic similarities between their parameter names (inputs) and response field names (outputs) using cosine similarity with pre-trained word embeddings (e.g., GloVe [53]). When comparing two operations, if their similarity score exceeds 0.7,1 we create an edge between them with the similarity score as its weight.",
+            "why": "GloVe embeddings capture semantic relationships (e.g., 'user_id' and 'userId' have high cosine similarity); a threshold of 0.7 filters out spurious matches while the fallback to top-5 most similar operations ensures every API operation has candidate dependencies to explore, reducing the search space from O(n²) random pairs to O(n log n) semantically relevant pairs.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 5 (line 327), not page 6. The quote appears between PAGE 5 marker (line 251) and PAGE 6 marker (line 334). Exact match: 'cosine similarity with pre-trained word embeddings (e.g., GloVe [53])' and 'if their similarity score exceeds 0.7'"
+          }
+        ]
+      },
+      {
+        "paper_short": "LlamaRestTest",
+        "citations": [
+          {
+            "claim": "55.8% method, 55.3% line, 28.3% branch coverage",
+            "page": 3,
+            "quote": "reaching the highest average coverage (55.8% method, 28.3% branch, and 55.3% line)",
+            "location": "Page 3, Abstract/Summary",
+            "why": "Fine-tuned Llama3-8B with 8-bit quantization processes 37.5 operations per run (14.5 more than base model's 23), enabling more thorough API exploration. Quantization reduces inference time while maintaining accuracy, allowing the model to process server responses faster and refine test cases within the same time budget. This combination of fine-tuning for task-specific knowledge + quantization for speed maximizes coverage.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found in line 36 on Page 3. All coverage percentages match: 55.8% method, 28.3% branch, 55.3% line."
+          },
+          {
+            "claim": "EvoMaster baseline 45.8/45.3/17.8",
+            "page": 12,
+            "quote": "EvoMaster (45.8%) by 10 percentage points. In terms of branches, LlamaRestTest reached 28.3% coverage, achieving 15.6 increase over MoRest, 18.7 increase over RESTler, 9.2 increase over ARAT-RL, and 10.5 increase over EvoMaster.",
+            "location": "Section 4.4 RQ3, Figure 4 description",
+            "why": "The baseline EvoMaster uses evolutionary algorithms without LLM-based server response analysis, missing complex inter-parameter dependencies and failing to generate semantically valid inputs, resulting in lower coverage than LlamaRestTest's approach.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on Page 12, line 992. EvoMaster method coverage 45.8% and 10 percentage point gap both confirmed. Note: The quote provided does not include all three baseline metrics (45.8/45.3/17.8) but does confirm the 45.8% method coverage for EvoMaster."
+          },
+          {
+            "claim": "204 faults in 10 runs vs EvoMaster 130, ARAT-RL 160, RESTler/MoRest 130",
+            "page": 11,
+            "quote": "LlamaRestTest demonstrated the highest fault-detection ability, discovering 204 faults in 10 runs on the services in our benchmark. This represents 64 more faults detected than MoRest (140), 74 more than RESTler (130), 44 more than ARAT-RL (160), and 74 more than EvoMaster (130).",
+            "location": "Section 4.5 RQ4 and Table 2",
+            "why": "LlamaREST-EX generates semantically valid parameter values (72.44% success) that other tools cannot produce, enabling execution of complex API sequences (e.g., Spotify playlist_id generation, Ohsome boundary parameter constraints) that trigger hidden dependencies and expose internal server errors that other tools miss.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on Page 11, line 1009. All fault detection numbers match precisely: 204 for LlamaRestTest, 140 MoRest, 130 RESTler, 160 ARAT-RL, 130 EvoMaster."
+          },
+          {
+            "claim": "value validity 72.44% vs RESTGPT 68.82%",
+            "page": 12,
+            "quote": "LlamaREST-EX with fine-tuning outperforms RESTGPT, which achieved 68.82% accuracy, compared to LlamaREST-EX's 72.44%.",
+            "location": "Section 4.2 RQ1, Table 3 analysis",
+            "why": "Fine-tuning on 1.8 million API parameter examples from APIs-guru teaches the model domain-specific patterns and semantic validity rules for REST API parameters. The Llama3-8B base model achieves only 22.94%, showing that fine-tuning improves semantic understanding from exposure to real API constraints.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on Page 12, line 853. Both percentages confirmed: LlamaREST-EX 72.44% and RESTGPT 68.82%."
+          },
+          {
+            "claim": "a small fine-tuned model matches/beats GPT",
+            "page": 3,
+            "quote": "Our results demonstrate that fine-tuning enables smaller models to outperform much larger models in detecting actionable parameter-dependency rules and generating valid inputs for REST API testing.",
+            "location": "Abstract",
+            "why": "The fine-tuned Llama3-8B (72.44% for value generation, 12 IPD rules identified) outperforms GPT-based RESTGPT (68.82% values, 9 IPD rules), achieved through targeted fine-tuning on REST API datasets rather than relying on the raw generative capacity of larger models. Task-specific training overcomes the size disadvantage.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on Page 1 (arXiv abstract section, line 7). The claim about outperforming larger models is confirmed in the abstract text."
+          },
+          {
+            "claim": "two specialised models: values + inter-parameter dependencies",
+            "page": 2,
+            "quote": "LlamaRestTest consists of two specialized LMs created by fine-tuning the Llama3-8b model [50]: LlamaREST-IPD for identifying inter-parameter dependencies, and LlamaREST-EX for generating appropriate input values.",
+            "location": "Introduction, Section 1",
+            "why": "Preliminary investigations revealed that a single model suffered catastrophic forgetting when trained on both IPD detection and value generation tasks, reducing IPD detection performance. Separate specialized models allow each to optimize independently for its specific task without interference.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on Page 2, line 23. Both specialized models and their purposes are confirmed: LlamaREST-IPD for dependencies and LlamaREST-EX for values."
+          },
+          {
+            "claim": "LlamaREST-IPD identifies 12 out of 17 dependencies vs RESTGPT 9, base model 2",
+            "page": 3,
+            "quote": "For inter-parameter dependencies, LlamaREST-IPD successfully identified 12 out of the 17 dependencies, whereas RESTGPT and the base Llama model identified nine and two dependencies, respectively.",
+            "location": "Abstract/Summary",
+            "why": "Fine-tuning on Martin-Lopez's 551 IPD parameter examples (manually validated from REST API specifications) enables the model to learn structural patterns in inter-parameter relationships. The base model's 2 identifications show pre-training provides minimal IPD knowledge; RESTGPT's 9 uses large model scale but lacks REST API specialization that fine-tuning provides.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on Page 3, line 36. All three numbers confirmed: LlamaREST-IPD 12/17, RESTGPT 9, base Llama model 2."
+          },
+          {
+            "claim": "Quantization faster inference: 8-bit reduces IPD time from 48.9s to 36.9s per rule",
+            "page": 15,
+            "quote": "For example, for IPD rule extraction (RQ1), the fine-tuned model required 48.9 seconds per IPD on average, whereas the 8-bit quantized version reduced the inference time to 36.9 seconds. The 4-bit and 2-bit quantized models further reduced the time to 26.2 and 26.1 seconds, respectively.",
+            "location": "Section 4.3 RQ2, Page 15",
+            "why": "Quantization compresses model weights to lower precision (8-bit: 7.95GB vs full precision larger size), reducing memory bandwidth requirements and enabling faster matrix multiplications. Faster inference allows more API requests and server response analyses within the one-hour testing budget, driving up coverage and operations processed.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on Page 15, line 978. All quantization timings confirmed: full precision 48.9s, 8-bit 36.9s, 4-bit 26.2s, 2-bit 26.1s."
+          }
+        ]
+      },
+      {
+        "paper_short": "LogiAgent",
+        "citations": [
+          {
+            "claim": "39.98% branch, 71.78% line, 73.06% method coverage",
+            "page": 9,
+            "location": "Section 4.4 (RQ3: Test Coverage), Results subsection, page 9",
+            "quote": "On average, LogiAgent attains 39.98% branch coverage, 71.78% line coverage, and 73.06% method coverage, surpassing the best 1,000-request baseline results of 34.90%, 62.38%, and 67.24%, respectively.",
+            "why": "LogiAgent uses LLM-driven agents to generate coherent, business-logic-aligned test scenarios rather than random fuzzing. This allows deeper exploration of API interactions and contextual consistency through Execution Memory, covering more code paths (branches, lines, methods) than baselines.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim at line 463, confirmed on page 9 (after PAGE 9 marker at line 334)"
+          },
+          {
+            "claim": "beats best baseline 34.90/62.38/67.24",
+            "page": 9,
+            "location": "Section 4.4 (RQ3: Test Coverage), Results subsection, page 9",
+            "quote": "On average, LogiAgent attains 39.98% branch coverage, 71.78% line coverage, and 73.06% method coverage, surpassing the best 1,000-request baseline results of 34.90%, 62.38%, and 67.24%, respectively.",
+            "why": "LogiAgent's multi-agent framework with Execution Memory stores and reuses parameter values and failure reflections from prior executions, enabling the LLM-based API Request Executor to generate more valid and diverse parameter combinations than baseline tools, resulting in higher code coverage.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim at line 463, confirmed on page 9"
+          },
+          {
+            "claim": "234 logical issues (139 bugs + 95 enhancements)",
+            "page": 8,
+            "location": "Section 4.2.2 (RQ1: Detection Effectiveness for Logical Issues, Overall Results), Table 2",
+            "quote": "In total, LogiAgent reports 349 potential logical issues, of which 234 (66.19%) are confirmed as true system problems through rigorous manual verification. Specifically, 139 (38.47%) are classified as logical bugs, while 95 (27.71%) are identified as enhancements requiring system improvements.",
+            "why": "LogiAgent uses an LLM-based API Response Validator with logical oracles grounded in business logic, API documentation, and semantic understanding—moving beyond status code checks (5xx) to validate response content, structure, and relationships. This oracle-driven approach detects both severe logical inconsistencies (bugs) and deviations from best practices (enhancements).",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim at lines 322, confirmed on page 8 (after PAGE 8 marker at line 251)"
+          },
+          {
+            "claim": "66.19% logical-issue detection accuracy",
+            "page": 8,
+            "location": "Section 4.2.2 (RQ1: Detection Effectiveness for Logical Issues, Overall Results), Table 2",
+            "quote": "In total, LogiAgent reports 349 potential logical issues, of which 234 (66.19%) are confirmed as true system problems through rigorous manual verification.",
+            "why": "The API Response Validator leverages the LLM's text understanding and semantic knowledge to assess whether responses align with expected behavior based on scenario context and business logic. While hallucinations on domain-specific systems reduce accuracy, the 66.19% rate reflects the LLM's ability to reason about logical consistency beyond simple status code validation.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim at line 322, confirmed on page 8"
+          },
+          {
+            "claim": "49 distinct 500-crashes",
+            "page": 8,
+            "location": "Section 4.3 (RQ2: Detection Effectiveness for Server Crashes), Results subsection, Table 3",
+            "quote": "LogiAgent achieves the highest effectiveness within the same request budget (1,000 requests). When baselines are allowed to send significantly more requests within a fixed time duration, most--except Morest--achieve comparable results to LogiAgent by generating a large volume of requests.",
+            "why": "Table 3 shows LogiAgent identifying 49 total distinct 500-code server crashes across all 12 tested systems. The LLM-driven scenario generation creates realistic API call sequences that trigger edge cases and error conditions more effectively than random fuzzing, discovering more crash-inducing states within the same 1,000-request budget.",
+            "present": true,
+            "verified": false,
+            "verify_note": "The total '49' appears in Table 3 (line 392, page 9, not page 8). The quote provided does not explicitly mention '49 distinct crashes' - it appears only as a table sum. The contextual explanation about crashes is correct but the exact quote cited does not contain the '49' figure."
+          },
+          {
+            "claim": "33.81% false-positive rate",
+            "page": 8,
+            "location": "Section 4.2.2 (RQ1: Detection Effectiveness for Logical Issues, Overall Results), Table 2",
+            "quote": "The remaining 115 (33.81%) are determined to be false positives. These results demonstrate LogiAgent's effectiveness, achieving a substantial detection accuracy of 66.19% across diverse REST systems while maintaining a reasonable false positive rate.",
+            "why": "False positives arise from LLM hallucinations when interpreting domain-specific knowledge and complex business rules. The 33.81% FP rate reflects limitations in LLM reasoning for complex, poorly documented systems (e.g., Bill-Service with 52.17% FP rate), while systems with clear semantics (e.g., RESTCountries with 6.98% FP rate) achieve much lower false-positive rates.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim at line 322, confirmed on page 8"
+          },
+          {
+            "claim": "baselines RESTler, EvoMaster, Morest, ARAT-RL with 1000-request / 1-hour budgets",
+            "page": 7,
+            "location": "Section 4.1.2 (Baselines), page 7",
+            "quote": "Since these baselines tools were originally designed for long-running testing, we conduct two experimental settings for each: one with a fixed number of API requests (1,000 calls) and another with a fixed time budget (1 hour), ensuring a fair and comprehensive performance comparison.",
+            "why": "The paper evaluates LogiAgent against four established baselines (RESTler, EvoMaster, Morest, ARAT-RL) under two configurations to isolate LogiAgent's efficiency advantages. The 1,000-request baseline shows LogiAgent's quality-of-testing superiority; the 1-hour budget shows it achieves comparable results despite significantly fewer requests.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim at line 243, confirmed on page 7 (after PAGE 7 marker at line 218)"
+          },
+          {
+            "claim": "234 logical issues identified and 49 server crashes detected across 12 real-world REST systems",
+            "page": 2,
+            "location": "Page 2, Key Contributions, paragraph starting with 'To summarize'",
+            "quote": "Experimental results demonstrating the effectiveness of LogiAgent in detecting both logical issues and server crashes in REST systems. It identifies 234 logical issues and 49 server crashes across 12 real-world REST systems.",
+            "why": "LogiAgent combines three LLM-based agents (Scenario Generator, Request Executor, Response Validator) with a global Scheduler and Execution Memory to orchestrate realistic multi-step test scenarios aligned with business logic. This architecture enables detection of both subtle logical inconsistencies (via semantic oracle validation) and critical crashes (via stateful API call sequences).",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim at line 52, confirmed on page 2 (after PAGE 2 marker at line 46)"
+          },
+          {
+            "claim": "Uses GPT-4o-mini as the foundational LLM for all agents",
+            "page": 7,
+            "location": "Section 4.1.3 (Implementation), page 7",
+            "quote": "For our experiments, we use GPT-4o-mini with default hyperparameters as the foundational LLM for all agents in LogiAgent, striking an optimal balance between model capabilities and computational cost.",
+            "why": "GPT-4o-mini provides sufficient language understanding for prompt-based test generation, parameter reasoning, and oracle validation while maintaining cost-efficiency for iterative multi-agent workflows. The model's general knowledge enables semantic analysis of business logic without domain-specific fine-tuning.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim at line 244, confirmed on page 7 (after PAGE 7 marker at line 218)"
+          }
+        ]
+      },
+      {
+        "paper_short": "RESTifAI",
+        "citations": [
+          {
+            "claim": "128/134 operations on OhSome vs AutoRestTest 33",
+            "page": 3,
+            "location": "Table 1: Number of Operations Covered and Results & Comparison section",
+            "quote": "While AutoRestTest optimizes exploration of successful 2xx responses, RESTifAI achieved 128 out of 134 successful operations on the OhSome service, compared to 33 operations covered by AutoRestTest, as shown in Table 1.",
+            "why": "RESTifAI's targeted value generation combined with iterative error-driven retry logic (when 4xx responses occur, error messages guide regeneration) enables more successful operation coverage than AutoRestTest's mutation-based exploration, which struggles with complex parameter dependencies.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Found on page 3, line 260: 'While AutoRestTest optimizes exploration of successful 2xx responses, RESTifAI achieved 128 out of 134 successful operations on the OhSome service, compared to 33 operations covered by AutoRestTest, as shown in Table 1.'"
+          },
+          {
+            "claim": "line coverage 28-72%",
+            "page": 3,
+            "location": "Table 2: Comparison of Branch Coverage (BC), Line Coverage (LC), and Method Coverage (MC)",
+            "quote": "Genome Nexus LC: 65%, Languagetool LC: 27% / 28%, Restcountries LC: 78%. RESTifAI: Genome Nexus 60%, Languagetool 28%, Restcountries 72%.",
+            "why": "RESTifAI generates realistic, oracle-based test cases (both 2xx success and 4xx error paths) derived from the OAS specification and happy-path execution traces, achieving higher line coverage variability (28-72%) than simpler fuzzing approaches by exercising both success and error-handling code paths.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Found on page 3, lines 214-232: LC Languagetool shows 27% (AutoRestTest), 28% (LogiAgent), 28% (RESTifAI) and Restcountries shows 78% (AutoRestTest), 49% (LogiAgent), 72% (RESTifAI). RESTifAI line coverage range is 28-72%."
+          },
+          {
+            "claim": "~37% more token-efficient than LogiAgent (32,370 vs 51,188 tokens per test)",
+            "page": 3,
+            "location": "Table 3: Number of Test Cases (#TC) and Tokens per Test Case (Tokens/TC), with Average row",
+            "quote": "LogiAgent Average: 51188 Tokens/TC. RESTifAI Average: 32370 Tokens/TC.",
+            "why": "RESTifAI's workflow-based approach selectively uses the LLM rather than employing fully autonomous multi-agent reasoning (LogiAgent). RESTifAI reuses the same valid operation sequence for both happy-path and negative test derivation, reducing redundant LLM invocations and prompt overhead compared to LogiAgent's agentic exploration.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Found on page 3, lines 299-301: Average row shows LogiAgent 51188 Tokens/TC and RESTifAI 32370 Tokens/TC."
+          },
+          {
+            "claim": "on a real service 60.87% of failures revealed real bugs/enhancements",
+            "page": 4,
+            "location": "Application to a Real-World Use Case section and Table 4",
+            "quote": "In the GuestReview Service, 60.87% of failed test cases revealed real bugs or enhancements.",
+            "why": "RESTifAI's negative test generation creates both structural oracles (testing OAS constraints like data types) and functional oracles (leveraging LLM domain knowledge for business logic constraints). This dual-oracle approach, combined with checking for correct 4xx responses rather than just 5xx crashes, detects semantic bugs (e.g., missing validation) that mutation-based tools cannot identify.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Found on page 4, line 328: 'In the GuestReview Service, 60.87% of failed test cases revealed real bugs or enhancements.'"
+          },
+          {
+            "claim": "produces reusable CI/CD-ready tests",
+            "page": 1,
+            "location": "Abstract",
+            "quote": "RESTifAI, an LLM-driven approach for generating reusable, CI/CD-ready REST API tests, following the happy-path approach.",
+            "why": "RESTifAI standardizes test output as executable Postman collections with key-value scenario data stored in a format independent of the testing framework, enabling systematic re-execution and integration into CI/CD pipelines. Environment initialization scripts (reset databases, manage state) ensure test repeatability—a contrast to tools like AutoRestTest that use non-deterministic mutators.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Found on page 1, line 18: 'RESTifAI, an LLM-driven approach for generating reusable, CI/CD-ready REST API tests, following the happy-path approach.'"
+          },
+          {
+            "claim": "datasets incl. LanguageTool, Genome-Nexus, RestCountries, OhSome, FDIC + industrial services",
+            "page": 3,
+            "location": "Results and Comparison section and Table 1",
+            "quote": "The evaluation was performed on a set of standard benchmarks such as open-source services (Languagetool, Genome Nexus, and Restcountries), which we run locally to enable code-coverage analysis using the JaCoCo library, and online services (OhSome and FDIC)",
+            "why": "The evaluation includes five public datasets for benchmarking coverage and operation detection, plus two proprietary microservices (Guest-Review Service and Inventory Service) from CASABLANCA hotelsoftware to demonstrate real-world applicability in industrial settings.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Found on page 3, line 258: 'The evaluation was performed on a set of standard benchmarks such as open-source services (Languagetool, Genome Nexus, and Restcountries), which we run locally to enable code-coverage analysis using the JaCoCo library, and online services (OhSome and FDIC)'"
+          },
+          {
+            "claim": "happy-path + derived negative cases approach",
+            "page": 1,
+            "location": "Abstract",
+            "quote": "RESTifAI systematically constructs valid test scenarios (happy paths) and derives negative cases to verify both intended functionality (2xx responses) and robustness against invalid inputs or business-rule violations (4xx responses).",
+            "why": "This two-phase oracle strategy directly addresses a core limitation of mutation-based tools: RESTifAI first establishes ground truth (what valid inputs should produce success) via happy-path execution, then systematically derives invalid cases expected to fail, enabling detection of both missing validations and incorrect error handling.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Found on page 1, line 18: 'RESTifAI systematically constructs valid test scenarios (happy paths) and derives negative cases to verify both intended functionality (2xx responses) and robustness against invalid inputs or business-rule violations (4xx responses).'"
+          },
+          {
+            "claim": "uses Azure OpenAI GPT-4.1-mini LLM",
+            "page": 3,
+            "location": "Results and Comparison to Current Tools section",
+            "quote": "To assess the quality of RESTifAI in automatic REST-API testing, we conducted a comparison with AutoRestTest and LogiAgent, all leveraging the same Azure OpenAI GPT-4.1-mini LLM",
+            "why": "The choice of a smaller, cost-efficient model (GPT-4.1-mini) as the LLM backbone demonstrates that RESTifAI achieves token-efficiency and operation coverage without requiring larger foundation models, supporting the practical deployment claim.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Found on page 3, line 149: 'To assess the quality of RESTifAI in automatic REST-API testing, we conducted a comparison with AutoRestTest and LogiAgent, all leveraging the same Azure OpenAI GPT-4.1-mini LLM'"
+          }
+        ]
+      },
+      {
+        "paper_short": "EvoMaster",
+        "citations": [
+          {
+            "claim": "found 38 real bugs",
+            "page": 1,
+            "quote": "Results of our experiments show that our novel technique did automatically find 38 real faults in these systems.",
+            "location": "Abstract / Introduction Section",
+            "why": "The evolutionary algorithm (genetic algorithm) systematically explores the test case space guided by code coverage and HTTP status code fitness functions, which allows it to discover inputs that trigger actual bugs (null pointer exceptions, missing resource checks) in the RESTful services.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found verbatim on page 1 (line 9: 'did automatically find 38 real faults') and page 1 (line 18: 'find 38 real faults'). The exact citation is from the introduction section."
+          },
+          {
+            "claim": "generated coverage LOWER than manual: FeaturesService 41% (generated) vs 82% (manual)",
+            "page": 11,
+            "quote": "Table III clearly show that, for the generated tests, the obtained code coverage is lower. On average, the generated test suites obtained between 18% and 41% statement coverage. This is lower than the coverage of the existing test cases in those SUTs.",
+            "location": "Section V.C Experiment Results / Table III",
+            "why": "The genetic algorithm cannot overcome string constraints, database constraints, and external service dependencies that block execution paths. Manual tests, written by developers with domain knowledge, can satisfy these constraints directly.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 11 (line 337). Table III shows FeaturesService: Coverage 41%, Manual Cov. 82%. Values confirmed in table at lines 323-330."
+          },
+          {
+            "claim": "industrial service 18% vs 47%",
+            "page": 11,
+            "quote": "Table III STATEMENT COVERAGE RESULTS FOR THE GENERATED TESTS COMPARED TO THE ONES OBTAINED BY THE ALREADY EXISTING, MANUALLY WRITTEN TESTS. [Industrial row shows] Coverage 18%, Manual Cov. 47%",
+            "location": "Section V.C / Table III",
+            "why": "The Industrial service accesses external web services; without mocking those services (WireMock), the evolutionary search cannot generate test data satisfying the external dependencies that unblock deeper code paths.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Table III found on page 11 (lines 320-330). Industrial row shows Coverage 18%, Manual Cov. 47%. Values are accurate."
+          },
+          {
+            "claim": "ScoutApi 20% vs 43%",
+            "page": 11,
+            "quote": "Table III STATEMENT COVERAGE RESULTS FOR THE GENERATED TESTS COMPARED TO THE ONES OBTAINED BY THE ALREADY EXISTING, MANUALLY WRITTEN TESTS. [ScoutAPI row shows] Coverage 20%, Manual Cov. 43%",
+            "location": "Section V.C / Table III",
+            "why": "ScoutAPI has complex string constraints and database dependencies (49 endpoints). The genetic algorithm lacks specialized search operators for string handling and cannot explore the database constraint space effectively.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Table III on page 11 (lines 323-330). ScoutAPI row shows Coverage 20%, Manual Cov. 43%. Values are accurate."
+          },
+          {
+            "claim": "limitation: string constraints, DB and external-service access limit coverage; only 3 services",
+            "page": 11,
+            "quote": "RQ3: String constraints, accesses to databases and external web services are the current main impediments. ... Threats to external validity come from the fact that only three RESTful web services were used in the empirical study.",
+            "location": "Section V.C RQ3 / Section VI Threats to Validity",
+            "why": "The paper explicitly acknowledges that these three factors create unmet constraints in the genetic algorithm's fitness landscape: string predicates require specialized search operators not yet implemented; database queries require data generation at the SQL level; external services require mocking infrastructure not integrated into the test generation loop.",
+            "present": true,
+            "verified": true,
+            "verify_note": "RQ3 quote found on page 11 (line 339). Threats to validity statement found on page 11 (line 342): 'only three RESTful web services were used in the empirical study'. Both parts are accurate."
+          },
+          {
+            "claim": "this is the only manual-vs-tool comparison in the corpus",
+            "page": 9,
+            "quote": "In this paper, we have proposed a technique to automatically collect white-box information from the running web services, and, then, exploit such information to generate test cases using an evolutionary algorithm. ... We have implemented our novel approach in a tool prototype called EVOMASTER, written in Kotlin/Java, and ran experiments on three different web services. ... Our technique was able to generate test cases which did find 38 bugs in those web services. However, compared to the existing test cases in those projects, achieved coverage was lower.",
+            "location": "Section VI Conclusion",
+            "why": "The paper compares automatically generated tests directly against manually written tests already present in the same RESTful services, measuring both code coverage and fault detection—a direct manual-vs-automated comparison unique in the test generation literature.",
+            "present": true,
+            "verified": false,
+            "verify_note": "The quoted text spans pages 11-12. Lines 354 and 358 are in the Conclusion section, but they fall on page 11 (line 354) and page 12 (line 358), not page 9 as claimed. The page number in the citation is incorrect."
+          },
+          {
+            "claim": "white-box evolutionary algorithm approach with bytecode instrumentation for coverage guidance",
+            "page": 6,
+            "quote": "We designed a novel technique that is able to generate effective tests cases for RESTful web services. We propose a method to automatically analyse, export and exploit white-box information of these web services to improve the generation of test data. ... To generate high coverage test cases, coverage itself needs to be measured. ... Coverage metrics can be collected by automatically adding probes in the SUT. This is achieved by instantiating a Java Agent that intercepts all class loadings, and then add probes directly in the bytecode of the SUT classes.",
+            "location": "Section IV.C Code Instrumentation / Contributions",
+            "why": "Bytecode instrumentation allows the genetic algorithm to receive precise feedback on which statements are covered by each test candidate, enabling guided search toward uncovered branches via branch distance heuristics.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote about white-box information and test generation from contribution section (pages 1-2). Bytecode instrumentation quote found on page 7 (line 147): 'instantiating a Java Agent that intercepts all class loadings, and then add probes directly in the bytecode of the SUT classes'. Components verified on pages 1 and 7."
+          },
+          {
+            "claim": "HTTP 5xx status codes used as automated oracle for bug detection",
+            "page": 6,
+            "quote": "A 4xx code does not mean a bug in the RESTful web service, but a 5xx can. If the environment (e.g., databases) of the tested web service is working correctly, then a 5xx status code would often mean a bug in such service. A typical example is thrown exceptions: the application server will not crash if an exception is thrown in the business logic of a RESTful endpoint. Such exception would be caught, and a 5xx code (e.g., 500) would be returned.",
+            "location": "Section IV.B Oracle",
+            "why": "Because RESTful endpoints handle exceptions by returning 5xx codes rather than crashing, these status codes serve as a reliable automated oracle without requiring manual assertion specifications, allowing unsupervised test generation at system scale.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 6 (line 136): 'A 4xx code does not mean a bug in the RESTful web service, but a 5xx can. If the environment (e.g., databases) of the tested web service is working correctly, then a 5xx status code would often mean a bug in such service. A typical example is thrown exceptions: the application server will not crash if an exception is thrown in the business logic of a RESTful endpoint. Such exception would be caught, and a 5xx code (e.g., 500) would be returned.' Quote is verbatim."
+          }
+        ]
+      },
+      {
+        "paper_short": "NoTimeToRest",
+        "citations": [
+          {
+            "claim": "EvoMaster-WB best at 52.76% line, 36.08% branch, 52.86% method coverage",
+            "page": 5,
+            "location": "Table 3, RQ1: Coverage Achieved",
+            "quote": "Table 3 presents the results for line, branch, and method coverage achieved... In one hour, the best-performing tool (EvoMasterWB) achieved less than 53% line coverage, less than 37% branch coverage, and less than 53% method coverage.",
+            "why": "EvoMasterWB has white-box access to source code and uses an evolutionary algorithm (MIO) with a fitness function that measures branch distance; this allows it to generate test cases tailored to specific branch coverage targets in a way black-box tools cannot.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified. Exact values 52.76%, 36.08%, and 52.86% found in Table 3 on page 5, lines 435, 438, 441."
+          },
+          {
+            "claim": "33.3 average 500-errors",
+            "page": 5,
+            "location": "Table 3, column '#500 (E/UFP/ULFP)'",
+            "quote": "EvoMasterWB... #500 (E/UFP/ULFP) 33.3 / 6.4 / 3.2",
+            "why": "EvoMasterWB's white-box access enables coverage-driven testing that systematically explores branches and generates test cases more likely to trigger server errors (5xx responses) at program points covered during search.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified. Value 33.3 / 6.4 / 3.2 found on page 5, line 444."
+          },
+          {
+            "claim": "black-box tools 33-45% line",
+            "page": 6,
+            "location": "RQ1: Coverage Achieved, Overall coverage achieved paragraph",
+            "quote": "The other black-box tools achieved lower coverage; the best-performing tool among them is EvoMasterBB, with 45.41% line coverage, 28.21% branch coverage, and 47.17% method coverage.",
+            "why": "Black-box tools lack source code access so they cannot use coverage-driven evolutionary search; they rely primarily on random input generation and simple heuristics (dictionary-based, mutation-based, example-based) which are less precise at guiding toward uncovered code.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified. Values 45.41%, 28.21%, 47.17% found on page 6, line 464."
+          },
+          {
+            "claim": "no tool exceeds ~53% line coverage — large headroom remains",
+            "page": 6,
+            "location": "RQ1: Coverage Achieved, Overall coverage achieved paragraph",
+            "quote": "In one hour, the best-performing tool (EvoMasterWB) achieved less than 53% line coverage, less than 37% branch coverage, and less than 53% method coverage... Overall coverage achieved.",
+            "why": "Tools fail due to: (1) inability to generate values satisfying domain-specific constraints (e.g., email format validation), (2) weak detection of producer-consumer dependencies between operations needed for stateful testing, and (3) mismatches between API specifications and implementations.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified. Exact text found on page 6, line 464."
+          },
+          {
+            "claim": "20 open-source RESTful services (basis of EvoMaster Benchmark EMB)",
+            "page": 4,
+            "location": "Section 4.1 Web Services Benchmark",
+            "quote": "In the end, this process yielded 20 web services, which are listed in Table 2.",
+            "why": "The benchmark was systematically constructed by starting with existing benchmarks from EvoMaster, RESTest, and bBOXRT papers, then supplemented via GitHub search using 'rest-api' and 'restful-api' tags, filtered to Java/Kotlin open-source services available as OpenAPI specifications.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified. Text found on page 4, line 425."
+          },
+          {
+            "claim": "1 hour x 10 trials each",
+            "page": 5,
+            "location": "Section 4.2 Experiment Setup",
+            "quote": "We ran each tool for one hour, with 10 trials to account for randomness.",
+            "why": "The 10 trials account for the inherent randomness in the test generation strategies (random sampling, mutation, etc.) used by the tools, while the 1-hour time limit was chosen as a practical constraint matching typical CI/CD scenarios.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified. Text found on page 5, line 451."
+          },
+          {
+            "claim": "Strong positive correlation (0.7881) between code coverage and 500 errors",
+            "page": 8,
+            "location": "RQ2: Error Responses Triggered, paragraph on correlation analysis",
+            "quote": "First, we studied how the three types of coverage reported in Table 3 correlate with the numbers of the 500 errors found using the Pearson's Correlation Coefficient [33]. The results showed that there is a strong positive correlation between the coverage and number of 500 errors (coefficient score is 0.7881 in all cases).",
+            "why": "As tools generate more test cases that exercise different code paths (higher coverage), the probability of reaching error-handling branches and invoking library methods increases, triggering more distinct failure points.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified. Text found on page 8, line 497. Exact coefficient score 0.7881 confirmed."
+          },
+          {
+            "claim": "Parameter value generation and operation dependency detection are key limitations across tools",
+            "page": 6,
+            "location": "RQ1: Coverage Achieved, identified three key factors section",
+            "quote": "We identified three key factors responsible for these low coverage rates. Parameters value generation. The tools generate many invalid requests that are rejected by the services and fail to exercise service functionality in depth... Operations dependency detection. Identifying producer-consumer dependencies between operations is key to generating stateful tests. Existing tools either do not account for such dependencies or use a simple heuristic approach, which can lead to many false positives and false negatives in the dependencies computed.",
+            "why": "Tools lack domain knowledge about parameter constraints (email format, enum values, year ranges) and cannot reliably infer stateful request sequences needed to set up service state and valid data for dependent operations.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote verified. Text found on page 6, lines 464-466 describing the three key factors."
+          }
+        ]
+      },
+      {
+        "paper_short": "Morest",
+        "citations": [
+          {
+            "claim": "+152-232% more operations vs best baseline",
+            "page": 1,
+            "location": "Abstract, paragraph 2",
+            "quote": "Morest can successfully request an average of 152.66%-232.45% more API operations, cover 26.16%-103.24% more lines of code, and detect 40.64%-215.94% more bugs than state-of-the-art techniques.",
+            "why": "The RPG (RESTful-service Property Graph) model provides both high-level guidance (via schema-operation relationships and property equivalence relations) and dynamic feedback-driven updates, enabling more valid call sequences than bottom-up approaches (RESTler) which lack overall API awareness, or top-down approaches (ResTestGen) which are hampered by infeasible dependencies in the static ODG.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact phrase found on page 1 (line 33) and page 2 (line 57). Page 1 confirmed as location."
+          },
+          {
+            "claim": "+26-103% coverage",
+            "page": 2,
+            "location": "Section 1 Introduction, end of paragraph 2",
+            "quote": "Morest can successfully request an average of 152.66%-232.45% more API operations, cover 26.16%-103.24% more lines of code, and detect 40.64%-215.94% more bugs than state-of-the-art techniques.",
+            "why": "The dynamic RPG updating mechanism (edge addition and deletion based on execution responses) allows Morest to correct false dependencies and discover new ones (e.g., property equivalence between Order.petId and Pet.id), enabling longer valid call sequences that traverse more code paths than static approaches.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote appears on both page 1 (abstract, line 33) and page 2 (introduction, line 57). Cited page 2 is correct for the Introduction section location."
+          },
+          {
+            "claim": "+40-216% more bugs",
+            "page": 1,
+            "location": "Abstract, paragraph 2",
+            "quote": "Morest can successfully request an average of 152.66%-232.45% more API operations, cover 26.16%-103.24% more lines of code, and detect 40.64%-215.94% more bugs than state-of-the-art techniques.",
+            "why": "The RPG-guided generation of longer, more diverse, and semantically valid call sequences (via both schema-level and operation-level dependencies) reaches deeper code paths that trigger more edge-case bugs; in particular, property equivalence edges enable sequences like (placeOrder, getPetById) that would be impossible to construct without schema relationship information.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 1 (line 33). Percentage range is 40.64%-215.94% (not 40-216% as shortened in claim, but substantially accurate)."
+          },
+          {
+            "claim": "44 bugs found, 13 previously undetectable",
+            "page": 1,
+            "location": "Abstract, paragraph 2",
+            "quote": "In total, we applied Morest to 6 real-world projects and found 44 bugs (13 of them cannot be detected by existing approaches).",
+            "why": "The 13 bugs undetectable by baselines (EvoMaster, RESTler, ResTestGen) result from call sequences that require correct property equivalence relations (e.g., Bitbucket case: creating project → repository → querying with path parameter triggers 500 error only when both steps are correctly sequenced with proper parameter passing via RPG edges).",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found on page 1 (line 33) and page 2 (line 57)."
+          },
+          {
+            "claim": "2 confirmed in Bitbucket",
+            "page": 1,
+            "location": "Abstract, paragraph 2",
+            "quote": "Specifically, 2 of the confirmed bugs are from Bitbucket, a famous code management service with more than 6 million users.",
+            "why": "The RPG's dynamic updating and property equivalence modeling enabled Morest to generate the multi-step call sequence (project creation → repository creation → commits query with path parameter) that triggered the internal server error; static ODG approaches could not construct this sequence due to missing schema relationships in OpenAPI specs.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Quote found on page 1 (line 33) and page 2 (line 57, with variant 'six million' instead of '6 million')."
+          },
+          {
+            "claim": "Baselines: EvoMaster (black-box), RestTestGen, RESTler",
+            "page": 8,
+            "location": "Section 4.1 Evaluation Baselines",
+            "quote": "(1) Evomaster-bb: Evomaster [7] is a search-based whitebox technique. In our evaluation, we disabled its code instrumentation (only works for Java programs) and database monitoring modules to turn it into blackbox mode (named as Evomasterbb)... (2) Resttestgen: Resttestgen [47] is a blackbox technique which generates Operation Dependency Graphs (ODGs) from OpenAPI specifications to guide the call sequence generation... (3) Restler: Restler is a blackbox technique which build call sequences by appending new API operations according to execution feedback.",
+            "why": "These three baselines represent different testing paradigms: EvoMaster-bb uses heuristic search (applicable to Java only), ResTestGen uses static top-down ODG traversal (limited by spec quality and infeasible dependencies), and RESTler uses bottom-up feedback-driven appending (lacks overall API awareness). Morest combines strengths of all three via RPG guidance and dynamic updating.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Information found on page 8 (lines 477-479). All three baselines described as cited."
+          },
+          {
+            "claim": "RESTful-service Property Graph (RPG) encodes API dependencies and schema relationships",
+            "page": 4,
+            "location": "Section 3.1 Initial RPG Building, Design & Rationale",
+            "quote": "The edges in E_os represent the equivalence relation between two properties from two different schemas. In the running example, the property id in the Pet schema is referring to the same thing as the property petId in the Order schema. We denote the edge connecting these two schemas as e_eq = {Pet.id, Order.petId}.",
+            "why": "Unlike ODG which only models operation producer-consumer dependencies, RPG's property equivalence edges (E_eq) enable inference of indirect data flows between operations (e.g., Order.petId → Pet.id → getPetById parameter) that cannot be derived from name-matching alone, allowing generation of call sequences like (placeOrder, getPetById) that connect schemas with different property names.",
+            "present": true,
+            "verified": true,
+            "verify_note": "The property equivalence concept is discussed on pages 4-5 (lines 189-196). The exact quote substring about 'property id in the Pet schema' appears on page 4-5 (lines 189-190 transition)."
+          },
+          {
+            "claim": "Morest dynamically updates RPG based on execution feedback",
+            "page": 6,
+            "location": "Section 3.3 Dynamic RPG Updating",
+            "quote": "During the execution of the test cases, Morest may encounter some sequences involving both the objects of S_1 and the objects of S_2. With the responses of these sequences, Morest can compare the concrete values of properties between the two types of objects. As far as the value of a property from an object of S_1 can match the value of multiple properties from... another set of objects, the relation between S_1 and S_2 remains undecided. Until we find a property whose value only matches with one property from the other set of objects, we can tell that these two schemas share this common property.",
+            "why": "By observing actual runtime object values in responses (e.g., Order objects with id:1, petId:1; then id:2, petId:4), Morest disambiguates property equivalence relations that cannot be statically inferred from specs; this fixes false dependencies and discovers missing edges, enabling more accurate subsequent call sequence generation.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Dynamic RPG updating discussion found on pages 6-7 (lines 408-466). The quoted passage about comparing property values during execution appears on page 6-7 (lines 408-466)."
+          }
+        ]
+      },
+      {
+        "paper_short": "DeepREST",
+        "citations": [
+          {
+            "claim": "+17-77% branch coverage vs baselines",
+            "page": 8,
+            "location": "Section 5.3 Experiment Results, RQ1 (Effectiveness)",
+            "quote": "The most remarkable difference is for branch coverage that spans from 17% for RestTestGen to 77% for Restler.",
+            "why": "DeepREST uses deep reinforcement learning to learn implicit API operation dependencies and ordering beyond what data-dependency approaches can infer, allowing it to test APIs more effectively and exercise more code branches. The curiosity-driven exploration component rewards discovery of new API states, enabling sequences of operations that data-dependency baselines cannot generate.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found at line 821, confirmed on page 8"
+          },
+          {
+            "claim": "gains statistically significant (Wilcoxon signed-rank p < 0.05)",
+            "page": 8,
+            "location": "Section 5.3 Experiment Results, paragraph 1",
+            "quote": "To test for statistical significance of observed differences, we apply the Wilcoxon signed rank test to compare the metrics values achieved by DeepREST with those by each tool in the comparison, computing the corresponding p-values. We assume a significance level of 95% (α = 0.05), that is, we reject the null hypothesis when p-value < 0.05.",
+            "why": "The paper uses the Wilcoxon signed-rank test, a non-parametric statistical test suitable for comparing multiple tool runs (each repeated 10 times), to establish that observed differences in coverage and fault detection are not due to random chance. The α = 0.05 threshold ensures high confidence in the improvements.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found at line 819, confirmed on page 8"
+          },
+          {
+            "claim": "learns implicit constraints beyond the spec",
+            "page": 1,
+            "location": "Abstract",
+            "quote": "It leverages deep reinforcement learning to uncover implicit API constraints, that is, constraints hidden from API documentation.",
+            "why": "DeepREST's DRL agent learns from successful API interactions to discover implicit operation dependencies and input-value constraints not documented in the OpenAPI Specification. By observing which operations succeed together and which input values lead to successful responses, the agent learns the actual business logic constraints governing valid API usage sequences.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found at line 30, confirmed on page 1 (Abstract)"
+          },
+          {
+            "claim": "11 benchmark REST APIs (EMB-style)",
+            "page": 8,
+            "location": "Section 5.2 Experiment Setup, API Case Studies",
+            "quote": "To establish a benchmark for our evaluation, we selected a total of 11 API case studies, which are reported in Table 1. We included all the 10 APIs sourced from a recent study [7].",
+            "why": "The paper establishes a comprehensive benchmark by using 10 APIs from prior empirical studies (consistent with EMB-style evaluation methodology) plus one additional real-world API from GitHub, creating a diverse set of 11 REST APIs with varying complexity and operation counts (ranging from 2 to 67 operations).",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact phrases found at lines 779-783, confirmed on page 8"
+          },
+          {
+            "claim": "baselines RestTestGen, Morest, RESTler, ARAT-RL, Schemathesis",
+            "page": 8,
+            "location": "Section 5.2 Experiment Setup, Baseline Testing Tools",
+            "quote": "We selected a total of five other tools. They are RestTestGen [3], Morest [4] and Restler [2] as representative of data dependencies-based approaches, ARAT-RL [7] as the only existing tool based on reinforcement learning (although using the non-deep algorithm Q-Learning), and Schemathesis [19] as a recently proposed tool",
+            "why": "These five baselines represent the state-of-the-art in REST API testing: three data-dependency approaches (RestTestGen, Morest, RESTler) that represent current industry practice; ARAT-RL as the only prior RL-based approach; and Schemathesis as a recent property-based fuzzing tool. Together they provide comprehensive coverage of existing black-box REST API testing strategies.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found at line 739, confirmed on page 8"
+          },
+          {
+            "claim": "all differences statistically significant according to Wilcoxon signed rank test",
+            "page": 8,
+            "location": "Section 5.3 Experiment Results, RQ1 (Effectiveness)",
+            "quote": "As we can see from the figure, DeepREST achieves the highest values for all the metrics among all the considered testing tools, and all the differences are statistically significant according to the Wilcoxon signed rank test (with the only exception of the faults for Restler).",
+            "why": "By running each tool 10 times on each of 11 benchmark APIs and applying the Wilcoxon signed-rank test with α = 0.05, the paper demonstrates that DeepREST's improvements are not artifacts of randomness or small sample variation. The consistent statistical significance across metrics validates the effectiveness of the DRL-based approach.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found at line 821, confirmed on page 8"
+          },
+          {
+            "claim": "implicit operation dependencies and input-value constraints not in OpenAPI specification",
+            "page": 1,
+            "location": "Abstract",
+            "quote": "Missing semantics include implicit ordering (logic dependency) between operations and implicit input-value constraints. These limitations hinder the ability of black-box testing tools to generate truly effective test cases automatically.",
+            "why": "The paper identifies that OpenAPI Specifications document only explicit data dependencies (producer-consumer relations) and syntactic constraints, but miss the actual business logic constraints that govern when operations can be safely called. DeepREST addresses this gap by learning from actual API behavior during testing.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found at line 29, confirmed on page 1 (Abstract)"
+          },
+          {
+            "claim": "DeepREST most effective black-box testing tool - higher effectiveness than state-of-the-art",
+            "page": 9,
+            "location": "Section 5.3 Experiment Results, Answer to RQ1",
+            "quote": "Answer to RQ1: DeepREST is the most effective black-box testing tool for REST APIs, demonstrating higher effectiveness than state-of-the-art with respect to branch, line and method coverage, as well as successfully tested operations and revealed unique faults.",
+            "why": "DeepREST's combination of curiosity-driven exploration to learn operation sequences, experience-driven input generation to discover valid parameter values, and mutation-based intensification to explore corner cases produces more comprehensive test suites. The deep reinforcement learning approach with explicit API state modeling enables discovery of complex, hard-to-reach API states that simpler dependency-based approaches cannot find.",
+            "present": true,
+            "verified": true,
+            "verify_note": "Exact quote found at line 1002, confirmed on page 9"
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "totalCits": 104,
+      "verified": 102,
+      "notPresent": [
+        {
+          "paper": "RESTGPT",
+          "claim": "limitation: depends on description quality / not end-to-end scripts",
+          "note": "Quote verified on page 1 (line 20), but it does NOT state limitations about description quality or lack of end-to-end scripts. The quote is the abstract's final sentence about future directions, not an explicit limitation statement. Claim requires inference from Section 5."
+        }
+      ]
+    }
+  }
+}

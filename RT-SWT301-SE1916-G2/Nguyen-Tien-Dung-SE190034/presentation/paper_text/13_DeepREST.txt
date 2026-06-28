@@ -1,0 +1,1340 @@
+
+===== PAGE 1 =====
+DeepREST: Automated Test Case Generation for REST APIs Exploiting Deep Reinforcement Learning
+
+arXiv:2408.08594v1 [cs.SE] 16 Aug 2024
+
+Davide Corradini
+davide.corradini@univr.it University of Verona - Dept. of Computer Science
+Verona, Italy
+
+Zeno Montolli
+zeno.montolli@univr.it University of Verona - Dept. of Computer Science
+Verona, Italy
+
+Michele Pasqua
+
+Mariano Ceccato
+
+michele.pasqua@univr.it
+
+mariano.ceccato@univr.it
+
+University of Verona - Dept. of Computer Science
+
+University of Verona - Dept. of Computer Science
+
+Preprint Verona,Italy
+ABSTRACT
+Automatically crafting test scenarios for REST APIs helps deliver more reliable and trustworthy web-oriented systems. However, current black-box testing approaches rely heavily on the information available in the API's formal documentation, i.e., the OpenAPI Specification (OAS for short). While useful, the OAS mostly covers syntactic aspects of the API (e.g., producer-consumer relations between operations, input value properties, and additional constraints in natural language), and it lacks a deeper understanding of the API business logic. Missing semantics include implicit ordering (logic dependency) between operations and implicit input-value constraints. These limitations hinder the ability of black-box testing tools to generate truly effective test cases automatically.
+This paper introduces DeepREST, a novel black-box approach for automatically testing REST APIs. It leverages deep reinforcement learning to uncover implicit API constraints, that is, constraints hidden from API documentation. Curiosity-driven learning guides an agent in the exploration of the API and learns an effective order to test its operations. This helps identify which operations to test first to take the API in a testable state and avoid failing API interactions later. At the same time, experience gained on successful API interactions is leveraged to drive accurate input data generation (i.e., what parameters to use and how to pick their values). Additionally, DeepREST alternates exploration with exploitation by mutating successful API interactions to improve test coverage and collect further experience.
+Our empirical validation suggests that the proposed approach is
+
+Verona, Italy
+Conference on Automated Software Engineering (ASE '24 - To appear). ACM, New York, NY, USA, 11 pages. https://doi.org/XXXXXXX.XXXXXXX
+Paper accepted for publication in the proceedings of: 39th IEEE/ACM Int. Conf. on Automated Software Engineering
+The present document is the preliminary version of the work prior to peerreview. The final version can be found on the publisher website.
+1 INTRODUCTION
+With the exponential growth of web applications and the increasing complexity of software systems, the demand for efficient and reliable testing methodologies has become paramount. Among the various forms of testing, the black-box testing of REpresentational State Transfer (REST) APIs has garnered significant attention due to their widespread adoption in modern web architectures.
+In literature, several black-box REST API testing approaches have been proposed [1], mostly relying on the information available in the OpenAPI Specification (OAS), that is the API formal documentation of the system under test. However, it has been observed that this information often falls short of addressing the intricate challenges associated with REST API testing. Specifically, two primary challenges arise in black-box REST API testing: (i) the selection of an effective ordering of API operations to test; and (ii) the generation or retrieval of valid input values for such operations.
+In contrast to web or mobile application testing, where the next test interaction can often be deduced from the application's context
+
+very effective in achieving high test coverage and fault detection
+
+(e.g., available links or widgets in the graphical user interface),
+
+and superior to a state-of-the-art baseline.
+
+REST APIs expose no such explicit context. Indeed, API operations
+
+can be, in principle, called at any time, and the OAS usually does
+
+CCS CONCEPTS
+
+not encode any information about the prioritization of operation
+
+· Software and its engineering  Software testing and debugging; · Computing methodologies  Reinforcement learning.
+
+invocations. This may lead to failures in crafting test cases, not just due to incorrect generation of operation input values but due to calling an operation that is not (yet) ready to be called, given the
+
+KEYWORDS
+REST API Black-box Testing, Deep Reinforcement Learning, Automated Testing
+
+current API state. As a simple example, consider the case of an e-commerce ser-
+vice. When the shopping cart is empty, the checkout operation is supposed to fail independently of the input values provided to
+
+ACM Reference Format: Davide Corradini, Zeno Montolli, Michele Pasqua, and Mariano Ceccato. 2024. DeepREST: Automated Test Case Generation for REST APIs Exploiting
+
+the operation simply because the cart is not ready for checkout. This suggests that an operation adding items to the cart must be called first to make the cart available for checkout. Some state-
+
+Deep Reinforcement Learning. In Proceedings of 39th IEEE/ACM International
+
+of-the-art black-box testing tools [2­4] alleviate the problem of
+
+
+===== PAGE 2 =====
+ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+Davide Corradini, Zeno Montolli, Michele Pasqua, and Mariano Ceccato
+
+operation ordering by considering producer-consumer relations
+
+/products/search:
+
+openapi: "3.0.0"
+
+get:
+
+between API operations. This yields an operation ordering purely
+
+info:
+
+summary: "Search products by name"
+
+based on explicit data dependencies derivable from the OAS (that
+
+version: 1.0.0 title: "Simple eComm"
+
+operationId: productSearch parameters:
+
+is, an operation is tested before another when the latter requires as
+
+license: name: MIT
+
+- name: keyword in: query
+
+input a resource provided as output by the former). Even if effective
+
+servers: - url: http://simple.ecommerce.io/v1
+
+required: true schema:
+
+in simple cases, such an approach overlooks implicit operation de-
+
+paths: /addProductToCart:
+
+type: string responses:
+
+pendencies caused by logic constraints rather than data constraints,
+
+post: summary: "Add product(s) to the cart"
+
+'200': schema:
+
+as in the case of the checkout example above. Conversely, spurious
+
+operationId: addProductToCart parameters:
+
+type: array items:
+
+constraints could be incorrectly inferred from the OAS, driving test-
+
+- name: productId in: query
+
+properties: productId:
+
+ing tools towards inappropriate ordering of operation sequences.
+
+required: true schema:
+
+type: integer format: int64
+
+Indeed, an OAS does not fully encode the API business logic, re-
+
+type: integer format: int64
+
+name: type: string
+
+sulting in API constraints that cannot be statically inferred from
+
+- name: quantity in: query
+
+price: type: number
+
+it.
+
+schema: type: integer
+
+/checkout:
+
+format: float
+
+Preprint In addition to the correct operation ordering, another crucial
+goal when testing REST APIs is adopting valid input values to call operations. This task is particularly hard due to the extensive value exploration required within a vast input space. Valid input values can encompass various combinations of data, which may need to satisfy inter-parameter dependencies and value conditions. Some input constraints are documented in the OAS and exploited by testing tools [2, 3, 5­7] to craft correct HTTP requests. However, similarly to the operations dependency case, some implicit input constraints may not be syntactically retrieved from the OAS, decreasing the chances of crafting successful test cases. For instance, an operation adding products to the cart may fail if a discounted product is added in a quantity less than the minimum. Such constraint is known to the API developer but unlikely to be found in the OAS and, consequently, hidden from black-box testing tools. Moreover, smartly picked input values might bring a REST API to a new state that is interesting to test because it could expose new and more complex logic defects.
+With the aim of automatically generating effective test cases for REST APIs, we propose DeepREST, a novel approach based on deep reinforcement learning to learn API constraints during testing, potentially even those not documented in the OAS (hence hidden from black-box tools). DeepREST trains an intelligent agent to autonomously learn and optimize a strategy to test a REST API in a black-box fashion. Deep reinforcement learning is leveraged to guide an agent in the exploration of several API states, which is positively rewarded when discovering an effective order in which to test API operations. At the same time, DeepREST also learns the most effective strategies to generate input values among the
+
+default: 1 minimum: 1 maximum: 100 responses: '200': description: "Product(s) added"
+
+post: summary: "Finalize purchase" operationId: checkout responses: '200': description: "Purchase completed"
+
+Figure 1: OpenAPI specification excerpt for Simple eComm.
+
+· Empirical results demonstrating that the proposed approach is effective (coverage and faults detection) and efficient (number of requests) in testing REST APIs. Indeed, DeepREST achieves superior performance than state-of-the-art testing tools a set of case study APIs;
+· An open-source tool implementing the approach, that can be found in the replication package [8].
+2 BACKGROUND
+This section covers the background notions needed to understand our approach. It includes an introduction to REST APIs and OpenAPI specifications, automated REST API testing guided by data dependencies, and reinforcement learning.
+2.1 REST APIs and OpenAPI Specifications
+The REST (REpresentational State Transfer) architectural style [9] is nowadays the most common paradigm adopted in web API development. A RESTful API (or REST API) is a web API that adheres to such a paradigm, allowing web clients to access and manipulate resources and invoke remote routines by leveraging stateless operations over the HTTP protocol.
+
+available strategies. Typical strategies are random generation, dic-
+
+REST APIs provide a uniform interface to Create, Read, Update,
+
+tionary lookup, and reusing examples from the OAS. Such selection
+
+and Delete (CRUD) resources, where an HTTP URI identifies a re-
+
+is based on the experience gained during previous successful inter- source while CRUD operations are typically mapped to the HTTP
+
+actions. Finally, DeepREST also performs exploitation, by mutating
+
+methods POST, GET, PUT (or PATCH) and DELETE, respectively. Ad-
+
+successful interactions and improve test coverage, fault detection, ditionally, REST APIs can expose functionalities such as resource
+
+and collect even further experience.
+
+search, invocation of remote routines, and authentication mecha-
+
+The contribution of this paper can be summarized as follows:
+
+nisms. Upon receiving and processing an HTTP request that ex-
+
+ercises a specific API operation, the REST API returns an HTTP
+
+response with the outcome of the request, called status code (e.g.,
+
+· The first approach leveraging deep reinforcement learning to
+
+2XX for a success; 4XX for a client-side error; or 5XX for a server-side
+
+automatically learn an effective testing order for operations
+
+error), and, possibly, a payload.
+
+in a REST API;
+
+As an example, consider Simple eComm, a REST API managing
+
+· A novel reinforcement learning-based approach to select the
+
+a simple e-commerce service. A possible HTTP URI pointing to
+
+most effective input value generation strategy for operation
+
+the search products functionality could be / products / search. In
+
+input parameters;
+
+this case, the HTTP operation GET / products / search is used to
+
+
+===== PAGE 3 =====
+DeepREST: Automated Test Case Generation for REST APIs Exploiting Deep Reinforcement Learning ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+search products by name, listing all products matching the search
+
+addProductToCart, a valid productId value is needed that is un-
+
+keyword provided as an HTTP input parameter. Conversely, the
+
+likely to be guessed. Hence, the operation productSearch should
+
+HTTP operation POST / addProductToCart could be used to add
+
+be tested earlier in order to fetch a valid value for productId.
+
+a product to the shopping cart. REST APIs are usually documented by using the OpenAPI1 stan-
+
+Data dependencies are statically inferred from the OAS by matching parameter names and schemas, giving higher priority to opera-
+
+dard. According to such standard, an API is described by a struc- tions with satisfied data dependencies.
+
+tured file (either YAML or JSON), called OpenAPI Specification (OAS),
+
+that indicates how to reach the API using a URI, which authen- 2.3 Reinforcement Learning
+
+Preprint tication schema is adopted, and the details of the API available
+operations: the input parameters (and their schema) to be used in requests and the schema of responses.
+Figure 1 contains an excerpt of the OAS for Simple eComm. After an initial header that specifies versions, licenses, and the base URL of the REST API, an OpenAPI specification contains the list of available URL paths. In the example, we have, among others, the two paths / products / search and / addProductToCart.
+A REST API operation is a pair of path and HTTP method, usually identified by an operation identifier. For instance, the method GET in / products / search refers to the operation identified as productSearch, where the search string is given as query parameter keyword. Similarly, the method POST in / addProductToCart refers to the operation named addProductToCart, where the product to add and quantity of the added product are given as query parameters productId and quantity, respectively.
+Request input and output are associated with a schema that specifies their type and, optionally, a set of constraints on values (e.g., a minimum or a maximum value for numeric parameters as in the case of quantity). Types can be atomic (e.g., integers and strings) or structured (i.e., compound objects). For instance, the parameter keyword of / products / search is of type string, while the response to the corresponding GET operation is expected to be an array of product objects, whose schema is also provided in the specification.
+2.2 Data Dependency-based REST API Testing
+Testing strategies of black-box approaches are typically based only on the information contained in OpenAPI specifications. So, to select an effective ordering of operations to test, state-of-the-art tools [2­4] purely base their decisions on data dependencies among the documented operations.
+For instance, RESTler [2] infers data dependencies (in the form of
+
+Reinforcement learning is a paradigm of machine learning in which an agent learns to make decisions by interacting with an environment. After taking action, an agent receives feedback in the form of rewards or penalties depending on the effect of its actions and adjusts its strategy over time to maximize cumulative rewards. The learning process involves discovering an optimal policy that guides decision-making.
+Multi-Armed Bandit Problem. The multi-armed bandit problem is a decision-making scenario where an agent is confronted with a problem, where either exploration or exploitation should be aimed at the same time. This problem is named after its origin, where a set of slot machines is available to a player with a limited playing budget. Each slot machine has an unknown probability distribution and amount of winning, so the player has to spend money to explore the machines to find the best to play with but, at the same time, money should be invested to exploit best machines to gain profit. The challenge lies in the exploration vs. exploitation trade-off: the agent must strike a balance between trying different actions to uncover their reward potentials and exploiting the current best-known action for immediate gains. This dilemma reflects the tension between gaining more information and making optimal decisions based on existing knowledge.
+A class of solutions to the multi-armed bandit problem, known as probability matching strategies, is based on the idea that the probability of choosing a solution should be equal to the probability for that solution to be optimal, according to the collected experience.
+Deep Reinforcement Learning. Deep reinforcement learning combines reinforcement learning with deep neural networks, using the latter to represent the agent's policy or value function. The learning process revolves around the agent interacting with an environment, where it observes a state  , takes an action  , receives a reward  , and transitions to a new state +1. The agent's goal is to learn a policy that maximizes the cumulative reward over time.
+
+producer-consumer relations) between the operations documented
+
+The Proximal Policy Optimization (PPO) algorithm [10] is a tech-
+
+in the OAS. Then, by leveraging a search-based algorithm, it ex- nique used in deep reinforcement learning to train an agent's
+
+tensively generates sequences of HTTP requests conforming to
+
+decision-making abilities. PPO aims to improve an agent's pol-
+
+the inferred dependencies. Instead, RestTestGen [3] computes the
+
+icy through trial and error, balancing the policy update towards
+
+Operation Dependency Graph (ODG), a graph encoding data depen- better performance while keeping it similar to the previous policy.
+
+dencies (again, producer-consumer relations) among operations
+
+This balance helps the agent learn effectively while maintaining
+
+available in the OAS. Finally, Morest [4] exploits the Property Graph,
+
+stability.
+
+which captures OAS-induced relations between API operations, to
+
+prioritize operation testing order. Referring to the Simple eComm example of Figure 1, the operation
+addProductToCart depends on the operation productSearch, which provides a list of valid products, since the output of the latter can be used as input for the former. Indeed, to test the operation
+
+3 MOTIVATING EXAMPLE
+Let us consider the OAS of Simple eComm reported in Figure 1. In the excerpt, three operations are defined: productSearch, which searches for products by name; addProductToCart, which adds a product to the shopping cart; and checkout, which finalizes the
+
+purchase of the current shopping cart. Even if apparently simple, by
+
+1 https://www.openapis.org/
+
+using Simple eComm we can highlight three non-trivial challenges
+
+
+===== PAGE 4 =====
+ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+Davide Corradini, Zeno Montolli, Michele Pasqua, and Mariano Ceccato
+
+posed by REST APIs, that are only partially addressed by state-of-
+
+REST API
+
+the-art testing approaches.
+
+HTTP request
+
+HTTP response
+
+DeepREST
+
+Challenge 1: Correct ordering of operations to test. To successfully test the checkout operation, we need a non-empty shopping cart, and this requires: (i) searching for existing products; (ii) adding them to the shopping cart; and (iii) performing the checkout.
+
+2XX: positive reward 4XX, 5XX: negative reward
+2XX: positive reward 4XX, 5XX: nil reward
+
+Test Interaction Handler
+
+operation,
+
+params
+
+2
+
+2XX: operation, params
+
+repeat operation, 3 new params
+
+State-of-the-art testing approaches based on data dependencies
+
+infer the ordering on which operations are tested by exploiting
+
+State Explorer
+
+Input Generator
+
+Test Intensifier
+
+producer-consumer relations. The (explicit) data dependency between productSearch, that returns a productId as output, and addProductToCart, that requires a productId as input, would
+
+DRL agent
+
+operation 1
+
+RL agents ip1 ip2 ip3 ip4
+
+Mutators pv2
+pv1 pv2 pv3
+
+suggest testing addProductToCart after productSearch, using
+
+Curiosity-driven
+
+Experience-driven
+
+Diversity-driven
+
+the productId returned by the latter. However, such approaches
+
+Preprint would overlook the business logic constraint that only valid and
+non-empty carts can be finalized. This results from an implicit dependency between addProductToCart and checkout, where the former operation takes the state where it can be purchased, and the latter operation finalizes the purchase. This dependency cannot be inferred just from the OAS of Simple eComm in Figure 1, but it could be learned by testing the API. We advocate for the need to overcome the limitations of current approaches and enhance automated testing so that implicit dependencies are learned on successfully tested scenarios, yielding an effective ordering of operations to test.
+Challenge 2: Appropriate input data selection. The second limitation is in how state-of-the-art approaches decide input data. Typical strategies are either random generation according to the constraints in the API specification, sourcing values from it (e.g., default, enums, and example values), or reusing values observed on previous interactions (from HTTP responses). However, the strategy to be used is typically chosen randomly among those available, regardless of the role of the input parameter. For instance, the value of productId parameter in the addProductToCart operation may be wisely chosen by picking one of those values that have been observed in previous responses (e.g., to productSearch), rather than with random generation. Conversely, it is more effective to use a random query string to test productSearch, rather than previously observed item values. We advocate that the decision about the strategy to generate input data should exploit the experience on past successful interactions.
+Challenge 3: Balance between exploration and exploitation. Lastly, a notable challenge is how to balance exploration of the REST API to test new operations and exploitation of already tested operations
+
+Figure 2: Approach overview.
+4 APPROACH
+In this section we present DeepREST, our approach conceived to address the challenges identified in the previous section. An overview of the architecture of DeepREST is illustrated in Figure 2, depicting an iterative process that applies three main components to craft REST API test cases, ending up in actual HTTP interactions. Such an iterative process is repeated until all API operations have been extensively tested or the allocated testing budget expires.
+The first component, the Curiosity-Driven State Explorer, is a deep reinforcement learning agent determining the most relevant next API operation to test based on the current state of the API. Employing a curiosity-driven strategy, this agent is positively rewarded when it reaches new API states, thereby promoting exploration. Its objective is to cover new states of the API beyond those reachable purely following data dependencies, discovering those that are reachable when implicit dependencies are exploited. Further details about this component are described in Subsection 4.1.
+The second component, the Experience-Driven Input Generator, is responsible for supplying valid input data to operations. Internally, this component adopts a group of reinforcement learning agents, each dedicated to a distinct input parameter. Treating the parameter value selection as a multi-armed bandit problem, these agents leverage experience to make informed decisions. Experience is also exploited to decide whether to include non-mandatory parameters in requests and to determine arrays' size. Further details about this
+
+for increasing coverage by testing them with diverse inputs. In fact, component are provided in Subsection 4.2.
+
+thorough and in-depth testing of individual operations could yield
+
+The first two components collectively assemble an HTTP request
+
+two distinct benefits: (i) the acquisition of additional valid data
+
+for the API under test. Testing an API is learned by providing a
+
+from API responses and (ii) higher coverage of API source code.
+
+positive reinforcement to correct interactions (HTTP responses
+
+In the context of the Simple eComm example, intensifying the
+
+with a status code 2XX) and a negative reinforcement to wrong
+
+testing on searchProduct, by trying different search keywords,
+
+interactions (HTTP responses with a status code 4XX or 5XX).
+
+would increase the chances of formulating valid queries and re-
+
+Upon successfully reaching a new API state and testing a new
+
+trieving more and more shopping products. Additionally, having
+
+operation, a test intensification phase is initiated. The third compo-
+
+multiple valid productId values would facilitate the testing of the
+
+nent, the Mutation-Based Test Intensifier, performs deeper testing of
+
+subsequent operation addProductToCart and, consequently, of
+
+the newly reached state, with the twofold objective of collecting ad-
+
+the operation checkout.
+
+ditional test data from API responses and increasing test coverage.
+
+Intensification consists of applying mutation operators to a success-
+
+ful HTTP request to generate many new requests, each with small
+
+changes in parameter values, promoting input diversity. Further
+
+details about this component are described in Subsection 4.3.
+
+
+===== PAGE 5 =====
+DeepREST: Automated Test Case Generation for REST APIs Exploiting Deep Reinforcement Learning ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+4.1 Curiosity-driven State Exploration
+
+event of failed interactions (HTTP status codes 4XX and 5XX), we
+
+To comprehensively inspect the behavior of the API under test, it
+
+assume that the API state did not change. In this case, also the state
+
+is crucial to invoke API operations in a clever order. As pointed
+
+observation does not change.
+
+out in Section 3, if the order in which operations are executed
+
+Reward. To stimulate curiosity, a DRL agent usually receives a
+
+is based on data dependencies only, we might overlook potential
+
+large positive reward whenever its action takes the environment to a
+
+implicit dependencies and, thus, fail to test some operations. More-
+
+new state never reached so far [12, 13]. In our context, new (internal)
+
+over, spurious dependencies could be inferred on the OAS, causing a
+
+API states are approximated with new state observations, which are
+
+testing approach to waste its testing budget on hopeless attempts.
+
+reached when the DRL agent is able to successfully test an operation.
+
+This limitation could result in a partial exploration of the API's
+
+Here, we distinguish two cases: the operation is successfully tested
+
+state space, collecting few meaningful test data and causing low
+
+for the first time (i.e., in the previous state observation its counter
+
+test coverage. On the flip side, it is not advisable to test all possi- was 0); and the operation has been already successfully tested before
+
+ble sequences of operations since the sheer volume of potential
+
+(i.e., in the previous state observation its counter was greater than
+
+sequences is prohibitively vast. In addition, a substantial portion
+
+0). In the first scenario, the agent receives a large positive reward
+
+Preprint of these sequences lacks practical significance or coherence with
+the API business logic, making their testing unnecessary. Hence, a selective approach is crucial for efficient and effective testing.
+Leveraging curiosity-driven deep reinforcement learning, we push toward exploring the API while learning an effective order of operations. We formulated the problem as an instance of reinforcement learning, with proper state, actions, state transition, and reward as follows.
+State. In an ideal scenario, the DRL state should precisely reflect the internal state of the API under test. However, since we treat the API as a black box, its precise internal state is unknown. We then resort to an approximation of the API internal state, referred to as state observation, derived from the information we can retrieve from previous HTTP interactions with the API. For instance, a successful exercise of the addProductToCart operation inherently suggests that the shopping cart contains items. With this consideration, we represent the DRL state as a list of  integers, where  is the number of API operations. The value of the element at position  in the list represents the number of successes (HTTP interactions that returned a 2XX status code) for the -th operation in the OAS that occurred so far during testing.
+As an example, consider the three operations of Simple eComm: addProductToCart, productSearch, and checkout. Then, the list [ 0 1 0 ] represents a state observation where the operation productSearch has been successfully tested (1 success), while the other two operations might have been attempted with no success (0 successes). In fact, successful operations are supposed to alter the (internal) state of an API, potentially enabling other operations to be called, while failed operations should have no side-effects.
+
+(+1000), while in the second scenario, the agent receives a negative reward (-100). With this strategy, we stimulate curiosity and, at the same time, we do not overly discourage the agent from repeating certain operations, which may be a prerequisite for successfully testing other operations.
+Finally, if the API rejects the chosen operation (with a 4XX or 5XX status code), a slightly negative reward (-1) is assigned to the agent. The penalty is intentionally mild, recognizing that rejection can stem from various reasons. Indeed, the agent may have selected the correct operation, but value generation provided the wrong input data (the latter causing the failure). In such a case, the agent should not be discouraged from attempting again to test the operation with different input data. Recall that input generation is in charge of a different learning agent (that will be presented in Section 4.2), having a different reward strategy.
+DRL Algorithm. To solve the aforementioned learning problem, we opted to employ the Proximal Policy Optimization algorithm (PPO) [10] since it is one of the most recent and advanced deep reinforcement learning algorithms [14] supporting vector state space with discrete values. In particular, we employed the PPO implementation coming with Stable Baselines 3 [15]. We customized the episode length to be equal to ep_length = 20 · num_operations, thus correlating it with the size API being tested. APIs exposing several operations will be granted more attempts in a single episode than smaller APIs. In a similar fashion, the maximum value for counters in the DRL state is set to 20, and in the case that an operation is successfully tested more than 20 times in an episode, the episode is truncated before its natural end, as the DRL agent could have stacked in choosing simple operations to test, rather than exploring
+
+Considering that a state observation is multi-discrete, i.e., it is
+
+others.
+
+an array with discrete values, finite-state reinforcement learning
+
+techniques, such as Q-Learning [11] can not be applied, and deep reinforcement learning is needed.
+Actions. The agent actions are represented by the set of available API operations. In our example, the three actions are testing either addProductToCart, productSearch, or checkout.
+State Transitions. The API transitions to a different (internal) state depending on the outcome of an operation's execution. If an operation execution resulted in success (HTTP status code 2XX) the API is assumed to have reached a new state, potentially "enabling" operations that were infeasible to test in the previous state. In this case, we update the state observation by incrementing the success counter for the operation successfully tested. Conversely, in the
+
+4.2 Experience-driven Input Generation
+Providing appropriate input data in API requests is crucial in automated black-box testing of REST APIs. Such input data comprises a collection of operation parameters that can take the form of simple values (such as strings, numbers, and booleans), arrays, or compound objects. In the process of generating input data, three challenges must be addressed: (i) deciding which parameters to include in the request among the optional ones; (ii) selecting the length of arrays; and, most notably, (iii) deciding the values to assign to primitive-type parameters (recursively on compound objects).
+To address these challenges, we developed a novel approach based on cumulative experience inspired by the multi-armed bandit
+
+
+===== PAGE 6 =====
+ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+Davide Corradini, Zeno Montolli, Michele Pasqua, and Mariano Ceccato
+
+problem. A distinct agent is deployed for each parameter, responsi- Our approach accumulates and subsequently leverages knowledge
+
+ble for making clever decisions about how that parameter should
+
+about the most successful sources for each parameter.
+
+be used in requests, grounded in their accumulated experience.
+
+When testing an operation, we keep track of the source that
+
+Agents' experience is initially empty, thus leading to initial purely
+
+supplied the value for each parameter. Upon successful execution
+
+random decisions. When successful input data is generated, agents
+
+of an operation (status code 2XX), reinforcement learning agents
+
+receive a positive reward (+1) associated with the decisions they
+
+obtain a positive reward (+1), promoting the reuse of the same
+
+made which led to a successful interaction, accumulating valuable
+
+source in the future. It is important to note that the same source
+
+experience on how to succeed. Decisions are made following a
+
+is unlikely to provide the same, identical value for future requests
+
+probability-matching strategy, where the likelihood of making a
+
+(think of, for instance, the random generation source). However,
+
+specific decision corresponds to the observed statistical distribution
+
+sources employ the same strategy to select a value, which ensures
+
+estimated at that time, as follows. The probability of choosing  is
+
+further exploration of the API.
+
+equal to the ratio of the accumulated rewards for  (i.e.,  ) on the
+
+The value sources now available in DeepREST are the following.
+
+total rewards   accumulated so far, that is: P() = /   .
+
+Random Parameter value is randomly generated according to the
+
+Preprint For example, consider an agent deciding whether to include a
+parameter in a new request. Suppose that, based on the agent's accumulated experience, the parameter has been employed in 8 out of the 10 previously successful interactions (i.e., it has collected 8 reward points). The agent will incorporate that parameter in the new request with a probability of P = 0.8. To prevent overfitting towards a single solution, however, agents might also make random decisions (with low probability, e.g., 0.1), still allowing the exploration of not yet tried configurations.
+A notable aspect of our approach is that the experience garnered on a parameter in one operation is leveraged for making decisions on parameters with the same (or similar) name in other operations. This approach significantly reduces the learning time when testing new operations, promoting efficiency and knowledge reuse.
+We now describe how we specifically address the three challenges mentioned at the beginning of the subsection.
+Parameter Presence. For each optional parameter in an operation, the agent decides whether to include or exclude the parameter in the request. As already discussed, the probability of a parameter being included matches the statistical distribution estimated so far.
+Array Length. Deciding the length of an array is inherently a hard problem, as arrays can theoretically have any size. We categorize array length into three classes to overcome the issue, yielding a bounded approach. In particular, Class A denotes empty arrays (the length is 0), Class B denotes one-element arrays, and Class C denotes arrays having at least 2 elements. Agents are rewarded positively (+1) if their selected size class leads to a successful request. When crafting new requests, agents will select the most suitable size class from the statistical distribution estimated so far. In case
+
+constraints in the OAS. Default Parameter value is the default value in the OAS. Enum Parameter value is randomly taken from one of the valid
+enum values from the OAS. Examples Parameter value is assigned with one of the example
+values from the OAS. ResponseDictionary Parameter value is taken from a dictionary
+of API response values observed for this parameter in previous interactions. These values, coming directly from the API, are likely valid and, therefore, likely accepted in new requests.
+LastResponseDictionary Same as the previous, but the last observed value is assigned to the parameter. This increases the likelihood of the value being valid. In the case of parameters acting as resource identifiers, it will help the generation of a chain of operations targeting the same resource.
+RequestDictionary Parameter value is taken from a dictionary of values already used for this field, whose API requests obtained a successful status code. These values are likely valid since the API has accepted them in previous interactions.
+LastRequestDictionary Same as the previous, but the last observed value is assigned to the parameter.
+LargeLanguageModelDictionary A large language model is queried to supply values for parameters based on their names, the context of the endpoint, and the parameter description if provided in the OAS (further details in the next subsection).
+Except for LargeLanguageModelDictionary, which is a contribution of the paper, the previous value sources are inspired by literature [2, 3], and this catalog can be easily extended. The novel contribution of our approach is how to learn the most effective strategy from
+
+the Class C is selected, the actual size of the array is randomly
+
+the catalog at each testing step rather than the catalog itself.
+
+chosen to be equal to or greater than 2 and compatible with the
+
+Large Language Model Dictionary. A new method for generat-
+
+length constraints reported in the OAS.
+
+ing realistic parameter values in our implementation of DeepREST
+
+Input Values. Our approach relies on a catalog of input gen- utilizes the inherent knowledge of large language models. We as-
+
+eration strategies, or sources of values, that are wisely selected at
+
+sume that a large language model can suggest realistic values for
+
+testing time to retrieve the most appropriate value for parameters
+
+a parameter based on both its name (for instance, for a parameter
+
+at a given point in testing time.
+
+named title, suggestions could include "The Odyssey" or "The
+
+Input values could be taken from various sources, such as random
+
+Iliad") and the context of the specific API operation to which the pa-
+
+generators, examples in the OAS, and dictionaries containing test
+
+rameter belongs (for example, within the operation POST / person,
+
+data collected from previous HTTP interactions. However, the same
+
+plausible values for a parameter named title could be, instead,
+
+source might not be equally effective for all the parameters. For
+
+"Mrs." or "Mr."). Furthermore, the natural language descriptions as-
+
+instance, when dealing with resource identifiers, dictionaries are
+
+sociated with the parameter and its API operation, sometimes found
+
+likely to be the optimal sources of valid values observed in the past
+
+in the OAS, can further guide the language model in generating
+
+rather than random values that are unlikely to be valid identifiers. realistic values.
+
+
+===== PAGE 7 =====
+DeepREST: Automated Test Case Generation for REST APIs Exploiting Deep Reinforcement Learning ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+To implement this approach, before actually starting with the testing session, we ask an LLM to suggest plausible input values for all parameters in the OAS. This involves providing the LLM with the HTTP method and path of the API operation, the description of the API operation (if available in the OAS), the parameter name, its type, and its description from the OAS (if available). The language model then responds with a set of realistic values which are stored in a dictionary for subsequent use while generating tests. Practically, we deployed a local instance of GPT4All [16] with the model wizardlm-13b-v1.2.Q4_0.gguf, described on the GPT4All website as the "best overall larger model". For each parameter in the OAS of an API, the LLM is asked to provide at least 20 relevant values.
+
+Table 1: Benchmark APIs.
+
+API
+REST Countries User Management Market Project Tracking System Features Service NCS SCS Genome-Nexus Person Controller Blog LanguageTool
+
+Short Name
+rest-countr user-mgmt
+market proj-track feat-serv
+ncs scs genome-nex person-ctrl blog lang-tool
+
+# Operations
+22 22 13 67 18 6 11 23 12 52 2
+
+Source
+Kim et al. [7] Kim et al. [7] Kim et al. [7] Kim et al. [7] Kim et al. [7] Kim et al. [7] Kim et al. [7] Kim et al. [7] Kim et al. [7] GitHub [18] Kim et al. [7]
+
+Preprint 4.3 Mutation-basedTestIntensification
+During test case generation, which is guided by curiosity and experience, the moment a new operation is successfully tested for the first time, we shift from exploration to exploitation (or intensification).
+This phase involves multiple replays of the successful HTTP request after it has been modified by applying a catalog of mutation operators. Some of them are nominal mutators, which alter the initial request while still satisfying all the constraints in the OAS (thus generating further potentially valid requests), while others are error mutators, which alter the request in a way that violates some constraints from the OAS (thus generating potentially invalid requests). We believe that an invalid request, resembling a valid one, holds the potential to traverse unexplored branches in the API source code, thereby contributing to increased test coverage and hopefully leading to more effective test cases. To build the catalog, we started with mutation operators from literature: some of them keeping HTTP requests valid [17]; while others turning HTTP requests invalid [3] (according to the OAS). We then added additional mutation operators such that each parameter of each operation can be changed once to keep the overall request valid and once to turn it invalid. Currently, 10 mutation operators are available in DeepREST (4 nominal mutators and 6 error mutators), described in the following.
+AddParameter An optional parameter is added to the original request. [nominal]
+RemoveParameter An optional parameter is removed from the original request. [nominal]
+RefillValue The value of a parameter is updated with a new
+
+5 EVALUATION
+In this section, we conduct a thorough empirical evaluation of DeepREST. Our primary focus is assessing the test coverage achieved by our approach and its fault detection capability. Test coverage, intended as both code coverage and operations successfully tested, is directly correlated with Challenges 1 and 2 presented in Section 3. Indeed, an optimal testing order of operations (Challenge 1) is likely to result in testing more operations successfully. Similarly, an appropriate and diverse input value selection (Challenge 2) is likely to result in testing more parts of the API implementation, increasing code coverage. Alongside successfully testing operations, to individuate faults a balance between exploration and exploitation (Challenge 3 of Section 3) is needed, testing again operations with different input values potentially inducing server-side errors. Since HTTP interactions are time-consuming, testing efficiency, in terms of the number of requests, is also investigated. To validate the aforementioned aspects, we engage in a comparative analysis with the current state-of-the-art testing tools for REST APIs.
+5.1 Research Questions
+To guide our empirical evaluation, we formulated the following two research questions.
+RQ1: What is the effectiveness of DeepREST in generating test cases for REST APIs? How does it compare with state-of-theart approaches?
+RQ2: What is the effeciency of DeepREST in generating test cases for REST APIs? How does it compare with state-of-the-
+
+value that satisfies the constraints in the OAS. [nominal]
+
+art approaches?
+
+NumberBoundaries In the case of a numeric parameter, its value
+
+To answer RQ1, we execute DeepREST and five state-of-the-art
+
+is changed to be close to its boundaries. [nominal]
+
+REST API testing tools on a benchmark set of API case studies. For
+
+AddInvalidParameter An optional parameter with an invalid value each tool, targeting each API in the benchmark, we measure code
+
+is added to the original request. [error]
+
+coverage, count successfully tested operations (2XX), and server-
+
+NumberOutOfBoundaries In the case of a numeric parameter, its
+
+side failures (5XX).
+
+value is changed to out of its boundaries. [error]
+
+To answer RQ2, for each experiment of the previous research
+
+ChangeHttpMethod The HTTP method of the original request is
+
+question, we monitor code coverage and success/failure count over
+
+changed. [error]
+
+time to measure their progressive increase. The efficiency of a tool
+
+MissingRequired A mandatory parameter is removed from the
+
+is deemed higher if it achieves high code coverage or success/failure
+
+original request. [error]
+
+count earlier in the testing process.
+
+WrongType A parameter value is replaced with a new one of a different type. [error]
+
+5.2 Experiment Setup
+
+ConstraintsViolation A parameter value is changed so that it
+
+Baseline Testing Tools. Our evaluation consists of a compar-
+
+violates the constraints from the OAS. [error]
+
+ison of DeepREST with state-of-the-art REST API testing tools.
+
+
+===== PAGE 8 =====
+ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+Davide Corradini, Zeno Montolli, Michele Pasqua, and Mariano Ceccato
+
+Value
+-17% -21% -71% -72% -77%
+-2% -1% -34% -33% -24% -2% -2% -27% -21% -11% -8% 0% -17% -25% -25% -33% 0% -67% -50% -67%
+
+We selected a total of five other tools. They are RestTestGen [3], Morest [4] and Restler [2] as representative of data dependenciesbased approaches, ARAT-RL [7] as the only existing tool based on reinforcement learning (although using the non-deep algorithm Q-Learning), and Schemathesis [19] as a recently proposed tool
+
+DeepREST RestTestGen ARAT-RL Morest Schemathesis Restler
+
+80
+
+15
+
+60
+
+10
+
+40
+
+5 20
+
+0 Branch Coverage
+
+Line Coverage
+
+Method Coverage
+
+0 Operations
+
+Unique Faults
+
+whose performance seems competitive [7]. According to recent
+
+surveys [7, 17], ARAT-RL and RestTestGen appear to be the best-
+
+Figure 3: Effectiveness results (aggregate).
+
+performing black-box tools.
+
+API Case Studies. To establish a benchmark for our evaluation,
+
+DeepREST RestTestGen ARAT-RL Morest Schemathesis Restler
+
+Area Under Curve -3% -4% -61% -67% -61% -8% -4% -36% -24% -26% -4% -5% -29% -23% -26% -4% 1% -21% -41% -44% -24% 0% -61% -42% -60%
+
+we selected a total of 11 API case studies, which are reported in
+
+150
+
+Table 1. We included all the 10 APIs sourced from a recent study [7].
+
+100
+
+2,000
+
+To enhance the realism of our evaluation, we supplemented this
+
+50
+
+1,000
+
+set with an additional API from GitHub (i.e., Blog) as representa-
+
+0
+
+0
+
+Preprint tive of more complex APIs. In fact, it contains implicit operation
+dependencies that cannot be syntactically deduced from the OAS (we found such implicit dependencies by manually reverse engineering the API business logic). Table 1 reports the list of API case studies, accompanied by the number of operations defined in their respective OAS.
+Metrics. We gathered the following metrics throughout all testing sessions conducted with all tools and configurations.
+Code Coverage We collected method, branch, and line coverage to measure the extent of API code executed by the test cases.
+Operation Coverage This black-box coverage metric [20, 21] is meant to count the number of successfully tested API operations by tools with respect to the total number of operations defined in the API documentation.
+Fault Detection As a measure of fault detection capacity, we counted the number of server-side failures (status code 5XX) with unique error messages identified by tools. An error message is considered unique when it is sufficiently different from other messages, as previously defined by Kim et al. [7].
+Area Under Curve As an efficiency metric, we captured the progress of code coverage, operation coverage, and fault detection while testing. This is measured as the area under the curve in a graph depicting test coverage and fault detection trends.
+Experimental Procedure. Experiments have been run using Docker containers, with a separate container for each testing tool and for each case study. Each container is assigned a maximum of 8 cores and 16 GB of RAM. At the end of each experiment run, containers were stopped and rebooted with a fresh file system to avoid any side effects, either in tools or API case studies. Testing
+
+Branch Coverage Line Coverage Method Coverage
+
+Operations
+
+Unique Faults
+
+Figure 4: Efficiency results (aggregate).
+
+5.3 Experiment Results
+The results of our evaluation are reported in Figures 3, 4, 5 and 6. To test for statistical significance of observed differences, we apply the Wilcoxon signed rank test to compare the metrics values achieved by DeepREST with those by each tool in the comparison, computing the corresponding -values. We assume a significance level of 95% ( = 0.05), that is, we reject the null hypothesis when -value < 0.05. Values of statistically significant differences are in black in the figures, while non-significant differences are in red.
+RQ1 (Effectiveness). The experimental results illustrating the effectiveness of DeepREST are presented in Figure 3 and Figure 5, alongside comparable results from the tools in the comparison for reference. Figure 3 shows the overall results aggregated by tool, with different bar colors for different tools (DeepREST is the leftmost bar in orange). On the left-hand side of the figure, we report the average branch, line and method coverage among all 11 APIs for each tool. On the right-hand side, we report the average count of successfully tested operations (2XX) and faults (5XX).
+As we can see from the figure, DeepREST achieves the highest values for all the metrics among all the considered testing tools, and all the differences are statistically significant according to the Wilcoxon signed rank test (with the only exception of the faults for Restler). The most remarkable difference is for branch coverage that spans from 17% for RestTestGen to 77% for Restler.
+
+tools were executed with the same budget of API calls for each API
+
+Figure 5 represents the collected metrics results split by case
+
+in the benchmark. This ensures that all the tools have the same
+
+study. For space reasons, we report the results for two metrics
+
+opportunity to explore and test the APIs, regardless of how long an
+
+only (results for the other metrics are provided in the replication
+
+API can non-deterministically take to respond. The budget has been
+
+package [8]). The first bar graph represents branch coverage, while
+
+computed for each API independently by empirically checking the
+
+the second bar graph the successful operations count. This figure
+
+amount of interactions that each API can serve in approximately
+
+confirms the previously observed trend, with DeepREST outper-
+
+one hour of testing. To control the impact of non-deterministic
+
+forming all the other tools in almost all the case study APIs. The
+
+features of testing tools, all experiments have been repeated 10
+
+very few exceptions include the case of Feature Service API, for
+
+times, reporting the average results. JaCoCo [22] was deployed to
+
+which ARAT-RL and RestTestGen achieve an higher score.
+
+collect source code coverage, while Restats [21] was utilized for
+
+These results suggest that our approach achieved the highest
+
+computing the operation coverage from HTTP logs. Metrics were
+
+effectiveness because it tested API states that other approaches
+
+recorded every 5 seconds.
+
+could not reach. This is probably due to the fact that DeepREST
+
+learned how to assemble more effective sequences of operation calls
+
+that could not be assembled just by relying on (producer-consumer)
+
+dependencies documented in the API specification.
+
+
+===== PAGE 9 =====
+DeepREST: Automated Test Case Generation for REST APIs Exploiting Deep Reinforcement Learning ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+-17% -21% -97% -96% -98%
+
+Operations Branch Coverage
+
+DeepREST RestTestGen ARAT-RL Morest Schemathesis Restler 100
+
+-1%
+
+-3%
+
+-24%
+
+-20%
+
+-2% -2% -2% -11% -28%
+
+-27%
+
+-31%
+
+-28%
+
+-11%
+
+-41%
+
+100%
+
+-18%
+
+50
+
+-41% -39% -65% -46% -50%
+
+8% -36% -56% -36%
+
+0% 0% -50% -100% -100%
+
+-9% 0% -64% -73% -64%
+
+-15% -58% -63% -63% -63%
+
+-1% -4% -29% -33% -51%
+
+-16% -15%
+
+0 40
+
+14% 29% -39% -54% -21%
+
+-62% -62% -57%
+
+-8% -17% -25% -25% -25%
+
+0%
+
+0%
+
+0% 9% 9% -36% -50%
+
+0% -9%
+0% -45% -86%
+
+20
+
+0
+
+rest-countr
+
+user-mgmt
+
+market
+
+proj-track
+
+feat-serv
+
+ncs
+
+0%
+
+-8%
+
+0%
+
+0%
+
+0%
+
+0%
+
+0%
+
+0%
+
+-9% -9% -48% -32% -41%
+
+scs
+
+genome-nex
+
+person-ctrl
+
+blog
+
+0% 0% -25% -38% -50%
+
+Figure 5: Effectiveness results (per API).
+
+-16% -20% -56% -44% -44%
+
+-18% -8% -36% -34% -15%
+
+lang-tool
+
+0% 0% -50% -50% -50%
+
+Preprint An interesting case to comment on is Project Tracking System,
+where DeepREST largely overcame other tools (16% to 62% higher coverage). The Operation Dependency Graph exported by RestTestGen for this API contains 62 operations and over 6000 data dependencies. On the one hand, this overwhelming large set of data dependencies probably contains many spurious dependencies, tricking testing tools into building unsuccessful sequences. On the other hand, there are so many dependencies that attempting all the resulting operation orders is quite inefficient. The advantage of deep reinforcement learning in this API is that whenever the correct order to test  operations is found, it is learned and reused to try and test a sequence of  + 1 operations without wasting the testing budget.
+Specifically, in the Project Tracking System API, only after creating new credentials an employee can be created. Then, a project must be created. Only after successfully taking the API to this state the POST / assignment operation can be tested, resulting in a mandatory sequence of four operations. As a matter of fact, DeepREST gradually learned this operation ordering, progressively building longer and longer sequences, thus testing more operations on this API.
+These results allow us to formulate the following answer to the first research question.
+Answer to RQ1: DeepREST is the most effective black-box testing tool for REST APIs, demonstrating higher effectiveness than state-of-the-art with respect to branch, line and method coverage, as well as successfully tested operations and revealed unique faults.
+
+The most remarkable difference is for the AUC of the successfully tested operations count that spans from 4% of RestTestGen to 44% of Restler, and line coverage that spans between 4% (ARAT-RL) to 36% (Morest).
+Figure 6 shows the results for the AUC of the same metrics, split by case study. For space reasons, we report the results for two metrics only (results for the other metrics are provided in the replication package [8]). The first bar graph represents branch coverage, while the second bar graph the successful operations count. DeepREST appear consistently superior state-of-the-art tools in most of the cases, with few exceptions (already observed for effectiveness); they are ARAT-RL and RestTestGen on the branch coverage of Feature Service.
+Based on these results, we can formulate the following answer to the second research question.
+Answer to RQ2: DeepREST demonstrates higher efficiency than state-of-the-art testing tools concerning branch, line and method coverage. Regarding successfully tested operations and revealed unique faults, DeepREST is superior to most state-of-the-art tools except ARAT-RL.
+5.4 Threats to Validity
+Threats to internal validity, impacting empirical results, are due to the metrics adopted to answer the research questions and the configuration of the tools in the comparison. To mitigate these
+
+threats, we adopted standard metrics from structural testing (code
+
+RQ2 (Efficiency). The experimental results about the efficiency of
+
+coverage) and specific metrics for REST API testing (operation cov-
+
+DeepREST are presented in Figure 4 and Figure 6. Figure 4 shows
+
+erage [20] and fault detection[7]). Furthermore, the latest versions
+
+the average results aggregated by tool, with different bar colors
+
+of the considered testing tools have been used in the comparison,
+
+for different tools (DeepREST is the left-most bar in orange). On
+
+with tools configured as indicated in the corresponding papers. We
+
+the left-hand side of the figure, we report the average Area Under
+
+addressed potential threats due to randomness issues by running
+
+Curve (AUC) for branch, line, and method coverage among all 11
+
+each tool 10 times and computing the average results. Moreover,
+
+APIs for each tool. On the right-hand side, we report the AUC for we applied a statistical test (i.e., Wilcoxon signed rank test) that is
+
+the successfully tested operations (2XX) and the faults (5XX) count. non-parametric, thus it does not assume experimental data to be
+
+As we can see from the figure, DeepREST is more efficient in
+
+normally distributed.
+
+achieving high values for all the metrics than all the other test-
+
+Threats to external validity, impacting the generalization of our
+
+ing tools, with the only exception of ARAT-RL for the successful
+
+findings, are due to the case studies selected for the tools com-
+
+operations count. Moreover, almost all the differences are statisti- parison and their limited number. We mitigated these threats by
+
+cally significant according to the Wilcoxon signed rank test (with
+
+considering the dataset of REST APIs adopted in previous stud-
+
+the only exception of unique faults by RestTestGen and ARAT-RL). ies [7], in addition to one new API.
+
+
+===== PAGE 10 =====
+ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+Davide Corradini, Zeno Montolli, Michele Pasqua, and Mariano Ceccato
+
+-21% -29% -97% -96% -97%
+
+Operations (AUC) Branch Cov. (AUC)
+
+DeepREST RestTestGen ARAT-RL Morest Schemathesis Restler
+
+-5% -2% -23% -38% -22%
+
+-1% -6% -1% -13% -28%
+
+8% 77%
+-33% -53% -34%
+
+200 150 100 50
+0
+
+-3% -4% -61% -70% -61%
+
+-23% -58% -61% -61% -63%
+
+-4% -5% -28% -32% -52%
+
+-24% -23%
+
+8,000
+
+6,000
+
+-63% -60% -62%
+
+14% 27% -36% -50% -22%
+
+-7% -15% -22% -22% -30%
+
+-6% 8% 12%
+-35% -55%
+
+1% -13%
+-2% -48% -86%
+
+4,000
+
+2,000
+
+0
+
+rest-countr
+
+user-mgmt
+
+market
+
+proj-track
+
+feat-serv
+
+ncs
+
+0% 0% -10% -8% -2%
+
+0%
+
+-13%
+
+0%
+
+-7%
+
+0%
+
+-25%
+
+0%
+
+-26%
+
+-4%
+
+-23%
+
+-9% -10% -60% -32% -70%
+
+-39% -40% -64% -43% -53%
+
+scs
+
+genome-nex
+
+person-ctrl
+
+blog
+
+-2% -2% -25% -37% -65%
+
+-5% -3% -50% -100% -100%
+
+Figure 6: Efficiency results (per API).
+
+-13% -25% -56% -44% -65%
+
+-18% -10% -35% -33% -25%
+
+lang-tool
+
+0% -1% -50% -50% -50%
+
+Preprint 6 RELATEDWORK
+Among automated REST API testing tools, only EvoMaster [23] adopts a white-box approach. Specifically, test case generation is guided by evolutionary algorithms, whose fitness function is defined in terms of API code coverage and HTTP interactions status code. EvoMaster also provides a black-box version of the tool that only resorts to the API documentation to guide generation.
+Literature about black-box REST API testing is broader, comprising various tools implementing different testing strategies. We already mentioned approaches, such as RESTler [2] and RestTestGen [3], that use data dependencies to prioritize operations testing. RESTler generates sequences of HTTP interactions by exploiting producer-consumer dependencies contained in the OAS, targeting internal server failures. Instead, RestTestGen exploits the Operation Dependency Graph, embedding data dependencies between operations, to craft meaningful test cases in nominal and error scenarios. As already pointed out, such approaches might be biased by spurious data dependencies or miss implicit operation dependencies that are instead exploited by DeepREST.
+From a general viewpoint, QuickREST [24] performs propertybased testing of REST APIs, generating test cases with the aim of verifying whether an API complies with some properties documented in its OAS. Similarly, Schemathesis [19] detects faults by checking response compliance in OpenAPI or GraphQL APIs via property-based testing. Morest [4] exploits a Property Graph, dynamically updated during testing, to model the behavior of the API under test. Knowledge from the graph is used to craft meaningful test sequences. RESTest [25] is a tool that provides interparameter dependencies testing, producing nominal and faulty test
+
+testing approaches based on curiosity-driven reinforcement learning for web clients and Android apps, respectively. Vuong and Takada [34] and Koroglu et al. [35] also apply reinforcement learning to automated testing of Android apps, the latter adopting an exploration method based on Q-Learning. Adamo et al. [36] present a reinforcement learning-based technique specifically designed for Android GUI testing, while Koroglu and Sen [37] present a reinforcement learning-based method for generating functional tests from UI test scenarios for Android apps. Mariani et al. [38] proposed AutoBlackTest, an automatic black-box testing approach for interactive applications.
+The closest work is ARAT-RL [7], which exploits reinforcement learning to test REST APIs. Utilizing Q-Learning, ARAT-RL determines the priority of operations to test initially by considering the frequency of parameters in the API specification (that can be seen as a sort of data dependencies-based initialization). It subsequently refines this prioritization based on the HTTP interactions with the API. Nevertheless, such refinement is limited by the learning strategy adopted by ARAT-RL: agents always receive a high penalty when successfully tested operations are considered again. This promotes exploration of not yet tested operations only, discouraging agents from crafting complex sequences of operations. Indeed, to spot implicit dependencies, considering already successfully tested operations is crucial since they may trigger operations that otherwise are unlikely to be exercised. In DeepREST, instead, deep reinforcement learning starts with an empty experience, avoiding any possible bias from data dependencies. Moreover, DeepREST explicitly models (an approximation of) the internal state of the REST API under test, and agents are encouraged to test operations
+
+cases. RestCT [26] leverages combinatorial testing to generate test
+
+multiple times in different API states. This may yield corner case
+
+cases for REST APIs based on the OAS. Dredd [27] is a tool test-
+
+preconditions triggering hard-to-test operations, corresponding
+
+ing REST APIs by comparing actual responses with expected ones,
+
+to implicit dependencies that can be spotted by crafting complex
+
+checking their status code, header, and body. Tcases [28] is a model-
+
+sequences of operation invocations only. This is possible due to the
+
+based tool, leveraging the OAS to systematically build an input
+
+DeepREST API state representation encoding the history of past
+
+space model. Subsequently, it generates test cases covering valid
+
+successes, which is used as a guide for operation sequencing. This
+
+input dimensions and checking response status codes for validation.
+
+complex state representation can not be modeled by Q-Learning
+
+REST API fuzzers [29­33] are black-box tools that generate new
+
+and requires a deep reinforcement learning approach.
+
+test cases starting from previously recorded HTTP traffic: they fuzz
+
+and replay new HTTP requests in order to find faults. Some of them [30­32] also exploit OASs.
+Reinforcement learning has been recently adopted in software testing, focusing primarily on web and mobile applications. In particular, Zheng et al. [12] and Pan et al. [13] propose automatic
+
+7 CONCLUSION
+Black-box REST API testing tools ground their test case generation strategies on the information contained in the OAS of the API under test. This poses limitations on those APIs that contain implicit operation dependencies and value conditions. Such constraints
+
+
+===== PAGE 11 =====
+DeepREST: Automated Test Case Generation for REST APIs Exploiting Deep Reinforcement Learning ASE '24 - To appear, October 27­November 1, 2024, Sacramento, CA, USA
+
+cannot be retrieved from the OAS, making testing tools blind with
+
+[16] nomic-ai, "Gpt4all," 2024, https://gpt4all.io.
+
+respect to potentially crucial parts of the API business logic. In this paper, we showed how such hidden API constraints can
+
+[17] M. Kim, D. Corradini, S. Sinha, A. Orso, M. Pasqua, R. Tzoref-Brill, and M. Ceccato, "Enhancing rest api testing with nlp techniques," in Proceedings of the 32nd ACM SIGSOFT International Symposium on Software Testing and Analysis, 2023, pp.
+
+be learned from API interactions attempted at testing time, even in
+
+1232­1243.
+
+a black-box setting. We indeed proposed the first REST API testing approach based on deep reinforcement learning, having the twofold
+
+[18] GitHub, "Blog rest api," 2024, https://github.com/osopromadze/Spring-Boot-BlogREST- API.
+[19] Z. Hatfield-Dodds and D. Dygalo, "Deriving semantics-aware fuzzers from web
+
+objective of computing an effective ordering of API operations to test, encompassing (explicit and implicit) operation dependencies,
+
+api schemas," in Proceedings of the ACM/IEEE 44th International Conference on Software Engineering: Companion Proceedings. New York, NY, USA: ACM, 2022, pp. 345­346.
+
+and selecting accurate input data for operation parameters. Opera-
+
+[20] A. Martin-Lopez, S. Segura, and A. Ruiz-Cortés, "Test coverage criteria for restful
+
+tions ordering inference is guided by exploration of the API under test, while input data generation leverages experience gained on
+
+web apis," in Proceedings of the 10th ACM SIGSOFT International Workshop on Automating TEST Case Design, Selection, and Evaluation, ser. A-TEST 2019. New York, NY, USA: Association for Computing Machinery, 2019, pp. 15­21. [Online].
+
+successful API interactions. Finally, DeepREST intensifies testing
+
+Available: https://doi.org/10.1145/3340433.3342822
+
+Preprint by mutating successful API interactions in order to achieve higher
+test coverage and collaterally increasing experience. Empirical evidence showed that the proposed approach results in
+boosting the performance of REST API testing. Indeed, DeepREST is shown to overcome state-of-the-art approaches, both in terms of effectiveness and efficiency.
+DATA AVAILABILITY
+All the material needed to replicate our experiments is available on Zenodo [8].
+REFERENCES
+[1] A. Golmohammadi, M. Zhang, and A. Arcuri, "Testing restful apis: A survey," ACM Trans. Softw. Eng. Methodol., vol. 33, no. 1, nov 2023.
+[2] V. Atlidakis, P. Godefroid, and M. Polishchuk, "RESTler: Stateful REST API fuzzing," in Proceedings of the 41st International Conference on Software Engineering, ser. ICSE '19. Piscataway, NJ, USA: IEEE Press, 2019, pp. 748­758. [Online]. Available: https://doi.org/10.1109/ICSE.2019.00083
+[3] D. Corradini, A. Zampieri, M. Pasqua, E. Viglianisi, M. Dallago, and M. Ceccato, "Automated black-box testing of nominal and error scenarios in restful apis," Software Testing, Verification and Reliability, Jan. 2022. [Online]. Available: https://doi.org/10.1002/stvr.1808
+[4] Y. Liu, Y. Li, G. Deng, Y. Liu, R. Wan, R. Wu, D. Ji, S. Xu, and M. Bao, "Morest: Model-based restful api testing with execution feedback," in Proceedings of the 44th International Conference on Software Engineering. New York, NY, USA: ACM, 2022, pp. 1406­1417.
+[5] V. Atlidakis, P. Godefroid, and M. Polishchuk, "Checking security properties of cloud service REST APIs," in 13th IEEE International Conference on Software Testing, Validation and Verification, ICST 2020, Porto, Portugal, October 24-28, 2020. IEEE, 2020, pp. 387­397. [Online]. Available: https: //doi.org/10.1109/ICST46399.2020.00046
+[6] A. Martin-Lopez, S. Segura, C. Muller, and A. Ruiz-Cortes, "Specification and automated analysis of inter-parameter dependencies in web APIs," IEEE Transactions on Services Computing, pp. 1­1, 2021.
+[7] M. Kim, S. Sinha, and A. Orso, "Adaptive rest api testing with reinforcement learn-
+
+[21] D. Corradini, A. Zampieri, M. Pasqua, and M. Ceccato, "Restats: A test coverage tool for restful apis," in 2021 IEEE International Conference on Software Maintenance and Evolution (ICSME). IEEE, 2021, pp. 594­598.
+[22] Jacoco, "JaCoCo Java Code Coverage Library," 2023, https://github.com/jacoco/ jacoco.
+[23] A. Arcuri, "RESTful API automated test case generation with Evomaster," ACM Transactions on Software Engineering and Methodology (TOSEM), vol. 28, no. 1, p. 3, 2019.
+[24] S. Karlsson, A. Causevic, and D. Sundmark, "QuickREST: Property-based test generation of OpenAPI-described RESTful APIs," in 2020 IEEE 13th International Conference on Software Testing, Validation and Verification (ICST), 2020, pp. 131­ 141.
+[25] A. Martin-Lopez, S. Segura, and A. Ruiz-Cortés, "RESTest: Black-box constraint-based testing of RESTful web APIs," in Service-Oriented Computing - 18th International Conference, ICSOC 2020, Dubai, United Arab Emirates, December 14-17, 2020, Proceedings, ser. Lecture Notes in Computer Science, E. Kafeza, B. Benatallah, F. Martinelli, H. Hacid, A. Bouguettaya, and H. Motahari, Eds., vol. 12571. Springer, 2020, pp. 459­475. [Online]. Available: https://doi.org/10.1007/978- 3- 030- 65310- 1_33
+[26] H. Wu, L. Xu, X. Niu, and C. Nie, "Combinatorial testing of restful apis," in Proceedings of the 44th International Conference on Software Engineering. New York, NY, USA: ACM, 2022, pp. 426­437.
+[27] apiaryio. (2023) Dredd. https://github.com/apiaryio/dredd. [28] Cornutum. (2023) Tcases. https://github.com/Cornutum/tcases. [29] API Fuzzer. (2022) API Fuzzer. https://github.com/KissPeter/APIFuzzer. [30] Fuzz-Lightyear, "Fuzz-Lightyear," 2022, https://github.com/Yelp/fuzz-lightyear. [31] Fuzzy-Swagger, "Fuzzy-Swagger," 2022, https://github.com/namuan/fuzzy-
+swagger. [32] Swagger-Fuzzer, "Swagger-Fuzzer," 2022, https://github.com/Lothiraldan/
+swagger- fuzzer. [33] TnT-Fuzzer, "TnT-Fuzzer," 2022, https://github.com/Teebytes/TnT-Fuzzer. [34] T. A. T. Vuong and S. Takada, "A reinforcement learning based approach to
+automated testing of android applications," in Proceedings of the 9th ACM SIGSOFT International Workshop on Automating TEST Case Design, Selection, and Evaluation. New York, NY, USA: ACM, 2018, pp. 31­37. [35] Y. Koroglu, A. Sen, O. Muslu, Y. Mete, C. Ulker, T. Tanriverdi, and Y. Donmez, "QBE: Qlearning-based exploration of android applications," in 2018 IEEE 11th International Conference on Software Testing, Verification and Validation (ICST), 2018, pp. 105­115. [36] D. Adamo, M. K. Khan, S. Koppula, and R. Bryce, "Reinforcement learning for android gui testing," in Proceedings of the 9th ACM SIGSOFT International Work-
+
+ing," in IEEE/ACM International Conference on Automated Software Engineering,
+
+shop on Automating TEST Case Design, Selection, and Evaluation. New York, NY,
+
+2023.
+
+USA: ACM, 2018, pp. 2­8.
+
+[8] "Replication package," https://zenodo.org/records/11525389.
+
+[37] Y. Koroglu and A. Sen, "Functional test generation from ui test scenarios using
+
+[9] R. T. Fielding, Architectural styles and the design of network-based software archi-
+
+reinforcement learning for android applications," Software Testing, Verification
+
+tectures. University of California, Irvine Doctoral dissertation, 2000, vol. 7.
+
+and Reliability, vol. 31, no. 3, p. e1752, 2021.
+
+[10] J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, "Proximal policy
+
+[38] L. Mariani, M. Pezze, O. Riganelli, and M. Santoro, "AutoBlackTest: Automatic
+
+optimization algorithms," CoRR, vol. abs/1707.06347, 2017.
+
+black-box testing of interactive applications," in 2012 IEEE Fifth International
+
+[11] C. J. C. H. Watkins and P. Dayan, "Q-learning," Machine Learning, vol. 8, no. 3,
+
+Conference on Software Testing, Verification and Validation, 2012, pp. 81­90.
+
+pp. 279­292, may 1992.
+
+[12] Y. Zheng, Y. Liu, X. Xie, Y. Liu, L. Ma, J. Hao, and Y. Liu, "Automatic web testing us-
+
+ing curiosity-driven reinforcement learning," in 2021 IEEE/ACM 43rd International
+
+Conference on Software Engineering (ICSE), 2021, pp. 423­435.
+
+[13] M. Pan, A. Huang, G. Wang, T. Zhang, and X. Li, "Reinforcement learning based
+
+curiosity-driven testing of android applications," in Proceedings of the 29th ACM
+
+SIGSOFT International Symposium on Software Testing and Analysis. New York,
+
+NY, USA: ACM, 2020, pp. 153­164.
+
+[14] OpenAI, "Proximal policy optimization," 2023, https://openai.com/research/
+
+openai- baselines- ppo.
+
+[15] A. Raffin, A. Hill, A. Gleave, A. Kanervisto, M. Ernestus, and N. Dormann, "Stable-
+
+baselines3: Reliable reinforcement learning implementations," Journal of Machine
+
+Learning Research, vol. 22, no. 268, pp. 1­8, 2021.
+

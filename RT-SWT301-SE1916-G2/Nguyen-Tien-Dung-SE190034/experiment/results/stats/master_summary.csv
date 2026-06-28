@@ -1,0 +1,13 @@
+sut,arm,role,endpoints,test_cases,requests,http_2xx,http_4xx,http_5xx,endpoint_coverage_pct,edge_scenarios,fault_recall,err_behaviours_triggered,err_behaviours_in_key
+ncs,llm,Proposed — LLM (Claude Sonnet 4.6),6,86,81,43,38,0,100.0,69,0.0143,6,6
+ncs,manual,"Baseline 1 — Human (black-box, EP+BVA)",6,60,60,31,29,0,100.0,46,0.0143,6,6
+ncs,evomaster,"Baseline 2 — Tool (EvoMaster 6.0, SOTA white-box fuzzer)",6,30,30,20,10,0,,0,0.1714,5,6
+scs,llm,Proposed — LLM (Claude Sonnet 4.6),11,109,109,90,19,0,100.0,68,0.1186,5,5
+scs,manual,"Baseline 1 — Human (black-box, EP+BVA)",11,82,82,70,12,0,100.0,59,0.1186,3,5
+scs,evomaster,"Baseline 2 — Tool (EvoMaster 6.0, SOTA white-box fuzzer)",11,27,27,27,0,0,,0,0.0847,0,5
+features,llm,Proposed — LLM (Claude Sonnet 4.6),18,100,220,180,8,32,100.0,80,0.25,20,20
+features,manual,"Baseline 1 — Human (black-box, EP+BVA)",18,55,136,115,1,20,100.0,36,0.25,13,20
+features,evomaster,"Baseline 2 — Tool (EvoMaster 6.0, SOTA white-box fuzzer)",18,30,40,22,0,18,,0,0.25,13,20
+ALL,llm,Proposed — LLM (Claude Sonnet 4.6),35,295,410,313,65,32,,217,0.0677,31,31
+ALL,manual,"Baseline 1 — Human (black-box, EP+BVA)",35,197,278,216,42,20,,141,0.0677,22,31
+ALL,evomaster,"Baseline 2 — Tool (EvoMaster 6.0, SOTA white-box fuzzer)",35,87,97,69,10,18,,0,0.1353,18,31

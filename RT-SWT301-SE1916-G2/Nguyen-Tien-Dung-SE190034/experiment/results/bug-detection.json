@@ -1,0 +1,124 @@
+{
+  "title": "Bug-detection results — AI (LLM) vs Manual vs EvoMaster",
+  "description": "Bao nhiêu lỗi mỗi bộ test thực sự BẮT ĐƯỢC, đối chiếu ground truth. Pilot: LLM = Claude Sonnet 4.6 (full run: GPT-4o).",
+  "generated_by": "experiment/scripts/results_json.py",
+  "mutation_faults": {
+    "what": "Gieo lỗi bằng mutation; 'killed' = test pass trên bản gốc nhưng fail trên mutant. Recall = killed/total.",
+    "n_mutants_total": 133,
+    "per_sut": {
+      "ncs": {
+        "n_mutants": 70,
+        "killed": {
+          "llm": 1,
+          "manual": 1,
+          "evomaster": 12
+        },
+        "recall": {
+          "llm": 0.0143,
+          "manual": 0.0143,
+          "evomaster": 0.1714
+        }
+      },
+      "scs": {
+        "n_mutants": 59,
+        "killed": {
+          "llm": 7,
+          "manual": 7,
+          "evomaster": 5
+        },
+        "recall": {
+          "llm": 0.1186,
+          "manual": 0.1186,
+          "evomaster": 0.0847
+        }
+      },
+      "features": {
+        "n_mutants": 4,
+        "killed": {
+          "llm": 1,
+          "manual": 1,
+          "evomaster": 1
+        },
+        "recall": {
+          "llm": 0.25,
+          "manual": 0.25,
+          "evomaster": 0.25
+        }
+      }
+    },
+    "overall": {
+      "killed": {
+        "llm": 9,
+        "manual": 9,
+        "evomaster": 18
+      },
+      "recall": {
+        "llm": 0.0677,
+        "manual": 0.0677,
+        "evomaster": 0.1353
+      }
+    },
+    "verdict_vi": "EvoMaster bắt nhiều nhất (18/133); AI = Người (9/133). EvoMaster mạnh nhờ oracle ghi-giá-trị, bắt lỗi tính toán mà oracle dựa-status của AI/Người bỏ sót."
+  },
+  "error_behaviours": {
+    "what": "Số hành vi lỗi (endpoint, status>=400) thực sự KÍCH được trên API sống, so với answer-key (hợp của 3 arm). Chỉ endpoint có tài liệu.",
+    "answer_key_total": 31,
+    "triggered": {
+      "llm": 31,
+      "manual": 22,
+      "evomaster": 18
+    },
+    "missed": {
+      "llm": 0,
+      "manual": 9,
+      "evomaster": 13
+    },
+    "per_sut": {
+      "ncs": {
+        "answer_key": 6,
+        "triggered": {
+          "llm": 6,
+          "manual": 6,
+          "evomaster": 5
+        }
+      },
+      "scs": {
+        "answer_key": 5,
+        "triggered": {
+          "llm": 5,
+          "manual": 3,
+          "evomaster": 0
+        }
+      },
+      "features": {
+        "answer_key": 20,
+        "triggered": {
+          "llm": 20,
+          "manual": 13,
+          "evomaster": 13
+        }
+      }
+    },
+    "verdict_vi": "AI kích 31/31 (100%), Người 22/31, EvoMaster 18/31. AI bắt riêng được 1 crash 500 + các 405/406 mà bộ test người bỏ sót."
+  },
+  "http_outcomes": {
+    "what": "Tổng response HTTP thật bắt được khi replay mọi request (785 request).",
+    "by_arm": {
+      "llm": {
+        "http_2xx": 313,
+        "http_4xx": 65,
+        "http_5xx": 32
+      },
+      "manual": {
+        "http_2xx": 216,
+        "http_4xx": 42,
+        "http_5xx": 20
+      },
+      "evomaster": {
+        "http_2xx": 69,
+        "http_4xx": 10,
+        "http_5xx": 18
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "slr-deck-react",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Interactive React presentation — LLM for REST API Test Generation (SWT301 · SE1916)",
+  "scripts": {
+    "gen": "node scripts/build-data.mjs",
+    "predev": "node scripts/build-data.mjs",
+    "dev": "vite",
+    "prebuild": "node scripts/build-data.mjs",
+    "build": "vite build",
+    "preview": "vite preview --port 4173"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^9.1.0",
+    "react-pdf": "^9.2.1",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "vite": "^6.4.3"
+  }
+}

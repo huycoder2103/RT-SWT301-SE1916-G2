@@ -1,0 +1,83 @@
+{
+  "RQ1_endpoint_coverage": {
+    "n_operations": 35,
+    "ops_covered": 35,
+    "coverage_overall_pct": 100.0,
+    "per_sut": {
+      "features": {
+        "covered": 18,
+        "total": 18,
+        "pct": 100.0
+      },
+      "ncs": {
+        "covered": 6,
+        "total": 6,
+        "pct": 100.0
+      },
+      "scs": {
+        "covered": 11,
+        "total": 11,
+        "pct": 100.0
+      }
+    },
+    "wilcoxon_W": 630.0,
+    "p_value_one_sided": 1.6485266344986434e-09,
+    "reject_H0_(coverage>90%)": true
+  },
+  "RQ3_edge_cases_llm_vs_manual": {
+    "n_operations": 35,
+    "llm_total_edge": 217,
+    "manual_total_edge": 141,
+    "llm_median_per_op": 5.0,
+    "manual_median_per_op": 4.0,
+    "wilcoxon_W": 493.0,
+    "p_value_one_sided": 6.20086477871289e-07,
+    "reject_H0_(llm>manual)": true,
+    "pairs_llm_more": 30,
+    "pairs_manual_more": 1,
+    "pairs_tie": 4
+  },
+  "RQ2_fault_detection": {
+    "per_sut_recall": {
+      "features": {
+        "llm": 0.25,
+        "manual": 0.25,
+        "evomaster": 0.25
+      },
+      "ncs": {
+        "llm": 0.0143,
+        "manual": 0.0143,
+        "evomaster": 0.1714
+      },
+      "scs": {
+        "llm": 0.1186,
+        "manual": 0.1186,
+        "evomaster": 0.0847
+      }
+    },
+    "overall_recall": {
+      "llm": 0.0677,
+      "manual": 0.0677,
+      "evomaster": 0.1353
+    },
+    "n_mutants_total": 133,
+    "friedman_chi2": 0.0,
+    "friedman_p": 1.0,
+    "mcnemar": {
+      "llm_vs_manual": {
+        "llm_only(b)": 0,
+        "manual_only(c)": 0,
+        "statistic": 0.0,
+        "p_value": 1.0,
+        "reject_H0": false
+      },
+      "llm_vs_evomaster": {
+        "llm_only(b)": 5,
+        "evomaster_only(c)": 14,
+        "statistic": 5.0,
+        "p_value": 0.063568115234375,
+        "reject_H0": false
+      }
+    }
+  }
+}

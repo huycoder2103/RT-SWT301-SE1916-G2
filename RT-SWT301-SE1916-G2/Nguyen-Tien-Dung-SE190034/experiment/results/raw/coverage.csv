@@ -1,0 +1,7 @@
+sut,arm,ops_covered,ops_total,coverage_pct
+features,llm,18,18,100.0
+features,manual,18,18,100.0
+ncs,llm,6,6,100.0
+ncs,manual,6,6,100.0
+scs,llm,11,11,100.0
+scs,manual,11,11,100.0

@@ -1,0 +1,546 @@
+{
+  "title": "Error-Surface Baseline (code-derived, per endpoint)",
+  "description": "Per-endpoint error surface derived purely from source code: where each endpoint can return a non-2xx response. Ground-truth baseline, independent of any test tool (no LLM / Manual / EvoMaster statistics).",
+  "generated_by": "experiment/scripts/error_surface.py",
+  "provenance_legend": {
+    "declared": "explicit ResponseEntity.status(4xx/5xx) / .badRequest() in the controller (file:line shown)",
+    "framework": "typed numeric @PathVariable -> Spring returns 400 automatically on a type mismatch",
+    "potential": "a source line that can throw: uncaught -> HTTP 500, or caught by the controller -> 4xx (source review)"
+  },
+  "summary": {
+    "total_endpoints": 35,
+    "total_error_points": 39,
+    "endpoints_with_explicit_4xx_guard": 5,
+    "endpoints_with_potential_5xx_crash": 22
+  },
+  "suts": {
+    "ncs": {
+      "base_path": "/api",
+      "n_endpoints": 6,
+      "endpoints": [
+        {
+          "operationId": "bessjUsingGET",
+          "method": "GET",
+          "path": "/api/bessj/{n}/{x}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "declared",
+              "file": "NcsRest.java",
+              "line": 44,
+              "detail": "return ResponseEntity.status(400).build();"
+            },
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "NcsRest.java",
+              "line": 35,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            },
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "imp/Bessj.java",
+              "line": 61,
+              "detail": "series divide-by-zero if internal sum==0 (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "expintUsingGET",
+          "method": "GET",
+          "path": "/api/expint/{n}/{x}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "declared",
+              "file": "NcsRest.java",
+              "line": 69,
+              "detail": "return ResponseEntity.status(400).build();"
+            },
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "NcsRest.java",
+              "line": 55,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            },
+            {
+              "status": 400,
+              "provenance": "potential",
+              "file": "imp/Expint.java",
+              "line": 16,
+              "detail": "n<0 || x<0 || (x==0 && (n==0||n==1)) -> RuntimeException, caught -> 400"
+            }
+          ]
+        },
+        {
+          "operationId": "fisherUsingGET",
+          "method": "GET",
+          "path": "/api/fisher/{m}/{n}/{x}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "declared",
+              "file": "NcsRest.java",
+              "line": 85,
+              "detail": "return ResponseEntity.status(400).build();"
+            },
+            {
+              "status": 400,
+              "provenance": "declared",
+              "file": "NcsRest.java",
+              "line": 93,
+              "detail": "return ResponseEntity.status(400).build();"
+            },
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "NcsRest.java",
+              "line": 74,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            },
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "imp/Fisher.java",
+              "line": 44,
+              "detail": "divide-by-zero when denominator w==0 (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "gammqUsingGET",
+          "method": "GET",
+          "path": "/api/gammq/{a}/{x}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "declared",
+              "file": "NcsRest.java",
+              "line": 113,
+              "detail": "return ResponseEntity.status(400).build();"
+            },
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "NcsRest.java",
+              "line": 98,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            },
+            {
+              "status": 400,
+              "provenance": "potential",
+              "file": "imp/Gammq.java",
+              "line": 80,
+              "detail": "x<0 || a<=0 -> RuntimeException, caught -> 400"
+            }
+          ]
+        },
+        {
+          "operationId": "remainderUsingGET",
+          "method": "GET",
+          "path": "/api/remainder/{a}/{b}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "declared",
+              "file": "NcsRest.java",
+              "line": 128,
+              "detail": "return ResponseEntity.status(400).build();"
+            },
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "NcsRest.java",
+              "line": 118,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            },
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "imp/Remainder.java",
+              "line": 34,
+              "detail": "b==0 reaches an unguarded division/loop path (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "checkTriangleUsingGET",
+          "method": "GET",
+          "path": "/api/triangle/{a}/{b}/{c}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "NcsRest.java",
+              "line": 15,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            }
+          ]
+        }
+      ]
+    },
+    "scs": {
+      "base_path": "/api",
+      "n_endpoints": 11,
+      "endpoints": [
+        {
+          "operationId": "calcUsingGET",
+          "method": "GET",
+          "path": "/api/calc/{op}/{arg1}/{arg2}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "ScsRest.java",
+              "line": 14,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            },
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "imp/Calc.java",
+              "line": 55,
+              "detail": "divide-by-zero when arg2==0 (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "cookieUsingGET",
+          "method": "GET",
+          "path": "/api/cookie/{name}/{val}/{site}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "imp/Cookie.java",
+              "line": 27,
+              "detail": "substring() StringIndexOutOfBounds if val.length()<=3 (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "costfunsUsingGET",
+          "method": "GET",
+          "path": "/api/costfuns/{i}/{s}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "ScsRest.java",
+              "line": 42,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            }
+          ]
+        },
+        {
+          "operationId": "dateParseUsingGET",
+          "method": "GET",
+          "path": "/api/dateparse/{dayname}/{monthname}",
+          "error_surface": []
+        },
+        {
+          "operationId": "fileSuffixUsingGET",
+          "method": "GET",
+          "path": "/api/filesuffix/{directory}/{file}",
+          "error_surface": []
+        },
+        {
+          "operationId": "notyPevarUsingGET",
+          "method": "GET",
+          "path": "/api/notypevar/{i}/{s}",
+          "error_surface": [
+            {
+              "status": 400,
+              "provenance": "framework",
+              "file": "ScsRest.java",
+              "line": 79,
+              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
+            }
+          ]
+        },
+        {
+          "operationId": "ordered4UsingGET",
+          "method": "GET",
+          "path": "/api/ordered4/{w}/{x}/{z}/{y}",
+          "error_surface": []
+        },
+        {
+          "operationId": "regexUsingGET",
+          "method": "GET",
+          "path": "/api/pat/{txt}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "imp/Regex.java",
+              "line": 45,
+              "detail": "PatternSyntaxException on an invalid regex argument (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "patUsingGET",
+          "method": "GET",
+          "path": "/api/pat/{txt}/{pat}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "imp/Pat.java",
+              "line": 54,
+              "detail": "charAt()/substring() out-of-bounds when pattern longer than text (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "text2txtUsingGET",
+          "method": "GET",
+          "path": "/api/text2txt/{word1}/{word2}/{word3}",
+          "error_surface": []
+        },
+        {
+          "operationId": "titleUsingGET",
+          "method": "GET",
+          "path": "/api/title/{sex}/{title}",
+          "error_surface": []
+        }
+      ]
+    },
+    "features": {
+      "base_path": "",
+      "n_endpoints": 18,
+      "endpoints": [
+        {
+          "operationId": "getProductByName",
+          "method": "GET",
+          "path": "/products/{productName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsDAO.java",
+              "line": 39,
+              "detail": "findByName throws ObjectNotFoundException when product absent (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "addProduct",
+          "method": "POST",
+          "path": "/products/{productName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsService.java",
+              "line": 53,
+              "detail": "DuplicatedObjectException / constraint violation when product already exists (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "deleteProductByName",
+          "method": "DELETE",
+          "path": "/products/{productName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsDAO.java",
+              "line": 39,
+              "detail": "findByName throws ObjectNotFoundException when product absent (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "getAllProducts",
+          "method": "GET",
+          "path": "/products",
+          "error_surface": []
+        },
+        {
+          "operationId": "getConfigurationWithNameForProduct",
+          "method": "GET",
+          "path": "/products/{productName}/configurations/{configurationName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsConfigurationsDAO.java",
+              "line": 43,
+              "detail": "singleResult returns null -> NPE on getActivedFeatures() (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "addConfiguration",
+          "method": "POST",
+          "path": "/products/{productName}/configurations/{configurationName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsService.java",
+              "line": 54,
+              "detail": "findByName throws ObjectNotFoundException when product absent (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "deleteConfiguration",
+          "method": "DELETE",
+          "path": "/products/{productName}/configurations/{configurationName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsConfigurationsDAO.java",
+              "line": 70,
+              "detail": "findByNameAndProductName null -> NPE on entityManager.remove() (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "getConfigurationActivedFeatures",
+          "method": "GET",
+          "path": "/products/{productName}/configurations/{configurationName}/features",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsConfigurationsDAO.java",
+              "line": 43,
+              "detail": "singleResult null -> NPE on getActivedFeatures() (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "addFeatureToConfiguration",
+          "method": "POST",
+          "path": "/products/{productName}/configurations/{configurationName}/features/{featureName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsConfigurationsDAO.java",
+              "line": 43,
+              "detail": "config null -> NPE; WrongProductConfigurationException for invalid config (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "deleteFeature",
+          "method": "DELETE",
+          "path": "/products/{productName}/configurations/{configurationName}/features/{featureName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "model/Product.java",
+              "line": 75,
+              "detail": "findProductFeatureByName throws ObjectNotFoundException when feature absent (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "getConfigurationsForProduct",
+          "method": "GET",
+          "path": "/products/{productName}/configurations",
+          "error_surface": []
+        },
+        {
+          "operationId": "getFeaturesForProduct",
+          "method": "GET",
+          "path": "/products/{productName}/features",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsDAO.java",
+              "line": 39,
+              "detail": "findByName throws ObjectNotFoundException when product absent (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "addFeatureToProduct",
+          "method": "POST",
+          "path": "/products/{productName}/features/{featureName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsService.java",
+              "line": 62,
+              "detail": "findByName ObjectNotFoundException when product absent; DuplicatedObjectException if feature exists (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "updateFeatureOfProduct",
+          "method": "PUT",
+          "path": "/products/{productName}/features/{featureName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "model/Product.java",
+              "line": 75,
+              "detail": "findByName / findProductFeatureByName ObjectNotFoundException when product/feature absent (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "deleteFeatureOfProduct",
+          "method": "DELETE",
+          "path": "/products/{productName}/features/{featureName}",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "model/Product.java",
+              "line": 75,
+              "detail": "findByName / findProductFeatureByName ObjectNotFoundException when product/feature absent (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "deleteConstraint",
+          "method": "DELETE",
+          "path": "/products/{productName}/constraints/{constraintId}",
+          "error_surface": []
+        },
+        {
+          "operationId": "addRequiresConstraintToProduct",
+          "method": "POST",
+          "path": "/products/{productName}/constraints/requires",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsDAO.java",
+              "line": 39,
+              "detail": "findByName throws ObjectNotFoundException when product absent (uncaught -> 500)"
+            }
+          ]
+        },
+        {
+          "operationId": "addExcludesConstraintToProduct",
+          "method": "POST",
+          "path": "/products/{productName}/constraints/excludes",
+          "error_surface": [
+            {
+              "status": 500,
+              "provenance": "potential",
+              "file": "services/ProductsDAO.java",
+              "line": 39,
+              "detail": "findByName throws ObjectNotFoundException when product absent (uncaught -> 500)"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,180 @@
+id,title,authors,year,venue,search_strings
+213933,Investigating web APIs on the World Wide Web,"Domingue, John, Maleshkova, Maria, Pedrinaci, Carlos",2012,IEEE,String A
+213942,Using semantics for automating the authentication of Web APIs,"Alvaro, Guillermo, Domingue, John, Maleshkova, Maria, Martinez, Ivan, Pedrinaci, Carlos",2012,,String A
+455847,Specification of high-level application programming interfaces (SemSorGrid4Env),"De Roure, David C., Martinez, Kirk, Page, Kevin R., Sadler, Jason",2012,,String B
+942872,A Knowledge-based Automated Debugger in Learning System,"Aljunid, Syed Ahmad, Nordin, Mohd Jan, Shukur, Zarina, Zin, Abdullah Mohd",2012,arXiv,String B
+2385407,How dangerous is your life? Personalising Government open crime data,"Garbett, Andrew, Kirman, Ben, Lawson, Shaun, Linehan, Conor, Wardman, Jamie",2012,,String B
+4214867,An analysis of social network connect services,"Salvachúa, Joaquín, Sánchez, Víctor, Tapiador, Antonio",2012,arXiv,String B
+4414924,Musical Program Auralisation: Empirical Studies,"Alty, James, Vickers, Paul",2013,,String B
+8054767,Crisis Event Extraction Service (CREES) - Automatic Detection and Classification of Crisis-related Content on Social Media,"Alani, Harith, Burel, Gregoire",2018,,String A
+8295273,PEP4Django - A Policy Enforcement Point for Python Web Applications,"Da Silva, Carlos, Medeiros, Welkson, Sampaio, Silvio",2020,,String B
+8389109,Network traffic analysis for threats detection in the Internet of Things,"Adebisi, B., Baker, T., Belguith, S., Bounceur, A., Epiphaniou, Gregory, Hammoudeh, M., Kayes, A. S. M., Pimlott, J.",2020,IEEE,String A
+8567877,Incident detection using data from social media,"Georgakis, P, Petalas, Y, Salas, A",2020,IEEE,String B
+8568265,Traffic event detection framework using social media,"Ammari, A, Georgakis, P, Nwagboso, C, Petalas, I, Salas, A",2020,IEEE,String B
+8755956,Intelligent intrusion detection in low power IoTs,"Ahmadinia, Ali, Javed, Abbas, Larijani, Hadi, Saeed, Ahmed",2020,ACM,String B
+9461354,Intra-exchange Cryptocurrency Arbitrage Bot,"Han, Eric",2019,,String B
+9850099,SplineAPI: A REST API for NLP Services,"B Liu, H Cunningham, I Mani, J Martin, L Padró",2016,,"String A, String B"
+16115856,Generation and Maintenance of Java Classes Based on Apiary Blueprint,"Hermann, Lukáš",2016,,String A
+16117541,Jabber Bot Remoted by REST API,"Stískala, Viktor",2016,,"String A, String B"
+16120683,Cyber Threat Intelligence Platform,"Jacko, Jerguš",2016,,"String A, String B"
+16149799,TypeScript Application Generation from REST API Descriptions,"Lipjanec, Silvester",2020,,String A
+17024615,An Insight View of Kernel Visual Debugger in System Boot up,"Farag, Mohamed",2014,arXiv,String B
+17039338,Modeling Morphology of Social Network Cascades,"Liu, Alex X., Shafiq, M. Zubair",2014,arXiv,String B
+17137531,Empirical Evidence of Large-Scale Diversity in API Usage of   Object-Oriented Software,"Baudry, Benoit, Mendez, Diego, Monperrus, Martin",2014,arXiv,String B
+17146536,Dynamics of Open-Source Software Developer's Commit Behavior: An   Empirical Investigation of Subversion,"Ma, Yutao, Wu, Yang, Xu, Youwei",2014,arXiv,String B
+17168507,RDF Translator: A RESTful Multi-Format Data Converter for the Semantic   Web,"Hepp, Martin, Rodriguez-Castro, Bene, Stolz, Alex",2014,arXiv,String B
+17186484,MPISE: Symbolic Execution of MPI Programs,"Chen, Zhenbang, Dong, Wei, Fu, Xianjin, Huang, Chun, Wang, Ji, Zhang, Yufeng",2014,arXiv,String B
+17192842,Mining online social networks with Python to study urban mobility,"Colet, Pere, Tugores, Antònia",2014,arXiv,String B
+17209388,Web API Fragility: How Robust is Your Web API Client,"Espinha, Tiago, Gross, Hans-Gerhard, Zaidman, Andy",2014,arXiv,String A
+17221719,Building Program Vector Representations for Deep Learning,"Jin, Zhi, Li, Ge, Liu, Yuxuan, Mou, Lili, Peng, Hao, Xu, Yan, Zhang, Lu",2014,arXiv,String B
+18026677,Correlation of Scholarly Networks and Social Networks,"Razmjou, Amir",2015,arXiv,String B
+18041650,Contemporary Internet of Things platforms,"Mazhelis, Oleksiy, Mineraud, Julien, Su, Xiang, Tarkoma, Sasu",2015,arXiv,String B
+18043200,A gap analysis of Internet-of-Things platforms,"Mazhelis, Oleksiy, Mineraud, Julien, Su, Xiang, Tarkoma, Sasu",2015,arXiv,String B
+18061404,Improving software team collaboration with Synchronized Software   Development,"Levin, Stanislav, Yehudai, Amiram",2015,arXiv,String B
+18068283,Automatic Repair of Real Bugs: An Experience Report on the Defects4J   Dataset,"Durieux, Thomas, Martinez, Matias, Monperrus, Martin, Sommerard, Romain, Xuan, Jifeng",2015,arXiv,String B
+18074867,Benchmarking Machine Learning Technologies for Software Defect Detection,"Ahmed, Faheem, Aleem, Saiqa, Capretz, Luiz Fernando",2015,arXiv,String B
+18098472,A history and future of Web APIs,"Boakes, Rich, Fremantle, Paul, Kopecky, Jack",2015,,"String A, String B"
+24716494,NeuroVault.org : a web-based repository for collecting and sharing unthresholded statistical maps of the human brain,"Camille eMaumet, Daniel S. Margulies, Gabriel eRivera, Gael eVaroquaux, Jean-Baptiste ePoline, Krzysztof Jacek Gorgolewski, Krzysztof Jacek Gorgolewski, Russell A. Poldrack, Satrajit S Ghosh, Tal eYarkoni, Thomas E. Nichols, Vanessa V Sochat, Yannick eSchwartz",2016,,String A
+24737611,A Framework for Distributed Deep Learning Layer Design in Python,"McLeod, Clay",2016,arXiv,"String A, String B"
+24752021,"DGD Gallery: Storage, sharing, and publication of digital research data","Bobenko, Alexander I., Joswig, Michael, Mehner, Milan, Sechelmann, Stefan, Techter, Jan",2016,arXiv,"String A, String B"
+24766617,RWebData: A High-Level Interface to the Programmable Web,"Matter, Ulrich",2016,arXiv,"String A, String B"
+24770829,"MATISSE: A novel tool to access, visualize and analyse data from   planetary exploration missions","Antonelli, Lucio Angelo, Capria, Maria Teresa, Giommi, Paolo, Palomba, Ernesto, Zinzi, Angelo",2016,arXiv,String B
+24798270,Web Infrastructure to Support e-Journal Preservation (and More),"Nelson, Michael L., Rosenthal, David S. H., Van de Sompel, Herbert",2016,arXiv,String B
+26837899,Mobile iOS application for a non-profit TV,Sukhotin Mikhail,2016,,String B
+26838929,GPS pinned messaging application,Mikhailova Daria,2016,,String B
+29212520,Автоматизация создания перехватчиков событий в системе управления проектами Team Foundation Server с помощью Rest API для Visual Studio Team Services и Team Foundation Server,"Чебоксаров, В. А.",2016,,String B
+29559742,COLOMBOS v3.0: leveraging gene expression compendia for cross-species analyses,"Bianco, Luca, Brilli, Matteo, Collado-Vides, Julio, Dierckxsens, Nicolas, Engelen, Kristof, Galardini, Marco, Gama-Castro, Socorro, Laukens, Kris, Ledezma-Tejeida, Daniela, Meysman, Pieter, Moretto, Marco, Romualdi, Chiara, Sonego, Paolo",2016,,String B
+31287867,Mobile fitness apps for promoting physical activity on Twitter: the #RunKeeper case,"Mechant, Peter, Stragier, Jeroen",2016,,String B
+32974670,The design of an indirect method for the human presence monitoring in the intelligent building,"Bilík, Petr, Fajkus, Michal, Machač, Jaroslav, Martinek, Radek, Nedoma, Jan, Vaňuš, Jan, Žídek, Jan",2019,,String A
+39081548,Statically Checking Web API Requests in JavaScript,"Dolby, Julian, Laredo, Jim A., Wittern, Erik, Ying, Annie T. T., Zheng, Yunhui",2017,arXiv,String A
+39973624,PREvant (Preview Servant): Composing Microservices into Reviewable and Testable Applications,"Schreiber, Marc",2020,,"String A, String B"
+40016204,Designing and implementation of REST API application in Java for procesing of PostgreSQL databases,Horčička Serhij,2017,,String B
+41010148,Exploring Protein-Protein Interactions as Drug Targets for Anti-cancer Therapy with In Silico Workflows,"A Goncearenco, A Goncearenco, A Marchler-Bauer, A Truszkowski, AA Bogan, B Graves, B Ma, BA Shoemaker, BA Shoemaker, BA Shoemaker, BJ Smith, CA Goble, CM Yates, D Petrey, E Cukuroglu, FP Davis, H Perez-Sanchez, HS Haase, J Bhagat, J Cinatl, JA Wells, K Wolstencroft, M Guharoy, M Li, M Li, M Li, M Petukh, M Tyagi, MK Gilson, MP Mazanetz, N Estrada-Ortiz, P Aloy, P Aloy, P Filippakopoulos, R Mosca, RR Thangudu, S Beisken, S Kim, S Shangary, S Teng, T Rolland, W Yang, WS Valdar, Y Wang, Y Zhao",2020,,String B
+42844060,SDN as Active Measurement Infrastructure,"Beverly, Robert, Rye, Erik",2017,arXiv,String B
+42845817,Finding Likely Errors with Bayesian Specifications,"Chaudhuri, Swarat, Jermaine, Chris, Murali, Vijayaraghavan",2017,arXiv,String B
+42867000,Opportunities in Software Engineering Research for Web API Consumption,"Dolby, Julian, Laredo, Jim A., Slominski, Aleksander A., Wittern, Erik, Ying, Annie, Young, Christopher C., Zheng, Yunhui",2017,arXiv,String A
+42867860,"Report of the HPC Correctness Summit, Jan 25--26, 2017, Washington, DC","Gopalakrishnan, Ganesh, Hovland, Paul D., Iancu, Costin, Krishnamoorthy, Sriram, Laguna, Ignacio, Lethin, Richard A., Sen, Koushik, Siegel, Stephen F., Solar-Lezama, Armando",2017,arXiv,String B
+42874090,Runtime Verification for Business Processes Utilizing the Bitcoin   Blockchain,"Hochreiner, Christoph, Prybila, Christoph, Schulte, Stefan, Weber, Ingo",2017,arXiv,String B
+42889605,Exploring Social Media for Event Attendance,"de Lira, Vinicius Monteiro, Macdonald, Craig, Ounis, Iadh, Perego, Raffaele, Renso, Chiara, Times, Valeria Cesario",2017,ACM,String B
+43118641,Decoupled-IFTTT: Constraining Privilege in Trigger-Action Platforms for   the Internet of Things,"Fernandes, Earlence, Jung, Jaeyeon, Prakash, Atul, Rahmati, Amir",2017,arXiv,String B
+43121387,DeepProf: Performance Analysis for Deep Learning Applications via Mining   GPU Execution Patterns,"Gu, Jiazhen, Liu, Huan, Wang, Xin, Zhou, Yangfan",2017,arXiv,String B
+43511233,Implementasi Rest Web Service Untuk Sales Order Dan Sales Tracking Berbasis Mobile,"Kurniawan, E. (Erick)",2017,,String A
+43883876,E-QED: Electrical Bug Localization During Post-Silicon Validation   Enabled by Quick Error Detection and Formal Methods,"B Vermeulen, D Lin, E Clarke, FM Paula De, HF Ko, M Abramovici, M Dusanapudi, NR Saxena, PH Bardell, PN Sanda, RB Jones, S-B Park, T Larrabee",2017,arXiv,String B
+43887593,Has the Online Discussion Been Manipulated? Quantifying Online   Discussion Authenticity within Online Social Media,"Bendahan, Jorge, Elyashar, Aviad, Puzis, Rami",2017,arXiv,String B
+43961900,The pragmatic proof: hypermedia API composition and execution,"Arndt, Dorthe, De Roo, Jos, Gabarró Vallès, Joaquim, Mels, Giovanni, Steiner, Thomas, Van Hoecke, Sofie, Verborgh, Ruben",2017,,String A
+44614722,A Practical Python API for Querying AFLOWLIB,"Rosenbrock, Conred W.",2017,arXiv,String B
+44618461,Practical Integer Overflow Prevention,"Eckert, Claudia, Grossklags, Jens, Muntean, Paul",2017,arXiv,String B
+45155738,ICN-aware Network Slicing Framework for Mobile Data Distribution,"Amin, Syed Obaid, Azgin, Aytac, Chakraborti, Asit, Ravindran, Ravishankar, Wang, Guoqiang",2017,arXiv,String B
+45953956,Trailing the Snail: SDN Controller Security Evolution,"Scott-Hayward, Sandra",2017,arXiv,String B
+45955665,AFLOW-ML: A RESTful API for machine-learning predictions of materials   properties,"Carrete, Jesús, Curtarolo, Stefano, Gossett, Eric, Isayev, Olexandr, Legrain, Fleur, Mingo, Natalio, Oses, Corey, Rose, Frisco, Toher, Cormac, Tropsha, Alexander, Zurek, Eva",2017,arXiv,String B
+45956420,A Systematic Evaluation of Static API-Misuse Detectors,"Amann, Sven, Mezini, Mira, Nadi, Sarah, Nguyen, Hoan Anh, Nguyen, Tien N.",2017,arXiv,String B
+45956581,The AFLOW Fleet for Materials Discovery,"A Jain, AA Maradudin, AI Liechtenstein, AK Rappe, AR Supka, C Nyshadham, C Toher, C Toher, Camilo E. Calderon, CB Barber, Corey Oses, D Hicks, DD Landis, E Perim, Eric Gossett, F Legrain, F Rose, G Bergerhoff, G Kresse, G Kresse, G Pizzi, GLW Hart, J-P Poirier, JE Saal, JJ Plata, JP Perdew, K Schmalzl, K Yang, LA Agapito, LA Agapito, LA Agapito, LA Agapito, M Buongiorno Nardelli, M Jong de, M Scheffler, MA Blanco, MA Blanco, MJ Mehl, MM Elcombe, O Isayev, O Isayev, O Levy, O Levy, O Levy, P D’Amico, P Giannozzi, P Giannozzi, P Gopal, P Nath, P Nath, PE Blöchl, RH Taylor, S Barzilai, S Barzilai, S Barzilai, S Curtarolo, S Curtarolo, S Curtarolo, S Sanvito, SL Dudarev, SP Ong, SR Bahn, V Blum, VL Karen, W Kaiser, W Setyawan, X Andrade, X Gonze, Yoav Lederer",2017,arXiv,String B
+47874544,Fostering SLA-Driven API Specifications,"Fernández Montes, Pablo, Gámez Díaz, Antonio, Ruiz Cortés, Antonio",2018,,String A
+48124208,The development of an incremental debugging system : a thesis presented in partial fulfilment of the requirements for the degree of Master of Science in Computer Science at Massey University,"McDonald, Malcolm John",2018,,String B
+50067259,Fault Localization Models in Debugging,"Alansari, Zainab, Belgaum, Mohammad Riyaz, Miraz, Mahdi H., Soomro, Safeeullah",2018,arXiv,String B
+50069907,Multi-access Edge Computing: The driver behind the wheel of 5G-connected   cars,"Featherstone, Walter, Filippou, Miltiades C., Giust, Fabio, Mangiante, Simone, Munaretto, Daniele, Sabella, Dario, Sciancalepore, Vincenzo",2018,arXiv,String A
+50746805,The Three Pillars of Machine Programming,"Amarasinghe, Saman, Barzilay, Regina, Carbin, Michael, Gottschlich, Justin, Mattson, Tim, Rinard, Martin, Solar-Lezama, Armando, Tatbul, Nesime, Tenenbaum, Joshua B",2018,arXiv,String B
+50748079,Exploring the Naturalness of Buggy Code with Recurrent Neural Networks,"Gao, Ji, Lanchantin, Jack",2018,arXiv,String B
+50751996,COINS: ContinuOus IntegratioN in wirelesS technology development,"Bregar, Klemen, Fortuna, Carolina, Gregorc, Urban, Hrovat, Andrej, Mohorčič, Mihael, Smolnikar, Miha, Vučnik, Matevž, Šolc, Tomaž",2018,arXiv,String B
+50753848,An Extended Low Fat Allocator API and Applications,"Duck, Gregory J., Yap, Roland H. C.",2018,arXiv,String B
+51328769,Enabling Automated Bug Detection for IP-based Designs using High-Level Synthesis,"Ferrandi, Fabrizio, Fezzardi, Pietro, Pilato, Christian",2018,IEEE,String B
+51390865,Open Astronomy Catalogs API,"Cowperthwaite, Philip S., Guillochon, James",2018,arXiv,String B
+51392766,Effective Automated Decision Support for Managing Crowdtesting,"Krishna, Rahul, Menzies, Tim, Wang, Junjie, Wang, Qing, Yang, Ye",2018,arXiv,String B
+51392815,CloudLaunch: Discover and Deploy Cloud Applications,"Afgan, Enis, Goonasekera, Nuwan, Lonie, Andrew, Taylor, James",2018,arXiv,"String A, String B"
+51393032,Evaluating Manual Intervention to Address the Challenges of Bug Finding   with KLEE,"Galea, John, Heelan, Sean, Kroening, Daniel, Neville, Daniel",2018,arXiv,String B
+51692547,A web API ecosystem through feature based reuse,"Dumontier, Michel, Verborgh, Ruben",2018,IEEE,String A
+51766589,API diversity for microservices in the domain of connected vehicles,"Gajek, Fabian",2018,,String A
+52214571,REST-ler: Automatic Intelligent REST API Fuzzing,"Atlidakis, Vaggelis, Godefroid, Patrice, Polishchuk, Marina",2018,arXiv,"String A, String B"
+52221801,IntRepair: Informed Repairing of Integer Overflows,"Eckert, Claudia, Grossklags, Jens, Monperrus, Martin, Muntean, Paul, Sun, Hao",2018,arXiv,String B
+54169481,EASYFLOW: Keep Ethereum Away From Overflow,"Chen, Zhong, Gao, Jianbo, Guan, Zhi, Li, Qingshan, Liu, Chao, Liu, Han",2019,arXiv,String B
+54169972,SD-WAN Threat Landscape,"Gordeychik, Sergey, Kolegov, Denis",2019,arXiv,String B
+54170045,"Modern RESTful API DLs and frameworks for RESTful web services API   schema modeling, documenting, visualizing","Kurgaev, Oleksandr, Malakhov, Kyrylo, Velychko, Vitalii",2019,arXiv,String A
+54186936,Koji: Automating pipelines with mixed-semantics data sources,"Maymounkov, Petar",2019,arXiv,String A
+54187457,Externalization of Packet Processing in Software Defined Networking,"Comer, Douglas, Rastegarnia, Adib",2019,arXiv,String B
+54189047,"BoostNet: Bootstrapping detection of socialbots, and a case study from   Guatemala","E Ferrara, E. Gallagher, EM Clark, M Stella, Nikan Chavoshi, Pablo Suárez-Serrato",2019,arXiv,String B
+54217803,Investigating IoT Middleware Platforms for Smart Application Development,"A Al-Fuqaha, A Farahzadi, J Mineraud, KJ Singh, M Ammar, MA da Cruz, MA Razzaque, PP Ray",2019,arXiv,String B
+54445911,Multi-tenant Pub/Sub processing for real-time data streams,"Carrera Pérez, David, Villalba Navarro, Álvaro",2019,,String B
+58947989,Symbolic QED Pre-silicon Verification for Automotive Microcontroller   Cores: Industrial Case Study,"Barrett, Clark, Devarajegowda, Keerthikumara, Ecker, Wolfgang, Fadiheh, Mohammad R., Ganesan, Karthik, Kunz, Wolfgang, Mitra, Subhasish, Schnieder, Ralf, Simon, Sebastian, Singh, Eshan, Stoffel, Dominik",2019,arXiv,String B
+58948447,Fearless Concurrency? Understanding Concurrent Programming Safety in   Real-World Rust Software,"Song, Linhai, Yu, Zeming, Zhang, Yiying",2019,arXiv,String B
+58953449,A Microservice Architecture for Online Mobile App Optimization,"Medvidovic, Nenad, Zhao, Yixue",2019,arXiv,String B
+58955560,Virtual Representations for Iterative IoT Deployment,"Bader, Sebastian R., Maleshkova, Maria",2019,arXiv,String A
+58960476,Benchmarking Web API Quality -- Revisited,"Bermbach, David, Wittern, Erik",2019,arXiv,String A
+58966217,"VIVoNet: Visually-represented, Intent-based, Voice-assisted Networking","Asthana, Amrita, Chaudhari, Amar, Gandotra, Rahil, Gangwar, Sapna, Gedia, Dewang, Kaluskar, Atharva, Karani, Lakshay, Perigo, Levi",2019,arXiv,String B
+58966288,A Literature Study of Embeddings on Source Code,"Chen, Zimin, Monperrus, Martin",2019,arXiv,String B
+58968379,"COCI, the OpenCitations Index of Crossref open DOI-to-DOI citations","Heibi, Ivan, Peroni, Silvio, Shotton, David",2019,arXiv,String B
+58972744,Learning Semantic Vector Representations of Source Code via a Siamese   Neural Network,"Fede, Halley, Ferreira, Guilherme, Hughes, Joseph, Pence, Eleanor, Walczyk, John, Wehr, David, Zhang, Bo",2019,arXiv,String B
+58974017,Characterizing and Detecting CUDA Program Bugs,"Liu, Cong, Wu, Mingyuan, Zhang, Lingming, Zhang, Yuqun, Zhou, Husheng",2019,arXiv,String B
+58976123,Hardware/Software Co-monitoring,"Chen, Bo, Cong, Kai, Lei, Li, Xie, Fei, Yang, Zhenkun",2019,arXiv,String B
+58981790,A Benchmark of Data Loss Bugs for Android Apps,"Mariani, Leonardo, Micucci, Daniela, Mobilio, Marco, Riganelli, Oliviero",2019,arXiv,String B
+65437071,Model-driven round-trip engineering of REST APIs,"Ed-douibi, Hamza",2019,,String A
+67790766,The role of limitations and SLAs in the API industry,"Bhogill, Prithpal, Fernández Montes, Pablo, Gámez Díaz, Antonio, Kolekar, Nikhil, Mohaan, Madhurranjan, Molina, Pedro J., Méndez, Francisco, Ruiz Cortés, Antonio",2019,ACM,String A
+67791045,Governify for APIs: SLA-Driven Ecosystem for API Governance,"Fernández Montes, Pablo, Gámez Díaz, Antonio, Ruiz Cortés, Antonio",2019,,String A
+67796558,Automating SLA-Driven API Development with SLA4OAI,"Fernández Montes, Pablo, Gámez Díaz, Antonio, Ruiz Cortés, Antonio",2020,,String A
+74256030,Programming patterns and development guidelines for Semantic Sensor Grids (SemSorGrid4Env),"De Roure, David, Frazer, Alex J., Martinez, Kirk, Nagel, Bart, Page, Kevin R.",2012,,String A
+75651095,RAMLFlask: Managing artifact coupling for Web APIs,"Maurer, Michael, Sobernig, Stefan, Strembeck, Mark",2019,,String A
+76745410,"The Personal Genome Project-UK, an open access resource of human multi-omics data","Beck, Stephan, Berner, Alison, Chervova, Olga, Conde, Lucia, Guerra-Assunção, José Afonso, Hamoudi, Rifat, Herrero, Javier, Jesus, Tiago F., Larose Cadieux, Elizabeth, Moghul, Ismail, Tian, Yuan, Voloshin, Vitaly, Webster, Amy P.",2020,,"String A, String B"
+78565272,A software service supporting software quality forecasting,"Ayala Martínez, Claudia Patricia, Gómez Seoane, Cristina, López Cuesta, Lidia, Manzano Aguilar, Martí",2020,IEEE,String B
+78565338,Classification of changes in API evolution,"Abelló Gamazo, Alberto, Franch Gutiérrez, Javier, Jovanovic, Petar, Koçi, Rediana",2020,IEEE,String A
+85600461,FPDetect: Efficient Reasoning About Stencil Programs Using Selective   Direct Evaluation,"Briggs, Ian, Das, Arnab, Gopalakrishnan, Ganesh, Krishnamoorthy, Sriram, Tipireddy, Ramakrishna",2020,arXiv,String B
+85602667,Specification and Automated Analysis of Inter-Parameter Dependencies in   Web APIs,"Martin-Lopez, Alberto, Müller, Carlos, Ruiz-Cortés, Antonio, Segura, Sergio",2020,arXiv,String A
+85659814,funcX: A Federated Function Serving Fabric for Science,"Akkus I. E., CMS, Forde J., Fox G., Hightower K., Hindman B., Malawski M., Merkel D., Spillner J., Stubbs J., Wang L., Waterman D. G.",2020,arXiv,String B
+85661708,The First French COVID19 Lockdown Twitter Dataset,"Balech, Sophie, Benavent, Christophe, Calciu, Mihai",2020,arXiv,String B
+85779633,Using Distributed Representation of Code for Bug Detection,"Briem, Jón Arnar, Rapoport, Pavel, Sellik, Hendrig, Smit, Jordi",2020,arXiv,String B
+85806732,A Link Generator for Increasing the Utility of OpenAPI-to-GraphQL   Translations,"Klamma, Ralf, Koren, István, Kus, Dominik Adam",2020,arXiv,String A
+85855346,Learning Semantic Program Embeddings with Graph Interval Neural Network,"Gao, Fengjuan, Wang, Ke, Wang, Linzhang, Wang, Yu",2020,arXiv,String B
+85954370,Adversarial Examples for Models of Code,"Alon, Uri, Yahav, Eran, Yefet, Noam",2020,arXiv,String B
+85956769,Github Data Exposure and Accessing Blocked Data using the GraphQL   Security Design Flaw,"Yazdipour, Shahriar",2020,arXiv,String B
+86135435,OBDA for the Web: Creating Virtual RDF Graphs On Top of Web Data Sources,"Bereta, Konstantina, Koubarakis, Manolis, Papadakis, George",2020,arXiv,"String A, String B"
+86732864,SafeRESTScript: Statically Checking REST API Consumers,"Burnay, Nuno, Lopes, Antónia, Vasconcelos, Vasco T.",2020,arXiv,String A
+86741485,OBA: An Ontology-Based Framework for Creating REST APIs for Knowledge   Graphs,"Garijo, Daniel, Osorio, Maximiliano",2020,arXiv,String A
+87838648,A First Look at the Deprecation of RESTful APIs: An Empirical Study,"Tian, Yuan, Yang, Jinqiu, Yasmin, Jerin",2020,arXiv,String A
+89592346,FirecREST: RESTful API on Cray XC systems,"Cruz, Felipe A., Martinasso, Maxime",2020,arXiv,String A
+99081081,REST API Plataforma colaborativa,"Fernández Alonso, Isaac",2020,,String A
+124660504,Structure and Feedback in Cloud Service API Fuzzing,"Atlidakis, Evangelos",2020,,String A
+128163521,REST API client-ohjelmakirjasto potilastietojärjestelmään,"Rantanen, Roope",2018,,String A
+128645954,Automated Test Generation for REST APIs: No Time to Rest Yet,"Kim, Myeongsoo, Orso, Alessandro, Sinha, Saurabh, Xin, Qi",2022,arXiv,String A
+135436615,"RESTful API Testing Methodologies: Rationale, Challenges, and Solution Directions","Abuhaliqa, Mohammed Ahmad M. E., Catal, Cagatay, Ehsan, Adeel, Mishra, Deepti",2022,,String A
+135970502,Analisis Penerapan Single Page Application Menggunakan Teknologi AJAX Dan REST API (Studi Kasus :Sistem Informasi Reservasi Wisma Tamu UKSW),"Azhari, A. L. (Adib), Tanone, R. -. (Radius)",2017,,"String A, String B"
+137207947,Exploiting Input Sanitization for Regex Denial of Service,"Barlas, Efe, Davis, James C, Du, Xin",2023,,String A
+140345995,Implementasi Rest - Api Untuk Portal Akademik Ukdw Berbasis Android,"Kristanto, H. (Harianto), Kurniawan, Y. K. (Yosef), Oslan, Y. (Yetli)",2017,,String B
+143146208,Simplifying the OpenFlexure microscope software with the web of things.,"Ayazi, Filip, Bowman, Richard W, Bumke, Kaspar E, Collins, Joel T, Knapper, Joe, McDermott, Samuel J, Stirling, Julian",2021,,String A
+144265370,"Designing, Implementing, and Deploying a Better Customer-oriented, Secure REST API for Invoicing Software",Miguel Rodrigues Gomes,2023,,String A
+146186703,Leveraging Large Language Models to Automatically Infer RESTful API Specifications,"DECROP, Alix",2023,,String A
+147642456,API Testing on Smart City Platform,"Kovalski, Martin",2023,,String A
+148775050,AI-driven web API testing,"Atlidakis V., Benac C., Canfora G., Chakrabarti S. K., Fertig T., H., Lamela P., Martin-Lopez A., Martin-Lopez A., Pinheiro P. V. P., Reza H., Segura S., Zhang M.",2021,ACM,String A
+149077581,Методи та засоби тестування захищеності REST API. Фазінг REST API,"Гах, Валерій Олександрович",2023,,String A
+149190100,Adaptive REST API Testing with Reinforcement Learning,"Kim, Myeongsoo, Orso, Alessandro, Sinha, Saurabh",2023,arXiv,String A
+149403993,API Server for BUT IS,"Mudrák, Ivan",2023,,String A
+149779355,A Lime-Flavored REST API for Alignment Services,"Armando Stellato, Manuel Fiorelli",2023,,String A
+150357043,DSL-driven Integration of OpenAPI based Web Services into DIME,"Steffen, Bruno",2023,,String A
+150890236,Automated Black-box Testing of Mass Assignment Vulnerabilities in RESTful APIs,"Davide Corradini, Mariano Ceccato, Michele Pasqua",2023,IEEE,String A
+152127785,FuzzTheREST - Intelligent Automated Blackbox RESTful API Fuzzer,"Dias, Tiago Fontes",2023,,String A
+152873361,Exploring Behaviours of RESTful APIs in an Industrial Setting,"Causevic, Adnan, Jongeling, Robbert, Karlsson, Stefan, Sundmark, Daniel",2024,arXiv,String A
+153739927,Microservice API Evolution in Practice: A Study on Strategies and   Challenges,"Glock, Johann, Lercher, Alexander, Macho, Christian, Pinzger, Martin",2024,arXiv,String A
+156879038,Инструменты разработки и тестирования веб-сервиса с интерфейсом REST API для расчета показателей газодинамики доменной плавки,"Гурин, И. А., Лавров, В. В., Спирин, Н. А., Уланов, И. С.",2024,,String A
+156879170,Разработка веб-сервиса для расчета проектных показателей теплового режима при изменении режимных и конструктивных параметров доменной печи,"Гурин, И. А., Лавров, В. В., Спирин, Н. А., Шамсимухаметов, П. Р.",2024,,String A
+157633917,You Can REST Now: Automated Specification Inference and Black-Box   Testing of RESTful APIs with Large Language Models,"Decrop, Alix, Devroey, Xavier, Papadakis, Mike, Perrouin, Gilles, Schobbens, Pierre-Yves",2024,arXiv,String A
+161305893,dtool and dserver: A flexible ecosystem for findable data,"Hartley, Matthew, Holey, Hannes, Hörmann, Johannes L., Olsson, Tjelvar S. G., Pastewka, Lars, Sanner, Antoine, Vazhappilly, Ashwin, Yanes, Luis",2024,,String A
+161779331,DeepREST: Automated Test Case Generation for REST APIs Exploiting Deep Reinforcement Learning,"Ceccato, Mariano, Corradini, Davide, Montolli, Zeno, Pasqua, Michele",2024,ACM,String A
+163759405,OAS DB: A Repository of Specifications to Support OpenAPI Research,"Chaim, Marcos Lordello, Cruzes, Daniela Soares, Oyetoyan, Tosin Daniel, Stoll, Alex Braha",2024,,String A
+164418596,Backend Infrastructure and Specifications Design Using OpenAPI and API-First on CV Elang Java Mandiri,"Anwar, Nizirwan, Ari Widatama, Yohanes Bagas, Ichwani, Arief, Widodo, Agung Mulyo",2024,,String A
+168494594,Adaptable Costs Evaluator,Tomáš Patro,2025,,String A
+169085924,Testing RESTful APIs: A Survey,"Arcuri, Andrea, Golmohammadi, Amid, Zhang, Man",2023,ACM,String A
+169296593,Building a prototype of web API honeypot for Electric Vehicle Charging Network operators,"Mammadov, Alakbar",2025,,String A
+170457222,Mining REST APIs for Potential Mass Assignment Vulnerabilities,"Corradini, Davide, Ghafari, Mohammad, Mazidi, Arash",2024,arXiv,String A
+172919760,Information System for Draw Competitions,Hlib Yarovyi,2025,,String A
+268329715,Leveraging Natural Language Processing and Data Mining to Augment and Validate APIs,"Decrop, Alix",2024,,String A
+268334771,A Public Benchmark of REST APIs,"Decrop, Alix, Devroey, Xavier, Eraso, Sara, Perrouin, Gilles",2025,,String A
+274074893,Fuzzing frameworks for server-side web applications:a survey,"Athanasopoulos, Elias, Dharmaadi, I. Putu Arya, Turkmen, Fatih",2025,,String A
+279676344,KAT: Dependency-aware Automated API Testing with Large Language Models,"Cao, Duy, Le, Tri, Le, Vy, Nguyen, Tien, Nguyen, Vu, Tran, Thien",2025,arXiv,String A
+290394930,Modernin REST API:n toteutus ja optimointi ASP.NET Corella,"Heikkilä, Joona",2025,,String A
+290399012,A comparative analysis of modern programming languages in REST API development,"Viitanen, Tuukka",2025,,String A
+290420428,Implementation of a mobile e-commerce platform for small business,"Volotovskaya, Kristina",2025,,String A
+290421019,Tunnistautumis- ja autorisointipalvelun toteuttaminen dokumenttien hallintasovellukselle,"Lammassaari, Tuomas",2025,,String A
+294342718,Stateful Security Testing of Web APIs,Gédsimon Soares Pereira,2025,,String A
+294350365,Security Testing of Web APIs,Gonçalo André Carneiro Teixeira,2025,,String A
+294904871,Generating Backend Applications with REST API in Haskell,Daniel Blažek,2025,,String A
+295908352,RESTgym: A Flexible Infrastructure for Empirical Assessment of Automated REST API Testing Tools,"Davide Corradini, Mariano Ceccato, Michele Pasqua",2025,,"String A, String B"
+299677946,Log-driven Testing of Microservice Systems with Transformers,"Raffaele Della Corte, Roberto Pietrantuono, Stefano Russo",2025,,String A
+300217997,JepREST 2.0 Testing REST Applications With Customized Semantics,"Riveiro, Rafael de Albuquerque",2025,,String A
+301764887,AI Assisted BIM Query System,"Perov, Ivan",2025,,String A

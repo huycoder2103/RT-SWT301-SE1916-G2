@@ -1,0 +1,60 @@
+/* =============================================================================
+   Base — fonts (latin + vietnamese subsets), design tokens, reset
+   "Study Academy" language: continuity with the deck (teal + same fonts),
+   warmer/gamified palette (indigo XP, amber practice, green/red feedback).
+   ========================================================================== */
+@font-face{font-family:"Space Grotesk";src:url("../assets/fonts/SpaceGrotesk-500.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Space Grotesk";src:url("../assets/fonts/SpaceGrotesk-700.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-600.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-700.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url("../assets/fonts/JetBrainsMono-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url("../assets/fonts/JetBrainsMono-600.woff2") format("woff2");font-weight:600;font-display:swap}
+/* Vietnamese subset — declared after latin so it wins for VN codepoints */
+@font-face{font-family:"Space Grotesk";src:url("../assets/fonts/SpaceGrotesk-500-vi.woff2") format("woff2");font-weight:500;font-display:swap;unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Space Grotesk";src:url("../assets/fonts/SpaceGrotesk-700-vi.woff2") format("woff2");font-weight:700;font-display:swap;unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-400-vi.woff2") format("woff2");font-weight:400;font-display:swap;unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-600-vi.woff2") format("woff2");font-weight:600;font-display:swap;unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"Inter";src:url("../assets/fonts/Inter-700-vi.woff2") format("woff2");font-weight:700;font-display:swap;unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"JetBrains Mono";src:url("../assets/fonts/JetBrainsMono-400-vi.woff2") format("woff2");font-weight:400;font-display:swap;unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:"JetBrains Mono";src:url("../assets/fonts/JetBrainsMono-600-vi.woff2") format("woff2");font-weight:600;font-display:swap;unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+1EA0-1EF9,U+20AB}
+
+:root{
+  --paper:#FBFAF7;--paper-2:#F4F2EC;--paper-3:#EBE8DF;--surface:#FFFFFF;
+  --ink:#181820;--ink-2:#42424E;--ink-3:#74747F;--line:#E2DED4;--line-2:#CFC9BB;
+  --teal:#0E8C84;--teal-deep:#0A655F;--teal-soft:#D6EEEC;
+  --indigo:#4F46E5;--indigo-soft:#E4E2FB;--indigo-deep:#3730A3;
+  --amber:#C2620C;--amber-soft:#FBEAD6;
+  --green:#15803D;--green-soft:#D6EFDD;--red:#C7332C;--red-soft:#F8DEDC;
+  --gold:#C99700;--gold-soft:#FBF0CE;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Space Grotesk","Inter",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r-xl:24px;--r-lg:18px;--r:13px;--r-sm:9px;--r-xs:6px;
+  --sh-1:0 1px 2px rgba(24,24,32,.05),0 2px 8px rgba(24,24,32,.05);
+  --sh-2:0 8px 24px rgba(24,24,32,.10),0 2px 6px rgba(24,24,32,.05);
+  --sh-pop:0 20px 56px rgba(24,24,32,.20);
+  --ease:cubic-bezier(.22,.61,.36,1);--spring:cubic-bezier(.34,1.56,.64,1);
+}
+:root[data-theme="dark"]{
+  --paper:#0E1014;--paper-2:#15181E;--paper-3:#1D212A;--surface:#171B22;
+  --ink:#ECEAE3;--ink-2:#B6B4AB;--ink-3:#82817A;--line:#282D36;--line-2:#3A404B;
+  --teal:#2DD4BF;--teal-deep:#5EEAD4;--teal-soft:#0E2E2B;
+  --indigo:#A5A0FB;--indigo-soft:#211E3C;--indigo-deep:#C7C3FF;
+  --amber:#F59E0B;--amber-soft:#39280C;
+  --green:#4ADE80;--green-soft:#11301B;--red:#F87171;--red-soft:#3A1715;
+  --gold:#FACC15;--gold-soft:#332A07;
+  --sh-1:0 1px 2px rgba(0,0,0,.4);--sh-2:0 10px 30px rgba(0,0,0,.5);--sh-pop:0 20px 56px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{height:100%}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;line-height:1.55}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.12;letter-spacing:-.01em}
+button{font-family:inherit}
+a{color:var(--teal);text-decoration:none}
+.mono{font-family:var(--mono);font-feature-settings:"tnum"}
+.muted{color:var(--ink-3)}
+::selection{background:color-mix(in srgb,var(--teal) 30%,transparent)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001s!important;transition-duration:.001s!important}}

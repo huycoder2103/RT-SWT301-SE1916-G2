@@ -1,0 +1,17 @@
+{
+  "llm": {
+    "killed": 1,
+    "total": 70,
+    "recall": 0.0143
+  },
+  "manual": {
+    "killed": 1,
+    "total": 70,
+    "recall": 0.0143
+  },
+  "evomaster": {
+    "killed": 12,
+    "total": 70,
+    "recall": 0.1714
+  }
+}

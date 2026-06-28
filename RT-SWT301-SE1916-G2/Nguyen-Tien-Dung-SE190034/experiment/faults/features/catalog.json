@@ -1,0 +1,161 @@
+{
+  "sut_jar": "features-service-sut.jar",
+  "total_candidates": 22,
+  "kept": 4,
+  "mutants": [
+    {
+      "id": "m001",
+      "file": "src/main/java/org/javiermf/features/models/Feature.java",
+      "line": 67,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m002",
+      "file": "src/main/java/org/javiermf/features/models/Feature.java",
+      "line": 80,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m003",
+      "file": "src/main/java/org/javiermf/features/models/Feature.java",
+      "line": 80,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m004",
+      "file": "src/main/java/org/javiermf/features/daos/ProductsDAO.java",
+      "line": 40,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m005",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConfigurationFeaturesResource.java",
+      "line": 37,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m006",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConfigurationFeaturesResource.java",
+      "line": 37,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m007",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConfigurationFeaturesResource.java",
+      "line": 37,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m008",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConfigurationFeaturesResource.java",
+      "line": 37,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m009",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConfigurationFeaturesResource.java",
+      "line": 37,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m010",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConfigurationResource.java",
+      "line": 42,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m011",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConfigurationResource.java",
+      "line": 42,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m012",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConfigurationResource.java",
+      "line": 42,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m013",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConstraintsResource.java",
+      "line": 27,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m014",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConstraintsResource.java",
+      "line": 27,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m015",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConstraintsResource.java",
+      "line": 27,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m016",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConstraintsResource.java",
+      "line": 38,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m017",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConstraintsResource.java",
+      "line": 38,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m018",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsConstraintsResource.java",
+      "line": 38,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m019",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsFeaturesResource.java",
+      "line": 33,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m020",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsFeaturesResource.java",
+      "line": 33,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m021",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsFeaturesResource.java",
+      "line": 33,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m022",
+      "file": "src/main/java/org/javiermf/features/services/rest/ProductsResource.java",
+      "line": 58,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    }
+  ]
+}

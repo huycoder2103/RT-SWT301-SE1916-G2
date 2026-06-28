@@ -1,0 +1,34 @@
+# Local preview tooling (machine-specific absolute paths)
+.claude/
+
+# React app build artifacts / deps (rebuildable: npm install && npm run build)
+presentation/app/node_modules/
+presentation/app/dist/
+presentation/app/.vite/
+
+# misc
+*.log
+.DS_Store
+
+# === RBL-2 / GAP-M experiment artifacts (large / rebuildable via experiment/scripts) ===
+experiment/harness/target/
+experiment/faults/**/*.jar
+experiment/results/raw/baseline/
+experiment/evomaster/raw/**/assets/
+experiment/evomaster/raw/**/*.html
+experiment/evomaster/raw/**/*.bat
+experiment/evomaster/raw/**/*.command
+experiment/evomaster/raw/**/webreport.py
+experiment/evomaster/raw/**/robots.txt
+em.yaml
+
+# scratch (PDF render + Drive fetch during this session)
+_pdf_pages/
+_drive_tmp/
+
+# outcome error-profile capture build log
+experiment/results/raw/capture_mvn.log
+
+# Large external benchmark data + archives (not source deliverables, rebuildable/external)
+experiment/EMB/
+*.rar

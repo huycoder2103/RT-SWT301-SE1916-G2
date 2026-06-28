@@ -1,0 +1,139 @@
+{
+  "papers": [
+    {
+      "label": "#1 RESTGPT",
+      "sub": "ICSE-NIER 2024 · arXiv:2312.00894",
+      "type": "pdf",
+      "path": "papers/01_RESTGPT_2312.00894.pdf",
+      "arxiv": "2312.00894"
+    },
+    {
+      "label": "#2 KAT",
+      "sub": "ICST 2024 · arXiv:2407.10227",
+      "type": "pdf",
+      "path": "papers/02_KAT_2407.10227.pdf",
+      "arxiv": "2407.10227"
+    },
+    {
+      "label": "#3 RESTSpecIT",
+      "sub": "arXiv 2024 · arXiv:2402.05102",
+      "type": "pdf",
+      "path": "papers/03_RESTSpecIT_2402.05102.pdf",
+      "arxiv": "2402.05102"
+    },
+    {
+      "label": "#4 APITestGenie",
+      "sub": "AST 2026 · arXiv:2409.03838",
+      "type": "pdf",
+      "path": "papers/04_APITestGenie_2409.03838.pdf",
+      "arxiv": "2409.03838"
+    },
+    {
+      "label": "#5 RestTSLLM",
+      "sub": "SBES 2025 · arXiv:2509.05540",
+      "type": "pdf",
+      "path": "papers/05_RestTSLLM_2509.05540.pdf",
+      "arxiv": "2509.05540"
+    },
+    {
+      "label": "#6 AutoRestTest",
+      "sub": "ICSE 2025 · arXiv:2411.07098",
+      "type": "pdf",
+      "path": "papers/06_AutoRestTest_2411.07098.pdf",
+      "arxiv": "2411.07098"
+    },
+    {
+      "label": "#7 LlamaRestTest",
+      "sub": "FSE 2025 · arXiv:2501.08598",
+      "type": "pdf",
+      "path": "papers/07_LlamaRestTest_2501.08598.pdf",
+      "arxiv": "2501.08598"
+    },
+    {
+      "label": "#8 LogiAgent",
+      "sub": "arXiv 2025 · arXiv:2503.15079",
+      "type": "pdf",
+      "path": "papers/08_LogiAgent_2503.15079.pdf",
+      "arxiv": "2503.15079"
+    },
+    {
+      "label": "#9 RESTifAI",
+      "sub": "ICSE 2026 Demo · arXiv:2512.08706",
+      "type": "pdf",
+      "path": "papers/09_RESTifAI_2512.08706.pdf",
+      "arxiv": "2512.08706"
+    },
+    {
+      "label": "#10 EvoMaster",
+      "sub": "ACM TOSEM 2019 · arXiv:1901.01538",
+      "type": "pdf",
+      "path": "papers/10_EvoMaster_1901.01538.pdf",
+      "arxiv": "1901.01538"
+    },
+    {
+      "label": "#11 NoTimeToRest",
+      "sub": "ISSTA 2022 · arXiv:2204.08348",
+      "type": "pdf",
+      "path": "papers/11_NoTimeToRest_2204.08348.pdf",
+      "arxiv": "2204.08348"
+    },
+    {
+      "label": "#12 Morest",
+      "sub": "ICSE 2022 · arXiv:2204.12148",
+      "type": "pdf",
+      "path": "papers/12_Morest_2204.12148.pdf",
+      "arxiv": "2204.12148"
+    },
+    {
+      "label": "#13 DeepREST",
+      "sub": "ASE 2024 · arXiv:2408.08594",
+      "type": "pdf",
+      "path": "papers/13_DeepREST_2408.08594.pdf",
+      "arxiv": "2408.08594"
+    }
+  ],
+  "slr": [
+    {
+      "label": "Evidence Table (13 papers)",
+      "type": "md",
+      "path": "docs/evidence-table.md"
+    },
+    {
+      "label": "Gap Statement",
+      "type": "md",
+      "path": "docs/gap-statement.md"
+    },
+    {
+      "label": "PRISMA Flow",
+      "type": "md",
+      "path": "docs/prisma-flow.md"
+    },
+    {
+      "label": "Inclusion/Exclusion Criteria",
+      "type": "md",
+      "path": "docs/ie_criteria.md"
+    },
+    {
+      "label": "Quality Assessment",
+      "type": "md",
+      "path": "docs/quality-assessment.md"
+    },
+    {
+      "label": "Search Log",
+      "type": "md",
+      "path": "docs/search-log.md"
+    }
+  ],
+  "experiment": [
+    {
+      "label": "Research Questions (PICO + RQ)",
+      "type": "md",
+      "path": "docs/01_rq.md"
+    },
+    {
+      "label": "Hypotheses (H0/H1 + tests)",
+      "type": "md",
+      "path": "docs/hypotheses.md"
+    }
+  ]
+}

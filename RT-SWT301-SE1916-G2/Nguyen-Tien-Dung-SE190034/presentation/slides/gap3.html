@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GAP 3 — Khoảng trống Metric · Tính khả thi &amp; Thiết kế thí nghiệm · SWT301 SE1916</title>
+<link rel="stylesheet" href="css/deck.css?v=5">
+<style>
+  /* Gap-3 deck — small additions on top of the shared design system (deck.css) */
+  .slide .fill{width:0;transition:width .95s cubic-bezier(.22,.61,.36,1) .15s}
+  .slide.active .fill{width:var(--w,0)}
+  .taxo{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s4)}
+  .taxo .g{position:relative;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper-2);
+    padding:16px 16px 18px;box-shadow:var(--shadow-1);opacity:.62;transition:opacity .3s,transform .3s,box-shadow .3s}
+  .taxo .g .code{font-family:var(--mono);font-weight:600;font-size:24px}
+  .taxo .g.pick{opacity:1;border-color:var(--teal);background:var(--teal-soft);transform:translateY(-4px);box-shadow:var(--shadow-2,0 10px 24px rgba(0,0,0,.10))}
+  .taxo .g .diff{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);margin-top:6px}
+  .flow{display:flex;align-items:stretch;gap:8px}
+  .flow .step{flex:1;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper-2);
+    padding:12px 10px;text-align:center;font-size:14px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+  .flow .step.hot{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .flow .step .s{font-family:var(--mono);font-size:11px;opacity:.8}
+  .flow .ar{align-self:center;color:var(--teal);font-size:20px;flex:none}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div id="controls">
+  <button id="c-prev" title="Trước (←)">‹</button>
+  <button id="c-next" title="Sau (→)">›</button>
+  <button id="c-grid" title="Tổng quan (O)">▦</button>
+  <button id="c-notes" title="Speaker notes (S)">≡</button>
+  <button id="c-theme" title="Sáng/Tối (T)">◐</button>
+  <button id="c-help" title="Phím tắt (?)">?</button>
+</div>
+
+<div id="stage">
+
+<!-- ===================== 1 · COVER ===================== -->
+<section class="slide cover active" data-title="Trang bìa">
+  <div class="badge">● SWT301 · SU26 · GROUP 2 · TOPIC SE1916 · RBL-2/3</div>
+  <h1>GAP 3 — <span class="hl">Khoảng trống Metric</span><br>Tính khả thi &amp; Cách thực nghiệm</h1>
+  <p class="lead">Trong 4 loại khoảng trống (GAP-T/D/<strong>M</strong>/S) rút ra từ một SLR trên <strong>13 nghiên cứu</strong> (mở rộng 59 ở cấp nhóm), <strong>GAP-M</strong> — đo lường — là khoảng trống chính được chốt để thực nghiệm: <em>chưa ai đo "edge-case / error-code per endpoint" và "endpoint-type miss"</em>.</p>
+  <div class="meta">
+    <div><div class="k">Thành viên</div><div class="val">Nguyễn Tiến Dũng — SE190034</div></div>
+    <div><div class="k">Khoảng trống</div><div class="val">GAP-M (Metric) · ưu tiên T &gt; M &gt; D &gt; S</div></div>
+    <div><div class="k">Nền tảng</div><div class="val">13 paper 2019–2026 · mọi số có trích dẫn</div></div>
+    <div><div class="k">Trạng thái</div><div class="val">Pilot đã chạy thật · feasibility ✅</div></div>
+  </div>
+  <div class="snote">
+    <p><b>Mở đầu (30s):</b> Kính chào hội đồng. Em trình bày riêng về <b>Gap 3 — khoảng trống Metric (GAP-M)</b> trong topic nhóm "LLM sinh test REST API".</p>
+    <p>Ba câu hỏi của bài: <b>(1)</b> Gap 3 là gì và vì sao nó là khoảng trống thật? <b>(2)</b> Làm nó có khả thi không? <b>(3)</b> Thực nghiệm nó ra sao? Mọi con số đều truy vết được về evidence table.</p>
+    <p><i>Điều khiển: → sang bước/slide · S notes · O tổng quan · T sáng/tối · F toàn màn hình · ? phím tắt.</i></p>
+  </div>
+</section>
+
+<!-- ===================== 2 · ROADMAP ===================== -->
+<section class="slide" data-title="Bản đồ">
+  <div class="kicker">Roadmap</div>
+  <h1 class="title">Bài đi theo đúng 3 câu hỏi</h1>
+  <div class="body">
+    <p class="lead">Từ <span class="em">bằng chứng</span> → <span class="em">khoảng trống</span> → <span class="em">khả thi</span> → <span class="em">thiết kế</span> → <span class="em">pilot thật</span> → <span class="em">mở rộng</span>. Không bước nào "tự nghĩ ra".</p>
+    <div class="cards c3">
+      <div class="card accent"><div class="tag">Phần 1</div><h3>GAP-M là gì</h3><div class="muted" style="font-size:14px">Bối cảnh từ 13 paper → 4 loại gap → định nghĩa GAP-M → phản chứng từng paper → vì sao quan trọng</div></div>
+      <div class="card accent"><div class="tag">Phần 2</div><h3>Tính khả thi</h3><div class="muted" style="font-size:14px">Bảng 7 tiêu chí feasibility (đều ✅) → metric đề xuất + công cụ cụ thể</div></div>
+      <div class="card accent"><div class="tag">Phần 3</div><h3>Cách thực nghiệm</h3><div class="muted" style="font-size:14px">3 API EMB · 3 arm · pipeline · RQ + H0/H1 + test · pilot · threats · mở rộng</div></div>
+    </div>
+    <div class="why"><div class="ic">!</div><div class="tx"><b>Điểm tựa:</b> phần Pilot không phải mô phỏng — em đã <b>build + chạy thật</b> trên 3 API, nên phần "khả thi" có bằng chứng thực thi, không phải hứa hẹn.</div></div>
+  </div>
+  <div class="snote"><p>Nói: "Bài có 3 phần đúng 3 câu hội đồng quan tâm. Điểm mạnh: phần khả thi được chứng minh bằng một pilot đã chạy thật, số liệu nằm trong repo."</p></div>
+</section>
+
+<!-- ===================== 3 · DIVIDER P1 ===================== -->
+<section class="slide divider" data-title="Phần 1 — GAP-M là gì">
+  <div class="kicker">Phần 1 / 3</div>
+  <div class="pnum">01</div>
+  <h1 class="title">GAP-M là gì</h1>
+  <p class="lead">Bối cảnh · 4 loại khoảng trống · định nghĩa chính xác · phản chứng · động cơ</p>
+  <div class="snote"><p>Phần 1 trả lời: trong bức tranh nghiên cứu hiện tại, đo lường đang thiếu cái gì, và làm sao biết chắc nó thiếu (phản chứng từng paper).</p></div>
+</section>
+
+<!-- ===================== 4 · CONTEXT ===================== -->
+<section class="slide" data-title="Bối cảnh nghiên cứu">
+  <div class="kicker">Nền tảng · từ 13 paper</div>
+  <h1 class="title">LLM sinh test REST API: mạnh, nhưng đo lệch</h1>
+  <div class="body">
+    <div class="split w-46">
+      <ul class="clean">
+        <li class="frag"><strong>LLM (đa số GPT)</strong> đọc OpenAPI spec → sinh test. Kết quả mạnh: RESTGPT <span class="num">97%</span> rule precision; AutoRestTest <span class="num">42</span> lỗi 500 vs EvoMaster 20; LlamaRestTest <span class="num">204</span> faults vs 130.</li>
+        <li class="frag">Coverage có thể rất cao ở mức <em>operation</em>: RESTifAI <span class="num">128/134 ≈ 95.5%</span>.</li>
+        <li class="frag">Nhưng <span class="em-red">thước đo bị lệch</span>: gần như chỉ có <strong>code/operation coverage</strong> + <strong>đếm lỗi 500</strong> trên API sống.</li>
+        <li class="frag">Chỉ <strong>KAT</strong> tách 2xx/4xx; chỉ <strong>RESTSpecIT</strong> báo 5xx. Không ai đo sâu hơn theo từng endpoint.</li>
+      </ul>
+      <div class="frag">
+        <div class="stats" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="v">9/13</div><div class="l">paper dùng LLM (GPT chiếm đa số)</div></div>
+          <div class="stat"><div class="v amber">11/13</div><div class="l">đọc trực tiếp OpenAPI spec</div></div>
+          <div class="stat"><div class="v red">1/13</div><div class="l">tách 2xx/4xx (chỉ KAT)</div></div>
+          <div class="stat"><div class="v violet">0/13</div><div class="l">đo edge-case / endpoint</div></div>
+        </div>
+        <div class="evidence" style="margin-top:14px">
+          <q>Coverage + đếm 500-error thống trị; chất lượng edge-case / error-code per endpoint chưa ai đo.</q>
+          <span class="src">gap-statement.md · §D · evidence-table N=13</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>Ý chính: LLM <b>làm tốt</b> nhưng cộng đồng <b>đo chưa đủ</b> — đó là tiền đề cho GAP-M. Nhấn: "0/13 đo edge-case theo endpoint" là con số sẽ chứng minh ở slide phản chứng.</p></div>
+</section>
+
+<!-- ===================== 5 · 4 GAP TAXONOMY ===================== -->
+<section class="slide" data-title="4 loại khoảng trống">
+  <div class="kicker">Phân loại · RBL-2 Bước 2A</div>
+  <h1 class="title">Bốn loại GAP — vì sao chọn GAP-M</h1>
+  <div class="body">
+    <div class="taxo">
+      <div class="g frag"><div class="code" style="color:var(--violet)">GAP-T</div><h3 style="font-size:16px;margin:4px 0">Tool</h3><div class="muted" style="font-size:13px">Công nghệ/LLM nào chưa thử (Gemini, open-source)</div><div class="diff">Khó: Trung bình · cần API+chi phí</div></div>
+      <div class="g pick frag"><div class="code" style="color:var(--teal-deep)">GAP-M</div><h3 style="font-size:16px;margin:4px 0">Metric ✓ chọn</h3><div style="font-size:13px">Khía cạnh nào chưa đo (edge-case/endpoint)</div><div class="diff" style="color:var(--teal-deep)">Khó: Thấp–TB · có thư viện</div></div>
+      <div class="g frag"><div class="code" style="color:var(--amber)">GAP-D</div><h3 style="font-size:16px;margin:4px 0">Dataset</h3><div class="muted" style="font-size:13px">Thiếu ground-truth (lỗi gieo sẵn → Recall)</div><div class="diff">Khó: Cao · gom+gán nhãn</div></div>
+      <div class="g frag"><div class="code" style="color:var(--ink-2)">GAP-S</div><h3 style="font-size:16px;margin:4px 0">Shortcoming</h3><div class="muted" style="font-size:13px">Hạn chế nhiều paper cùng thừa nhận</div><div class="diff">Khó: Thấp · chủ yếu tăng N</div></div>
+    </div>
+    <div class="why frag"><div class="ic">✓</div><div class="tx"><b>Ưu tiên T &gt; M &gt; D &gt; S</b> (RBL-2). GAP-T cần key+chi phí; GAP-D phải xây benchmark lỗi-gieo (tốn). <b>GAP-M là rủi-ro-thấp-nhất, làm-được-ngay</b> — "implement một metric, thường đã có thư viện" — nên đây là khoảng trống <span class="em">chốt cho thực nghiệm cá nhân</span>.</div></div>
+  </div>
+  <div class="snote"><p>Nói: "Em không chọn gap dễ một cách tùy tiện — em chọn theo <b>feasibility</b>. GAP-M có độ khó Thấp–Trung bình, không cần dataset mới hay API trả phí, nên khả thi nhất trong thời gian môn học." (GAP-D fault-detection vẫn nằm trong proposal NHÓM như RQ2 — phần này tập trung GAP-M cấp cá nhân.)</p></div>
+</section>
+
+<!-- ===================== 6 · GAP-M DEFINITION ===================== -->
+<section class="slide" data-title="Định nghĩa GAP-M">
+  <div class="kicker">Định nghĩa chính xác</div>
+  <h1 class="title">GAP-M = hai thước đo chưa ai làm</h1>
+  <div class="body">
+    <div class="cards c2">
+      <div class="card accent"><div class="tag">Metric 1 · chính</div><h3>Edge-case / error-code scenario count <em>per endpoint</em></h3><div style="font-size:14px;color:var(--ink-2)">Đếm số kịch bản <strong>negative + boundary + error-code</strong> (4xx/5xx) phân biệt <em>cho từng endpoint</em> — sinh ra bằng cách cố tình vi phạm ràng buộc OpenAPI.</div></div>
+      <div class="card accent"><div class="tag">Metric 2 · phụ</div><h3>Endpoint-type miss profile</h3><div style="font-size:14px;color:var(--ink-2)">Phân rã coverage theo <strong>loại endpoint</strong> — CRUD / validation / error-handling — để chỉ ra <em>loại nào hay bị bỏ sót</em>, thay vì chỉ một con số tổng.</div></div>
+    </div>
+    <div class="why frag"><div class="ic">i</div><div class="tx"><b>Khác biệt cốt lõi:</b> coverage tổng nói "đã chạm bao nhiêu endpoint"; GAP-M nói <b>"tại mỗi endpoint, test có đào đủ các tình huống lỗi/biên không"</b> và <b>"loại endpoint nào yếu"</b> — thông tin <span class="em">hành động được</span> mà coverage tổng giấu đi.</div></div>
+    <div class="evidence frag"><q>none measures a per-endpoint edge-case scenario count, nor a per-endpoint-type miss profile.</q><span class="src">gap-analysis.md · GAP Chính (Metric)</span></div>
+  </div>
+  <div class="snote"><p>Nói chậm phần này — đây là <b>đóng góp</b>. Nhấn: coverage 95% vẫn có thể bỏ sót toàn bộ nhánh 4xx của một endpoint; GAP-M phát hiện đúng chỗ đó.</p></div>
+</section>
+
+<!-- ===================== 7 · COUNTER-CHECK ===================== -->
+<section class="slide" data-title="Phản chứng 13 paper">
+  <div class="kicker">Phản chứng · RBL-2 Bước 2B (bắt buộc)</div>
+  <h1 class="title">Quét 13 paper — không ai đo GAP-M</h1>
+  <div class="body">
+    <table class="grid dense">
+      <thead><tr><th>#</th><th>Paper</th><th>Metric đã báo</th><th>Edge-case /endpoint?</th><th>Type-miss?</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>RESTGPT</td><td>rule P/R/F1, valid input</td><td class="no">✗</td><td class="no">✗</td></tr>
+        <tr><td class="num">2</td><td>KAT</td><td>status-code cov (2xx/4xx)</td><td class="no">✗</td><td class="no">✗</td></tr>
+        <tr><td class="num">3</td><td>RESTSpecIT</td><td>route disc., 5xx (tổng)</td><td class="no">✗</td><td class="no">✗</td></tr>
+        <tr><td class="num">6</td><td>AutoRestTest</td><td>code cov, 500-errors</td><td class="no">✗</td><td class="no">✗</td></tr>
+        <tr><td class="num">8</td><td>LogiAgent</td><td>coverage, 5xx crashes</td><td class="no">✗</td><td class="no">✗</td></tr>
+        <tr><td class="num">9</td><td>RESTifAI</td><td>operation coverage 128/134</td><td class="no">✗</td><td class="no">✗</td></tr>
+        <tr><td class="num">10</td><td>EvoMaster</td><td>statement cov, bugs</td><td class="no">✗</td><td class="no">✗</td></tr>
+        <tr class="rowhl"><td class="num">—</td><td><strong>13/13 còn lại</strong></td><td>coverage + đếm lỗi (tổng)</td><td class="no">✗</td><td class="no">✗</td></tr>
+      </tbody>
+    </table>
+    <div class="why frag"><div class="ic">0</div><div class="tx"><b>Kết quả phản chứng: 0/13.</b> Không paper nào đo metric per-endpoint hay type-miss → GAP-M <span class="em">được xác nhận là khoảng trống thật</span>, không phải "em thấy thiếu".</div></div>
+  </div>
+  <div class="snote"><p>Đây là slide chống bắt bẻ: "Em không tuyên bố suông. Em quét <b>từng</b> paper, cột metric. Tất cả đều ✗ ở hai cột cuối." Nếu hội đồng hỏi paper X → mở evidence-table.md.</p></div>
+</section>
+
+<!-- ===================== 8 · MOTIVATION ===================== -->
+<section class="slide" data-title="Vì sao quan trọng">
+  <div class="kicker">Động cơ</div>
+  <h1 class="title">Vì sao khoảng trống này đáng lấp</h1>
+  <div class="body">
+    <div class="split w-46">
+      <ul class="clean">
+        <li class="frag"><strong>Spec ≠ implementation.</strong> springfox chỉ ghi 200/401/403/404, nhưng code thật trả <span class="num">400</span> ở biên (vd <code style="font-family:var(--mono);font-size:13px">n≤2</code>, <code style="font-family:var(--mono);font-size:13px">|x|&gt;10000</code>). Test mù-spec dễ bỏ sót nhánh lỗi.</li>
+        <li class="frag"><strong>Coverage tổng che giấu.</strong> 95% operation coverage vẫn có thể 0% kịch bản 4xx ở nhiều endpoint.</li>
+        <li class="frag"><strong>Đội QA chọn công cụ "theo niềm tin".</strong> Không có metric per-endpoint → không biết LLM mạnh/yếu ở loại endpoint nào.</li>
+      </ul>
+      <div class="frag">
+        <div class="card gap"><div class="tag">Hậu quả thực tế</div><h3 style="font-size:16px">Nếu không lấp</h3><div style="font-size:14px">Báo cáo "đã test 95%" nhưng <span class="em-red">nhánh lỗi/biên bị bỏ trống</span> — đúng chỗ bug ẩn nấp. GAP-M biến "cảm tính" thành <span class="em">số đo hành động được</span>.</div></div>
+        <div class="evidence" style="margin-top:14px"><q>RQ3 measures whether LLM tests produce more error-code/boundary scenarios per endpoint than manual design.</q><span class="src">01_rq.md · RQ3 → GAP-M</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>Liên hệ thực tế: "Một con số coverage đẹp có thể che mất việc test không hề chạm nhánh lỗi. GAP-M là cái đèn pin soi vào đúng chỗ đó."</p></div>
+</section>
+
+<!-- ===================== 9 · DIVIDER P2 ===================== -->
+<section class="slide divider" data-title="Phần 2 — Tính khả thi">
+  <div class="kicker">Phần 2 / 3</div>
+  <div class="pnum">02</div>
+  <h1 class="title">Tính khả thi</h1>
+  <p class="lead">7 tiêu chí feasibility · metric đề xuất · công cụ cụ thể, tái lập được</p>
+  <div class="snote"><p>Phần 2: chứng minh GAP-M làm được trong điều kiện môn học — và đã được chứng minh bằng pilot chạy thật.</p></div>
+</section>
+
+<!-- ===================== 10 · FEASIBILITY ===================== -->
+<section class="slide" data-title="Bảng feasibility">
+  <div class="kicker">Feasibility check · RBL-2 Bước 2C</div>
+  <h1 class="title">7 tiêu chí — tất cả ✅ (đã chạy thật)</h1>
+  <div class="body">
+    <div class="split w-46">
+      <table class="grid dense">
+        <thead><tr><th>Tiêu chí</th><th>Mức</th><th>Bằng chứng</th></tr></thead>
+        <tbody>
+          <tr><td>Dataset</td><td class="yes">✅</td><td>EMB public · đã clone + deploy 3 API</td></tr>
+          <tr><td>Tool/API</td><td class="yes">✅</td><td>Claude (pilot) / GPT-4o (kế hoạch) · không cần key trả phí cho pilot</td></tr>
+          <tr><td>Compute</td><td class="yes">✅</td><td>CPU local · JDK 8/17 + Maven</td></tr>
+          <tr><td>Ground truth</td><td class="yes">✅</td><td>Không cần annotate — đếm từ tag máy-đọc</td></tr>
+          <tr><td>Skills</td><td class="yes">✅</td><td>Đã code: harness RestAssured + parser + scipy</td></tr>
+          <tr><td>Thời gian</td><td class="yes">✅</td><td>Pilot xong trong phiên thiết kế</td></tr>
+          <tr><td>Contribution</td><td class="yes">✅</td><td>Metric per-endpoint đầu tiên cho lĩnh vực</td></tr>
+        </tbody>
+      </table>
+      <div>
+        <div class="why frag"><div class="ic">7</div><div class="tx"><b>7 ✅ / 0 ⚠️ / 0 ❌ → An toàn.</b> GAP-M chốt làm primary, không cần downscope.</div></div>
+        <div class="card accent frag" style="margin-top:14px"><div class="tag">Vì sao khả thi nhất</div><h3 style="font-size:16px">Bottleneck = "implement metric"</h3><div style="font-size:14px;color:var(--ink-2)">Khác GAP-D (xây dataset lỗi-gieo) hay GAP-T (fine-tune/chi phí API), GAP-M chỉ cần <span class="em">một hàm đếm</span> trên output có sẵn — thường đã có thư viện.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>Nhấn: cột "Bằng chứng" không phải dự đoán — mỗi dòng đã xảy ra trong pilot. Đây là lý do feasibility của bài này khó bắt bẻ.</p></div>
+</section>
+
+<!-- ===================== 11 · PROPOSED METRIC + TOOLING ===================== -->
+<section class="slide" data-title="Metric + công cụ">
+  <div class="kicker">Đề xuất metric · RBL-2 Bước 3E</div>
+  <h1 class="title">Metric &amp; công cụ — tái lập được</h1>
+  <div class="body">
+    <div class="cards c3">
+      <div class="card accent"><div class="tag">Đo gì</div><h3>Edge-case / endpoint</h3><div style="font-size:13.5px;color:var(--ink-2)">Đếm tag <code style="font-family:var(--mono);font-size:12px">// SCENARIO type=negative|boundary|errorcode</code> trên mỗi operation.</div></div>
+      <div class="card accent"><div class="tag">Đo gì</div><h3>Coverage % + type</h3><div style="font-size:13.5px;color:var(--ink-2)">operation chạm/total từ spec; phân rã theo CRUD/validation/error-handling.</div></div>
+      <div class="card accent"><div class="tag">Công cụ</div><h3>Stack pin chặt</h3><div style="font-size:13.5px;color:var(--ink-2)">RestAssured 5.4 + JUnit 5.10 · parser tag (deterministic) · scipy 1.17 cho test.</div></div>
+    </div>
+    <div class="frag">
+      <div class="evidence">
+        <div class="tag" style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-bottom:8px">CÁCH ĐO — tag máy-đọc gắn vào mỗi test (trích harness)</div>
+        <code style="font-family:var(--mono);font-size:13px;display:block;white-space:pre;color:var(--ink)">// SCENARIO op=bessjUsingGET type=boundary   expect=200|400
+// SCENARIO op=bessjUsingGET type=errorcode  expect=4xx
+@Test void bessjUsingGET_B_negativeN() { given().get("/api/bessj/-1/1.0")
+     .then().statusCode(anyOf(is(200),is(400),is(422),is(500))); }</code>
+      </div>
+    </div>
+    <div class="why frag"><div class="ic">↺</div><div class="tx"><b>Tái lập:</b> metric = đếm tag → <span class="em">deterministic</span>, không cần người chấm; ai chạy lại cũng ra cùng số. Đúng tiêu chuẩn reproducibility của RBL.</div></div>
+  </div>
+  <div class="snote"><p>Nói: "Metric phải tái lập được mới hợp lệ. Em không chấm tay — mỗi test mang một tag máy-đọc, một script đếm ra con số. Chạy lại bao nhiêu lần cũng vậy."</p></div>
+</section>
+
+<!-- ===================== 12 · DIVIDER P3 ===================== -->
+<section class="slide divider" data-title="Phần 3 — Thực nghiệm">
+  <div class="kicker">Phần 3 / 3</div>
+  <div class="pnum">03</div>
+  <h1 class="title">Cách thực nghiệm GAP-M</h1>
+  <p class="lead">3 API · 3 arm · pipeline · RQ + H0/H1 + kiểm định · pilot thật · threats · mở rộng</p>
+  <div class="snote"><p>Phần 3: thiết kế thí nghiệm và kết quả pilot đã chạy.</p></div>
+</section>
+
+<!-- ===================== 13 · DESIGN: SUTs + ARMS + PIPELINE ===================== -->
+<section class="slide" data-title="Thiết kế thí nghiệm">
+  <div class="kicker">Thiết kế · design-rationale.md</div>
+  <h1 class="title">3 API · 3 arm · 1 pipeline</h1>
+  <div class="body">
+    <div class="cards c3" style="margin-bottom:4px">
+      <div class="card"><div class="tag">Population</div><h3 style="font-size:15px">3 API EMB</h3><div class="muted" style="font-size:13px">rest-ncs (6) · rest-scs (11) · features-service (18) = <span class="num">35 ops</span></div></div>
+      <div class="card"><div class="tag">Intervention</div><h3 style="font-size:15px">LLM</h3><div class="muted" style="font-size:13px">Claude Sonnet 4.6 (pilot) → GPT-4o (full), few-shot từ spec, <span class="em">blind</span></div></div>
+      <div class="card"><div class="tag">Comparison</div><h3 style="font-size:15px">Manual + EvoMaster</h3><div class="muted" style="font-size:13px">Manual EP/BVA (blind) · EvoMaster 6.0.0 black-box</div></div>
+    </div>
+    <div class="flow frag">
+      <div class="step"><div class="s">input</div>OpenAPI spec</div><div class="ar">→</div>
+      <div class="step hot"><div class="s">I</div>LLM few-shot</div><div class="ar">→</div>
+      <div class="step"><div class="s">output</div>RestAssured tests</div><div class="ar">→</div>
+      <div class="step"><div class="s">run</div>vs original</div><div class="ar">→</div>
+      <div class="step"><div class="s">measure</div>coverage · edge-case</div>
+    </div>
+    <div class="why frag"><div class="ic">⊘</div><div class="tx"><b>Blind protocol:</b> cả 3 arm sinh test <b>trước</b> khi biết lỗi; LLM/Manual chỉ thấy spec (không thấy source) → chống cáo buộc "nhìn trộm đáp án". Base paper pipeline: APITestGenie (#4).</div></div>
+  </div>
+  <div class="snote"><p>Nói: "P-I-C-O rõ ràng. 3 API thật của benchmark EMB, 3 arm cùng một harness black-box để so công bằng. Pipeline 5 bước, ai cũng chạy lại được."</p></div>
+</section>
+
+<!-- ===================== 14 · RQ + H0/H1 + TEST ===================== -->
+<section class="slide" data-title="RQ + giả thuyết">
+  <div class="kicker">Câu hỏi &amp; giả thuyết · hypotheses-draft.md</div>
+  <h1 class="title">RQ → H0/H1 → ngưỡng (Case) → kiểm định</h1>
+  <div class="body">
+    <div class="cards c2">
+      <div class="card accent frag"><div class="tag">RQ-sub · absolute</div><h3 style="font-size:16px">Coverage ≥ 90%</h3>
+        <div style="font-size:13.5px;color:var(--ink-2)"><b>H0:</b> cov ≤ 90% · <b>H1:</b> cov &gt; 90%<br>
+        <b>Ngưỡng:</b> 90% — <span class="em">Case 2</span> (floor 88.6% RESTSpecIT #3, trần 95.5% RESTifAI #9)<br>
+        <b>Test:</b> one-sample Wilcoxon / Binomial exact</div></div>
+      <div class="card accent frag"><div class="tag">RQ-main · comparative</div><h3 style="font-size:16px">Edge-case: LLM vs Manual</h3>
+        <div style="font-size:13.5px;color:var(--ink-2)"><b>H0:</b> median LLM ≤ Manual · <b>H1:</b> LLM &gt; Manual<br>
+        <b>Ngưỡng:</b> so sánh — <span class="em">Case 3</span> (chưa paper nào đo → pilot lập)<br>
+        <b>Test:</b> paired Wilcoxon signed-rank · effect size rank-biserial</div></div>
+    </div>
+    <div class="why frag"><div class="ic">α</div><div class="tx"><b>α = 0.05</b> · No-HARKing: RQ/metric/ngưỡng <b>chốt trước</b> khi chạy, không đổi sau khi có data. Mỗi ngưỡng đều trỏ nguồn (Case 1/2/3) — không "tự đặt".</div></div>
+  </div>
+  <div class="snote"><p>Nhấn tính chính trực: ngưỡng 90% không phải tự nghĩ — nó là Case 2, lấy từ khoảng kết quả thật trong evidence. Test khớp loại dữ liệu (đếm/tỉ lệ → Wilcoxon/Binomial).</p></div>
+</section>
+
+<!-- ===================== 15 · PILOT RESULTS ===================== -->
+<section class="slide" data-title="Kết quả pilot">
+  <div class="kicker">Pilot Tuần-7 · đã chạy thật</div>
+  <h1 class="title">Pilot: GAP-M đo được &amp; phân biệt được</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <div style="font-size:13px;font-family:var(--mono);color:var(--ink-3);margin-bottom:8px">RQ-sub · ENDPOINT COVERAGE (LLM)</div>
+        <div class="bar"><div class="lab">rest-ncs</div><div class="track"><div class="fill" style="--w:100%"></div></div><div class="val num">6/6</div></div>
+        <div class="bar"><div class="lab">rest-scs</div><div class="track"><div class="fill" style="--w:100%"></div></div><div class="val num">11/11</div></div>
+        <div class="bar"><div class="lab">features-service</div><div class="track"><div class="fill" style="--w:100%"></div></div><div class="val num">18/18</div></div>
+        <div class="bar" style="margin-top:6px"><div class="lab"><b>Tổng</b></div><div class="track"><div class="fill" style="--w:100%"></div></div><div class="val num">100%</div></div>
+        <div class="evidence" style="margin-top:12px"><q>35/35 ops · Wilcoxon p ≈ 1.6e-9 → reject H0 (&gt; 90%).</q><span class="src">results/stats/summary.json</span></div>
+      </div>
+      <div class="frag">
+        <div style="font-size:13px;font-family:var(--mono);color:var(--ink-3);margin-bottom:8px">RQ-main · EDGE-CASE / ENDPOINT</div>
+        <div class="bar"><div class="lab">LLM</div><div class="track"><div class="fill" style="--w:100%"></div></div><div class="val num">217</div></div>
+        <div class="bar"><div class="lab">Manual</div><div class="track"><div class="fill amber" style="--w:65%"></div></div><div class="val num">141</div></div>
+        <div class="twocol" style="margin-top:10px;font-size:13px">
+          <div>ncs <span class="num">69 vs 46</span></div><div>scs <span class="num">68 vs 59</span></div>
+          <div>features <span class="num">80 vs 36</span></div><div>median <span class="num">5 vs 4</span></div>
+        </div>
+        <div class="why" style="margin-top:12px"><div class="ic">✓</div><div class="tx">30/35 endpoint LLM nhiều hơn · paired Wilcoxon <b>p ≈ 6.2e-7</b> → <span class="em">reject H0</span>: LLM &gt; Manual.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>Đây là bằng chứng feasibility + tín hiệu sớm: metric chạy được và <b>phân biệt</b> LLM vs Manual có ý nghĩa thống kê. Lưu ý: đây là pilot (Claude proxy); full run dùng GPT-4o sẽ xác nhận — không HARKing.</p></div>
+</section>
+
+<!-- ===================== 16 · THREATS ===================== -->
+<section class="slide" data-title="Threats to validity">
+  <div class="kicker">Tính hợp lệ · trung thực</div>
+  <h1 class="title">Threats — và cách giảm thiểu cụ thể</h1>
+  <div class="body">
+    <div class="cards c2">
+      <div class="card gap frag"><div class="tag">Construct</div><h3 style="font-size:15px">LLM &amp; Manual cùng do Claude tạo (pilot)</h3><div style="font-size:13px">→ Blind protocol + sinh trước khi gieo lỗi + <span class="em">full run thêm cohort người thật</span> & GPT-4o.</div></div>
+      <div class="card gap frag"><div class="tag">External</div><h3 style="font-size:15px">3 API EMB nhỏ · n=3</h3><div style="font-size:13px">→ Nêu rõ "EMB/JVM-only"; mở rộng thêm SUT; pilot per-endpoint N=35 đủ cho paired test.</div></div>
+      <div class="card gap frag"><div class="tag">Internal</div><h3 style="font-size:15px">Assertion <code style="font-family:var(--mono);font-size:12px">anyOf</code> lỏng</h3><div style="font-size:13px">→ Báo cáo theo loại tag; siết assertion nơi spec rõ; log raw output (LLM nondeterminism).</div></div>
+      <div class="card gap frag"><div class="tag">Conclusion</div><h3 style="font-size:15px">Mẫu nhỏ</h3><div style="font-size:13px">→ Non-parametric + <span class="em">effect size</span> (rank-biserial) + Holm/Bonferroni, không chỉ p-value.</div></div>
+    </div>
+    <div class="why frag"><div class="ic">!</div><div class="tx">Mỗi mitigation là <b>hành động cụ thể, kiểm chứng được</b> — không ghi "sẽ cố giảm bias". Đó là yêu cầu §7 của RBL-3.</div></div>
+  </div>
+  <div class="snote"><p>Chủ động nêu điểm yếu trước khi hội đồng hỏi — và mỗi điểm yếu có hành động đi kèm. Đây là phần ghi điểm chính trực.</p></div>
+</section>
+
+<!-- ===================== 17 · EXTENSIBILITY ===================== -->
+<section class="slide" data-title="Mở rộng">
+  <div class="kicker">Có thể mở rộng · research-grounded</div>
+  <h1 class="title">Lấp GAP-M xong → mở ra gì</h1>
+  <div class="body">
+    <div class="cards c3">
+      <div class="card accent frag"><div class="tag">GAP-T</div><h3 style="font-size:15px">Ablation đa LLM</h3><div class="muted" style="font-size:13px">Gemini / DeepSeek / open-source LLaMA-3 cùng metric → ai mạnh edge-case?</div></div>
+      <div class="card accent frag"><div class="tag">GAP-D</div><h3 style="font-size:15px">Ghép fault-detection</h3><div class="muted" style="font-size:13px">Pilot RQ2: EvoMaster value-oracle Recall <span class="num">0.135</span> &gt; LLM/Manual <span class="num">0.068</span> → nghiên cứu oracle.</div></div>
+      <div class="card accent frag"><div class="tag">Scale</div><h3 style="font-size:15px">Thêm SUT + auth</h3><div class="muted" style="font-size:13px">user-management (MySQL) → bổ sung endpoint-type "authentication" cho type-miss.</div></div>
+      <div class="card accent frag"><div class="tag">Model</div><h3 style="font-size:15px">Full run GPT-4o</h3><div class="muted" style="font-size:13px">gpt-4o-2024-08-06 theo protocol đã chốt → xác nhận pilot (Tuần 8).</div></div>
+      <div class="card accent frag"><div class="tag">Metric+</div><h3 style="font-size:15px">Taxonomy edge-case</h3><div class="muted" style="font-size:13px">Mở rộng: auth, rate-limit, payload-size, malformed body → đo sâu hơn 4xx/5xx.</div></div>
+      <div class="card accent frag"><div class="tag">Tool</div><h3 style="font-size:15px">Đóng gói metric</h3><div class="muted" style="font-size:13px">Plugin đo edge-case/endpoint dùng lại cho mọi OpenAPI API.</div></div>
+    </div>
+  </div>
+  <div class="snote"><p>Nói: "GAP-M không phải đích cuối — nó là nền. Có metric per-endpoint rồi thì so nhiều LLM (GAP-T), ghép fault-detection (GAP-D), mở rộng taxonomy lỗi... đều thành các hướng tiếp theo có cơ sở."</p></div>
+</section>
+
+<!-- ===================== 18 · CONCLUSION ===================== -->
+<section class="slide divider" data-title="Kết luận">
+  <div class="kicker">Kết luận</div>
+  <div class="pnum">✓</div>
+  <h1 class="title">GAP-M: thật · khả thi · đã chạy</h1>
+  <p class="lead"><strong>0/13</strong> paper đo metric per-endpoint (khoảng trống thật) · <strong>7/7</strong> tiêu chí feasibility ✅ · pilot: coverage <strong>100%</strong> (p≈1.6e-9), edge-case LLM <strong>217 vs 141</strong> (p≈6.2e-7). Mọi số trỏ về evidence + repo — full run GPT-4o (Tuần 8) sẽ chốt.</p>
+  <div class="snote"><p>Chốt: "Em đã chỉ ra GAP-M là khoảng trống thật (phản chứng 0/13), chứng minh khả thi (7/7, đã chạy), và thiết kế + chạy pilot cho kết quả có ý nghĩa thống kê. Em xin nhận câu hỏi của hội đồng." Phím O để mở tổng quan khi Q&amp;A.</p></div>
+</section>
+
+</div>
+
+<div id="notes"><h4>Speaker notes — nhấn S để ẩn</h4><div class="ntxt"></div></div>
+<div id="overview"></div>
+<div id="help"><div class="panel">
+  <h3>Phím tắt</h3>
+  <div class="row"><kbd>→</kbd><kbd>Space</kbd> Bước/slide kế</div>
+  <div class="row"><kbd>←</kbd> Quay lại</div>
+  <div class="row"><kbd>↑</kbd><kbd>↓</kbd> Nhảy slide (bỏ qua bước)</div>
+  <div class="row"><kbd>số</kbd> + <kbd>Enter</kbd> Tới slide số…</div>
+  <div class="row"><kbd>S</kbd> Speaker notes &nbsp; <kbd>O</kbd> Tổng quan lưới</div>
+  <div class="row"><kbd>T</kbd> Sáng/tối &nbsp; <kbd>F</kbd> Toàn màn hình</div>
+  <div class="row"><kbd>Home</kbd><kbd>End</kbd> Đầu / cuối · <kbd>Esc</kbd> đóng</div>
+  <div class="row muted">In PDF: Ctrl+P → Save as PDF (mỗi slide 1 trang).</div>
+</div></div>
+
+<div id="chrome">
+  <span id="brand">GAP-M · LLM × REST API Testing</span>
+  <span class="ftitle"></span>
+  <span id="counter">01 / 18</span>
+</div>
+
+<script src="js/deck.js?v=5"></script>
+</body>
+</html>

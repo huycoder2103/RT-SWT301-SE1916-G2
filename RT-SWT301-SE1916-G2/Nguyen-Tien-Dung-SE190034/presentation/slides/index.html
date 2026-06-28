@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM cho Sinh Test REST API — SLR & Thiết kế Thí nghiệm · SWT301</title>
+<link rel="stylesheet" href="css/deck.css?v=5">
+</head>
+<body>
+<div id="progress"></div>
+
+<div id="controls">
+  <button id="c-prev" title="Trước (←)">‹</button>
+  <button id="c-next" title="Sau (→)">›</button>
+  <button id="c-grid" title="Tổng quan (O)">▦</button>
+  <button id="c-notes" title="Speaker notes (S)">≡</button>
+  <button id="c-theme" title="Sáng/Tối (T)">◐</button>
+  <button id="c-help" title="Phím tắt (?)">?</button>
+</div>
+
+<div id="stage">
+
+<!-- ===================== 1 · COVER ===================== -->
+<section class="slide cover active" data-title="Trang bìa">
+  <div class="badge">● SWT301 — SOFTWARE TESTING · SU26 · GROUP 2 · TOPIC SE1916</div>
+  <h1>LLM cho <span class="hl">Sinh Test REST API</span><br>Tổng quan hệ thống &amp; Thiết kế thí nghiệm</h1>
+  <p class="lead">Một SLR (Systematic Literature Review) trên 13 nghiên cứu 2019–2026 — đi từ câu hỏi ban đầu, qua sàng lọc PRISMA, tới một <strong>khoảng trống nghiên cứu</strong> có thể bảo vệ được và một thí nghiệm trả lời nó.</p>
+  <div class="meta">
+    <div><div class="k">Thành viên</div><div class="val">Nguyễn Tiến Dũng — SE190034</div></div>
+    <div><div class="k">Phạm vi</div><div class="val">N = 13 nghiên cứu · 2019–2026</div></div>
+    <div><div class="k">Chất lượng TB</div><div class="val">5.73 / 6 (Kitchenham QA)</div></div>
+    <div><div class="k">Trích dẫn</div><div class="val">verbatim, có page/dòng, đã verify</div></div>
+  </div>
+  <div class="snote">
+    <p><b>Mở đầu (30s):</b> Kính chào hội đồng. Em là Nguyễn Tiến Dũng, MSSV SE190034. Hôm nay em trình bày phần nghiên cứu cá nhân trong topic nhóm: <b>"Dùng LLM để sinh test case cho REST API"</b>.</p>
+    <p>Toàn bộ bài này không phải ý kiến cá nhân — nó là một <b>Systematic Literature Review</b>: em đọc 13 công trình từ 2019 đến 2026, mỗi con số em nêu đều trích dẫn được tới <b>tận trang, tận câu</b> trong file PDF gốc, và em đã tải sẵn 13 PDF đó để hội đồng kiểm chứng.</p>
+    <p>Mục tiêu cuối: chỉ ra một <b>khoảng trống (GAP)</b> mà cả 13 paper chất lượng cao này đều bỏ ngỏ, rồi đề xuất thí nghiệm lấp nó.</p>
+    <p><i>Mẹo điều khiển: phím → để sang slide/bước; S = hiện notes; O = tổng quan; T = đổi nền sáng/tối; ? = phím tắt.</i></p>
+  </div>
+</section>
+
+<!-- ===================== 2 · ROADMAP ===================== -->
+<section class="slide" data-title="Bản đồ bài thuyết trình">
+  <div class="kicker">Roadmap · Quy trình nghiên cứu</div>
+  <h1 class="title">Toàn bộ bài đi theo một đường thẳng</h1>
+  <div class="body">
+    <p class="lead">Mỗi mũi tên là một bước có <span class="em">bằng chứng kiểm chứng được</span> — không bước nào "tự nghĩ ra".</p>
+    <div class="prisma" style="margin-top:8px">
+      <div class="cards c4" style="width:100%">
+        <div class="card accent"><div class="tag">Bước 1 · Phần 1</div><h3>Bối cảnh &amp; Câu hỏi ban đầu</h3><div class="muted" style="font-size:14px">REST API là gì, vì sao test khó, LLM hứa hẹn gì → RQ thô + 2 điểm mơ hồ</div></div>
+        <div class="card accent"><div class="tag">Bước 2 · Phần 2</div><h3>Phương pháp SLR</h3><div class="muted" style="font-size:14px">PICO → search string → 6 database → IC/EC → PRISMA → đánh giá chất lượng</div></div>
+        <div class="card accent"><div class="tag">Bước 3 · Phần 3</div><h3>13 Bằng chứng</h3><div class="muted" style="font-size:14px">9 paper LLM + 4 baseline kinh điển, mỗi paper có số liệu + trích dẫn</div></div>
+        <div class="card gap"><div class="tag">Bước 4 · Phần 4</div><h3>GAP — Khoảng trống</h3><div style="font-size:14px">Ma trận so sánh chéo phơi bày 3 khoảng trống chưa ai lấp</div></div>
+      </div>
+      <div class="arrow" style="margin:6px 0">▼</div>
+      <div class="cards c3" style="width:100%">
+        <div class="card accent"><div class="tag">Bước 5 · Phần 5</div><h3>Tinh chỉnh Câu hỏi NC</h3><div class="muted" style="font-size:14px">GAP → Main RQ + RQ1/RQ2/RQ3, mọi tinh chỉnh truy vết về evidence</div></div>
+        <div class="card accent"><div class="tag">Bước 6 · Phần 6</div><h3>Giả thuyết &amp; Thí nghiệm</h3><div class="muted" style="font-size:14px">H0/H1 + kiểm định thống kê + thiết kế 3 API EMB có lỗi gieo sẵn</div></div>
+        <div class="card"><div class="tag">Đóng · Kết luận</div><h3>Kết luận, Q&amp;A, Phụ lục</h3><div class="muted" style="font-size:14px">Tính chính trực + chỉ mục trích dẫn đầy đủ chống bắt bẻ</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p><b>Ý chính:</b> Đây là "bản đồ" để hội đồng không bị lạc. Cả bài là <b>một chuỗi nhân–quả</b>: bối cảnh → phương pháp → bằng chứng → khoảng trống → câu hỏi → giả thuyết → thí nghiệm.</p>
+    <p>Nhấn mạnh: điểm khác biệt của bài là <b>mỗi bước đều có nguồn</b>. Khi tới phần GAP, em sẽ không nói "em thấy thiếu" mà chỉ vào đúng cột trong ma trận so sánh để chứng minh nó thiếu.</p>
+    <p>Chuyển: "Trước hết, để cả hội đồng cùng một mặt bằng, em làm rõ nền tảng."</p>
+  </div>
+</section>
+
+<!-- ===================== 3 · DIVIDER P1 ===================== -->
+<section class="slide divider" data-title="Phần 1 — Bối cảnh">
+  <div class="kicker">Phần 1 / 6</div>
+  <div class="pnum">01</div>
+  <h1 class="title">Bối cảnh &amp; Nền tảng</h1>
+  <p class="lead">REST API · bài toán sinh test · vì sao LLM bước vào · câu hỏi nghiên cứu ban đầu</p>
+  <div class="snote"><p>Slide phân mục. Nói nhanh: "Phần 1 trả lời 4 câu — REST API là gì, test nó khó ở đâu, các công cụ trước-LLM làm tới đâu, và vì sao LLM lại hứa hẹn. Hiểu 4 cái này thì phần sau mới thấm."</p></div>
+</section>
+
+<!-- ===================== 4 · REST API primer ===================== -->
+<section class="slide" data-title="REST API là gì">
+  <div class="kicker">Nền tảng · 1/5</div>
+  <h1 class="title">REST API là gì — và "spec" OpenAPI</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <ul class="clean">
+          <li class="frag"><strong>REST API</strong> = cách hai phần mềm nói chuyện qua HTTP. Mỗi <em>tài nguyên</em> (user, order…) có một URL; thao tác bằng <strong>method</strong>: <span class="num">GET</span> đọc, <span class="num">POST</span> tạo, <span class="num">PUT/PATCH</span> sửa, <span class="num">DELETE</span> xoá.</li>
+          <li class="frag">Server trả về <strong>status code</strong>: <span class="num">2xx</span> thành công · <span class="num">4xx</span> lỗi phía client (sai input, thiếu quyền) · <span class="num">5xx</span> lỗi phía server (crash).</li>
+          <li class="frag"><strong>OpenAPI / Swagger</strong> = file đặc tả (YAML/JSON) mô tả: có những <em>endpoint</em> nào, tham số gì, kiểu dữ liệu, schema request/response, và mô tả bằng ngôn ngữ tự nhiên.</li>
+          <li class="frag">Đây là <span class="em">đầu vào chuẩn</span> cho hầu hết công cụ sinh test — 11/13 paper đọc trực tiếp OpenAPI.</li>
+        </ul>
+      </div>
+      <div class="frag">
+        <div class="evidence" style="margin-bottom:14px">
+          <div class="tag" style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-bottom:8px">VÍ DỤ — một endpoint trong OpenAPI</div>
+          <code style="font-family:var(--mono);font-size:13px;display:block;white-space:pre;color:var(--ink)">paths:
+  /pets/{id}:
+    get:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }</code>
+        </div>
+        <div class="why frag"><div class="ic">!</div><div class="tx"><b>Vì sao quan trọng:</b> dòng <span class="num">minimum: 1</span> và mã <span class="num">404</span> chính là chỗ để sinh <em>edge case</em> — gửi <span class="num">id = 0</span> hay <span class="num">id</span> không tồn tại để buộc 4xx. Cả bài sẽ xoáy vào việc <b>ai sinh được những edge case này</b>.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p><b>Mục tiêu slide:</b> đảm bảo cả hội đồng (kể cả người không chuyên backend) hiểu 3 khái niệm: method, status code, OpenAPI spec.</p>
+    <p>Nhấn vào ví dụ: chỉ vào <code>minimum: 1</code> và <code>404</code>. Nói: "Một bộ test tốt không chỉ gọi GET hợp lệ, mà phải cố tình <b>vi phạm</b> ràng buộc này — gửi id=0, gửi id chữ — để xem API có trả đúng 4xx không. Đây là <b>edge case</b>, và là trục chính của RQ3 sau này."</p>
+    <p>Chốt: "OpenAPI là đầu vào chuẩn — 11/13 paper dùng nó. Giữ ý này, lát nữa nó là chữ P và I trong PICO."</p>
+  </div>
+</section>
+
+<!-- ===================== 5 · why testing is hard ===================== -->
+<section class="slide" data-title="Test REST API khó ở đâu">
+  <div class="kicker">Nền tảng · 2/5</div>
+  <h1 class="title">Sinh test REST API tự động — khó ở đâu?</h1>
+  <div class="body">
+    <div class="cards c3">
+      <div class="card frag"><div class="tag">Thách thức 1</div><h3>Không gian đầu vào vô hạn</h3><div style="font-size:15px">Mỗi tham số có vô số giá trị hợp lệ/không hợp lệ. Phải sinh giá trị <em>thực tế</em> (email đúng định dạng, ngày hợp lệ) thì request mới qua được 4xx.</div></div>
+      <div class="card frag"><div class="tag">Thách thức 2</div><h3>Phụ thuộc &amp; trạng thái</h3><div style="font-size:15px">Phải <span class="num">POST</span> tạo resource rồi mới <span class="num">GET</span> được nó. Thứ tự lời gọi (stateful) quyết định có chạm tới endpoint sâu hay không.</div></div>
+      <div class="card frag"><div class="tag">Thách thức 3</div><h3>Bài toán Oracle</h3><div style="font-size:15px">Làm sao biết kết quả <em>đúng</em>? Spec ≠ code thật. Nhiều tool chỉ coi <span class="num">5xx</span> = lỗi → bỏ sót lỗi logic trả 200 nhưng sai.</div></div>
+    </div>
+    <div class="frag">
+      <div class="why"><div class="ic">!</div><div class="tx"><b>Hai loại "độ phủ" (coverage) — đừng nhầm:</b> <b>(a) Endpoint/operation coverage</b> = đã gọi bao nhiêu % endpoint; <b>(b) Code coverage</b> = đã chạy bao nhiêu % dòng/nhánh code server. Loại (a) có thể rất cao; loại (b) thường thấp hơn nhiều. <span class="em">Sự khác biệt này là chìa khoá của RQ1.</span></div></div>
+    </div>
+  </div>
+  <div class="snote">
+    <p><b>3 thách thức</b> giải thích vì sao đây là bài toán nghiên cứu mở chứ không phải "viết vài test là xong".</p>
+    <p>Thách thức 1 (giá trị thực tế) → đây đúng là chỗ LLM mạnh, nhớ để nối sang slide sau. Thách thức 3 (oracle) → giải thích vì sao đo "fault detection" rất khó và hầu hết paper chỉ đếm 5xx.</p>
+    <p><b>Cực kỳ quan trọng — nói chậm:</b> phân biệt 2 loại coverage. Hội đồng rất hay hỏi "90% coverage là nhiều mà, sao còn gap?". Trả lời: 90% là <b>endpoint</b> coverage (gọi tới endpoint), còn <b>code</b> coverage chỉ ~52%. RQ1 của em đo endpoint coverage và còn bóc tách <i>loại endpoint nào hay bị bỏ sót</i> — cái chưa ai làm.</p>
+  </div>
+</section>
+
+<!-- ===================== 6 · pre-LLM landscape ===================== -->
+<section class="slide" data-title="Landscape trước LLM">
+  <div class="kicker">Nền tảng · 3/5</div>
+  <h1 class="title">Trước LLM: 4 trường phái sinh test tự động</h1>
+  <div class="body">
+    <div class="cards c2">
+      <div class="card frag base"><div class="tag">Search-based</div><h3>EvoMaster <span class="pill base">2019</span></h3><div style="font-size:15px">Thuật toán di truyền (genetic / MIO) tối ưu test suite theo code coverage. <b>White-box</b> (đọc cả mã nguồn). Là <em>baseline được tái sử dụng nhiều nhất</em> trong cả corpus.</div></div>
+      <div class="card frag base"><div class="tag">Model-based</div><h3>Morest <span class="pill base">2022</span></h3><div style="font-size:15px">Dựng "Property Graph" của API rồi cập nhật bằng phản hồi thực thi để chọn chuỗi lời gọi hợp lý.</div></div>
+      <div class="card frag base"><div class="tag">Fuzzing có trạng thái</div><h3>RESTler <span class="pill base">2019</span></h3><div style="font-size:15px">Phân tích spec, sinh <em>chuỗi</em> request có trạng thái để dò 5xx. Nền tảng cho fuzzing REST.</div></div>
+      <div class="card frag base"><div class="tag">Reinforcement learning</div><h3>DeepREST <span class="pill base">2024</span></h3><div style="font-size:15px">Deep RL + "tò mò" (curiosity) học các ràng buộc ngầm <em>ngoài</em> spec. Mạnh nhưng cần huấn luyện.</div></div>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">!</div><div class="tx"><b>Giới hạn chung (sẽ chứng minh bằng số ở Phần 3):</b> dù thông minh, nhóm này bị chặn ở <span class="em-red">~52% line coverage</span> trên 20 service chuẩn, và <b>EvoMaster còn sinh test phủ THẤP hơn người viết tay</b> (41% vs 82%). Đó là lằn ranh mà LLM hứa hẹn vượt qua.</div></div></div>
+  </div>
+  <div class="snote">
+    <p>4 trường phái này chính là 4 baseline non-LLM (#10–#13) sẽ gặp ở Phần 3. Giới thiệu trước để khi tới đó hội đồng đã quen tên.</p>
+    <p>Nhấn 2 con số "treo" để tạo tò mò: <b>52% line coverage là trần</b> (paper #11), và <b>EvoMaster thua test tay 41% vs 82%</b> (paper #10). Hai con số này là lý do người ta kỳ vọng LLM, và cũng là baseline để so trong thí nghiệm.</p>
+    <p>EvoMaster nhấn mạnh: "đây là tool em chọn làm baseline tự động trong thí nghiệm, vì nó được tái dùng nhiều nhất."</p>
+  </div>
+</section>
+
+<!-- ===================== 7 · why LLM ===================== -->
+<section class="slide" data-title="Vì sao LLM hứa hẹn">
+  <div class="kicker">Nền tảng · 4/5</div>
+  <h1 class="title">LLM bước vào — nó làm được gì mà tool cũ không?</h1>
+  <div class="body">
+    <ul class="clean">
+      <li class="frag"><strong>Đọc được mô tả ngôn ngữ tự nhiên trong spec.</strong> Tool dựa luật (rule-based) không hiểu câu "id must be a valid ISO country code"; LLM thì hiểu → sinh đúng giá trị. <span class="muted">(đây là lý do RESTGPT đạt 97% precision trích luật — Phần 3)</span></li>
+      <li class="frag"><strong>Sinh giá trị đầu vào "giống thật".</strong> Email, ngày tháng, mã định danh hợp lệ → vượt qua tầng kiểm tra 4xx để chạm code sâu hơn.</li>
+      <li class="frag"><strong>Suy luận phụ thuộc giữa các operation.</strong> Biết phải tạo trước rồi mới truy vấn — nhờ "đọc hiểu" cả tài liệu.</li>
+      <li class="frag"><strong>Sinh thẳng script test chạy được</strong> (xUnit, Postman, Karate) và cả <em>kịch bản âm</em> (negative cases).</li>
+    </ul>
+    <div class="frag"><div class="why"><div class="ic">?</div><div class="tx"><b>Nhưng có cái giá:</b> LLM <em>ảo giác</em> (hallucination), chi phí token, và oracle vẫn không chắc. Vì vậy câu hỏi không phải "LLM có dùng được không" mà là <b>"hiệu quả tới mức nào, so với người và so với EvoMaster, trên thước đo có sự thật nền (ground truth)?"</b> — đúng tinh thần SLR.</div></div></div>
+  </div>
+  <div class="snote">
+    <p>Đây là bản lề: chuyển từ "tool cũ" sang "vì sao LLM". 4 năng lực — mỗi cái nối tới một paper cụ thể ở Phần 3 (RESTGPT đọc NL, LlamaRestTest sinh giá trị, KAT suy luận dependency, APITestGenie sinh script).</p>
+    <p>Câu callout cuối là <b>framing của cả bài</b>: không tung hô LLM, mà đặt câu hỏi có kiểm soát. Nói đúng câu in đậm — nó dẫn thẳng tới Main RQ.</p>
+  </div>
+</section>
+
+<!-- ===================== 8 · initial RQ ===================== -->
+<section class="slide" data-title="Câu hỏi nghiên cứu ban đầu">
+  <div class="kicker">Nền tảng · 5/5</div>
+  <h1 class="title">Câu hỏi ban đầu — và vì sao chưa đủ</h1>
+  <div class="body">
+    <div class="evidence frag" style="border-left-color:var(--teal);font-size:18px">
+      <q>Với một REST API có đặc tả OpenAPI (P), liệu một LLM (I) có thể tự động sinh test case bao phủ edge case và error code, so với thiết kế test thủ công (C), đạt độ phủ endpoint ≥ 90% và phát hiện thêm ≥ 2 bug thật (O)?</q>
+      <span class="src">Nguồn: experiment/01_rq.md — Initial RQ (Stage 0, trước PRISMA)</span>
+    </div>
+    <div class="split" style="margin-top:6px">
+      <div class="card gap frag"><div class="tag">Điểm mơ hồ 1</div><h3>"LLM" là LLM nào?</h3><div style="font-size:15px">RQ thô chỉ nói "LLM" chung chung. Chưa biết model nào <em>đã / chưa</em> được đánh giá cho bài toán này.</div></div>
+      <div class="card gap frag"><div class="tag">Điểm mơ hồ 2</div><h3>Baseline &amp; ngưỡng từ đâu?</h3><div style="font-size:15px">Chỉ so với "thủ công"; chưa rõ có cần thêm tool tự động không, và ngưỡng <span class="num">≥90%</span> / "≥2 bug" có nguồn hay tự đặt.</div></div>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">→</div><div class="tx"><b>Vì 2 điểm mơ hồ này, không thể nhảy thẳng vào làm thí nghiệm.</b> Phải khảo sát có hệ thống xem cộng đồng đã làm gì → đó chính là lý do tồn tại của <b>SLR ở Phần 2</b>.</div></div></div>
+  </div>
+  <div class="snote">
+    <p>Đọc nguyên văn RQ ban đầu (đã in trên slide). Sau đó chỉ ra 2 điểm mơ hồ — đây là lý do <b>methodologically</b> phải làm SLR, không phải làm SLR cho có.</p>
+    <p>Câu chốt rất quan trọng khi bảo vệ: "Em không tự đặt ngưỡng 90% rồi đi chứng minh. Em xuất phát từ RQ thô, thấy nó mơ hồ, nên làm SLR để <b>tinh chỉnh</b> nó dựa trên bằng chứng. Phần 5 sẽ cho thấy RQ cuối khác RQ thô ra sao và vì sao."</p>
+  </div>
+</section>
+
+<!-- ===================== 9 · DIVIDER P2 ===================== -->
+<section class="slide divider" data-title="Phần 2 — Phương pháp SLR">
+  <div class="kicker">Phần 2 / 6</div>
+  <div class="pnum">02</div>
+  <h1 class="title">Phương pháp SLR</h1>
+  <p class="lead">Search string · 6 database · tiêu chí IC/EC · sơ đồ PRISMA · đánh giá chất lượng Kitchenham</p>
+  <div class="snote"><p>Phần 2 chứng minh tính <b>hệ thống &amp; tái lập được</b>. Thông điệp: "bất kỳ ai chạy lại quy trình này cũng ra cùng 13 paper." Đây là phần dễ bị hỏi nhất về phương pháp, nên mỗi bước đều có file nguồn.</p></div>
+</section>
+
+<!-- ===================== 10 · what is SLR ===================== -->
+<section class="slide" data-title="SLR là gì">
+  <div class="kicker">Phương pháp · 1/7</div>
+  <h1 class="title">SLR là gì — và quy trình</h1>
+  <div class="body">
+    <p class="lead"><strong>Systematic Literature Review</strong>: khảo sát tài liệu theo quy trình <em>minh bạch, có thể tái lập và kiểm toán</em> (chuẩn Kitchenham) — đối lập với đọc vu vơ rồi trích vài bài.</p>
+    <div class="prisma" style="margin-top:6px">
+      <div class="cards" style="grid-template-columns:repeat(6,1fr);width:100%;gap:10px">
+        <div class="card accent frag" style="padding:14px"><div class="tag">1</div><h3 style="font-size:15px">Câu hỏi + PICO</h3></div>
+        <div class="card accent frag" style="padding:14px"><div class="tag">2</div><h3 style="font-size:15px">Search string + DB</h3></div>
+        <div class="card accent frag" style="padding:14px"><div class="tag">3</div><h3 style="font-size:15px">Sàng lọc IC/EC</h3></div>
+        <div class="card accent frag" style="padding:14px"><div class="tag">4</div><h3 style="font-size:15px">Đánh giá chất lượng</h3></div>
+        <div class="card accent frag" style="padding:14px"><div class="tag">5</div><h3 style="font-size:15px">Trích xuất dữ liệu</h3></div>
+        <div class="card gap frag" style="padding:14px"><div class="tag">6</div><h3 style="font-size:15px">Tổng hợp → GAP</h3></div>
+      </div>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">!</div><div class="tx"><b>Vì sao bắt buộc:</b> nếu chỉ "Google vài bài", khoảng trống tìm được có thể chỉ là <em>do bỏ sót</em>. SLR đảm bảo: khoảng trống là thật, vì đã sàng lọc <span class="num">~280</span> kết quả thô theo tiêu chí công khai.</div></div></div>
+  </div>
+  <div class="snote">
+    <p>Định nghĩa SLR + 6 bước. Mỗi bước = một slide tiếp theo. Nói: "6 bước này em sẽ đi qua từng cái với file dữ liệu thật."</p>
+    <p>Callout: đây là câu trả lời phòng thủ cho "sao em chắc gap là thật?" — vì quy trình sàng từ ~280 xuống 13 là công khai và tái lập được.</p>
+  </div>
+</section>
+
+<!-- ===================== 11 · PICO + strings ===================== -->
+<section class="slide" data-title="PICO & Search strings">
+  <div class="kicker">Phương pháp · 2/7</div>
+  <h1 class="title">Từ PICO ra 2 chuỗi tìm kiếm</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <div class="evidence frag" style="margin-bottom:12px">
+          <div class="tag" style="font-family:var(--mono);font-size:11px;color:var(--teal);margin-bottom:6px">STRING 1 — LLM sinh test REST API (chính)</div>
+          <code style="font-family:var(--mono);font-size:12.5px;display:block;white-space:pre-wrap;color:var(--ink)">("REST API" OR "Web API" OR OpenAPI OR Swagger)
+AND ("test generation" OR "test case generation"
+     OR "automated testing")
+AND (LLM OR "large language model" OR GPT OR ChatGPT)</code>
+        </div>
+        <div class="evidence frag">
+          <div class="tag" style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px">STRING 2 — testing dựa spec (bổ sung baseline)</div>
+          <code style="font-family:var(--mono);font-size:12.5px;display:block;white-space:pre-wrap;color:var(--ink)">("OpenAPI specification" OR Swagger OR "API specification")
+AND ("test generation" OR "API testing")
+AND (coverage OR executable OR "fault detection"
+     OR "bug detection")</code>
+        </div>
+      </div>
+      <div>
+        <table class="grid frag"><thead><tr><th>PICO</th><th>Từ khoá</th></tr></thead>
+        <tbody>
+          <tr><td><b>P</b> Population</td><td>REST/Web API có OpenAPI/Swagger</td></tr>
+          <tr><td><b>I</b> Intervention</td><td>LLM / GPT sinh test</td></tr>
+          <tr><td><b>C</b> Comparison</td><td>thủ công + EvoMaster (baseline)</td></tr>
+          <tr><td><b>O</b> Outcome</td><td>coverage · executable · fault/bug detection</td></tr>
+        </tbody></table>
+        <div class="frag" style="margin-top:14px"><div class="why"><div class="ic">!</div><div class="tx"><b>Vì sao 2 string:</b> String 1 bắt các paper LLM; String 2 cố ý kéo về các <em>baseline kinh điển</em> (EvoMaster, Morest…) để có điểm so sánh cho GAP. Boolean: <code>AND</code> = bắt buộc, <code>OR</code> = một trong các từ, <code>"..."</code> = cụm chính xác.</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Giải thích PICO trước (khung chuẩn của câu hỏi nghiên cứu), rồi cho thấy 2 search string <b>suy ra trực tiếp từ PICO</b>.</p>
+    <p>Điểm bảo vệ: vì sao 2 string chứ không 1? String 1 = LLM; String 2 = baseline. Có chủ đích, vì C trong PICO là "so với EvoMaster + thủ công" nên phải chủ động tìm các baseline đó. Nguồn: search-log.md §1.</p>
+  </div>
+</section>
+
+<!-- ===================== 12 · databases ===================== -->
+<section class="slide" data-title="Databases & bộ lọc">
+  <div class="kicker">Phương pháp · 3/7</div>
+  <h1 class="title">6 nguồn dữ liệu + bộ lọc</h1>
+  <div class="body">
+    <div class="cards c3">
+      <div class="card frag"><div class="tag">Aggregator</div><h3>Google Scholar</h3><div class="muted" style="font-size:14px">Recall rộng nhất — đếm thô ~280 kết quả</div></div>
+      <div class="card frag"><div class="tag">Preprint</div><h3>arXiv (cs.SE)</h3><div class="muted" style="font-size:14px">Nơi paper LLM-testing xuất hiện sớm nhất</div></div>
+      <div class="card frag"><div class="tag">Publisher</div><h3>IEEE Xplore</h3><div class="muted" style="font-size:14px">ICST, ICSE, TSE</div></div>
+      <div class="card frag"><div class="tag">Publisher</div><h3>ACM DL</h3><div class="muted" style="font-size:14px">ISSTA, FSE, ASE, ICSE, TOSEM</div></div>
+      <div class="card frag"><div class="tag">Publisher</div><h3>SpringerLink</h3><div class="muted" style="font-size:14px">LNCS / proceedings</div></div>
+      <div class="card frag"><div class="tag">Metadata</div><h3>Semantic Scholar</h3><div class="muted" style="font-size:14px">Đối chiếu metadata + tìm PDF hợp pháp</div></div>
+    </div>
+    <div class="frag"><div class="bar" style="margin-top:4px"><div class="lab">Bộ lọc</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val"></div></div>
+      <p style="font-size:15px;margin-top:8px"><span class="pill">Ngôn ngữ = English (IC1)</span> &nbsp; <span class="pill">Năm ≥ 2018 (IC2)</span> &nbsp; <span class="pill">Ngày tìm: 2026-05-27</span> &nbsp; <span class="pill">EC2: phải có PDF full-text hợp pháp</span></p>
+    </div>
+  </div>
+  <div class="snote">
+    <p>6 database — nói nhanh vai trò mỗi cái. Google Scholar cho recall rộng; arXiv vì lĩnh vực này preprint ra trước; còn lại là publisher cho bản peer-reviewed.</p>
+    <p>Bộ lọc gắn với IC1 (English), IC2 (≥2018), EC2 (PDF hợp pháp). Mọi record đều có source_url + DOI để tái kiểm. Nguồn: search-log.md §2.</p>
+  </div>
+</section>
+
+<!-- ===================== 13 · IC ===================== -->
+<section class="slide" data-title="Tiêu chí chọn (IC)">
+  <div class="kicker">Phương pháp · 4/7</div>
+  <h1 class="title">Tiêu chí ĐƯA VÀO — IC1→IC5 (phải thoả tất cả)</h1>
+  <div class="body">
+    <ol class="clean">
+      <li class="frag"><strong>IC1 — Ngôn ngữ:</strong> viết hoàn toàn bằng tiếng Anh.</li>
+      <li class="frag"><strong>IC2 — Thời gian:</strong> xuất bản từ 2018 trở đi.</li>
+      <li class="frag"><strong>IC3 — Phạm vi:</strong> trực tiếp về test REST/Web API, OpenAPI/Swagger, hoặc sinh test API tự động.</li>
+      <li class="frag"><strong>IC4 — Công nghệ:</strong> dùng <em>LLM</em>, <b>hoặc</b> là baseline đủ liên quan để làm điểm so sánh cho GAP (EvoMaster, RESTler, RestTestGen, Morest).</li>
+      <li class="frag"><strong>IC5 — Bằng chứng thực nghiệm:</strong> có số liệu &amp; metric cụ thể (coverage, precision, recall, pass rate, fault/bug…). Survey/quan điểm thuần → loại.</li>
+    </ol>
+    <div class="frag"><div class="why"><div class="ic">!</div><div class="tx"><b>IC4 là điểm tinh tế:</b> cố ý giữ baseline non-LLM. Vì câu hỏi của topic là "LLM <em>so với</em> thủ công &amp; EvoMaster", nên phải có chính EvoMaster/Morest/DeepREST trong corpus làm mốc định lượng — nếu loại hết thì không có gì để so.</div></div></div>
+  </div>
+  <div class="snote">
+    <p>5 tiêu chí đưa vào — một paper phải thoả CẢ 5. Đọc nhanh từng cái.</p>
+    <p>Dừng ở IC4 để giải thích: vì sao giữ tool không-LLM? Vì C trong PICO. Đây là lựa chọn có chủ đích, không phải "lạc đề". Nguồn: ie_criteria.md §1.</p>
+  </div>
+</section>
+
+<!-- ===================== 14 · EC ===================== -->
+<section class="slide" data-title="Tiêu chí loại (EC)">
+  <div class="kicker">Phương pháp · 5/7</div>
+  <h1 class="title">Tiêu chí LOẠI — EC1→EC5 (vi phạm 1 là loại)</h1>
+  <div class="body">
+    <div class="cards c2">
+      <div class="card frag gap"><div class="tag">EC1 · Trùng lặp</div><div style="font-size:15px">Trùng nội dung/tiêu đề, hoặc là bản cũ/bị thay thế của một paper đã giữ.</div></div>
+      <div class="card frag gap"><div class="tag">EC2 · Không truy cập được</div><div style="font-size:15px">Không có PDF full-text hợp pháp để đọc/tải.</div></div>
+      <div class="card frag gap"><div class="tag">EC3 · Định dạng &amp; độ dài</div><div style="font-size:15px">Poster, abstract mở rộng, slide, hoặc &lt; 4 trang.</div></div>
+      <div class="card frag gap"><div class="tag">EC4 · Lạc miền</div><div style="font-size:15px">Chỉ về GUI/unit/mobile testing; <em>hoặc</em> dùng API <b>ngược hướng</b> (API làm <em>công cụ cho</em> LLM, hoặc LLM sinh <em>chính</em> spec) — không phải sinh test <em>cho</em> API.</div></div>
+      <div class="card frag gap" style="grid-column:1/-1"><div class="tag">EC5 · Lạc pha</div><div style="font-size:15px">Chỉ về thực thi test / giám sát / bảo trì test (đặt tên test, test oracle) — không sinh kịch bản hay code test (test generation).</div></div>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">!</div><div class="tx"><b>EC4 "ngược hướng" rất hay nhầm:</b> ví dụ "RestGPT — kết nối LLM với REST API thật" (2023) bị loại vì nó dùng API <em>phục vụ</em> LLM, ngược với đề tài "sinh test <em>cho</em> API". Đừng nhầm với "RESTGPT" (in hoa) là paper #1.</div></div></div>
+  </div>
+  <div class="snote">
+    <p>5 tiêu chí loại. EC4 và EC5 là 2 cái gây ra phần lớn việc loại ở vòng tiêu đề/abstract.</p>
+    <p>Ví dụ EC4: paper "RestGPT: Connecting LLMs with Real-World RESTful APIs" — tên gần giống paper #1 nhưng bị loại vì ngược hướng. Đây là chi tiết cho thấy em đọc kỹ, không loại nhầm. Nguồn: ie_criteria.md §2.</p>
+  </div>
+</section>
+
+<!-- ===================== 15 · PRISMA ===================== -->
+<section class="slide" data-title="Sơ đồ PRISMA">
+  <div class="kicker">Phương pháp · 6/7</div>
+  <h1 class="title">Phễu PRISMA: ~280 → 13</h1>
+  <div class="body" style="margin-top:10px">
+    <div class="split w-37">
+      <div class="prisma">
+        <div class="stg frag">Định danh (Google Scholar)<br><span class="big">~280</span><div class="muted" style="font-size:12px">String 1 ≈197 + String 2 ≈83 · arXiv cross-check 26</div></div>
+        <div class="arrow frag">▼</div>
+        <div class="stg frag">Gộp + khử trùng lặp (title/DOI)<br><span class="big">30</span><div class="muted" style="font-size:12px">20 LLM + 10 baseline</div></div>
+        <div class="arrow frag">▼ <span class="excl">− 7 loại · EC4=4, EC5=3</span></div>
+        <div class="stg frag">Sàng tiêu đề + abstract → full-text<br><span class="big">23</span></div>
+        <div class="arrow frag">▼ <span class="excl">− 10 loại · EC1=7, IC5=1, EC4=1, EC3=1</span></div>
+        <div class="stg final frag">Đưa vào evidence table<br><span class="big">13</span><div class="muted" style="font-size:12px">9 LLM + 4 baseline</div></div>
+      </div>
+      <div>
+        <ul class="clean frag">
+          <li><strong>Định danh:</strong> chạy 2 string trên 6 DB; Google Scholar báo ~280 hit thô (đa phần lạc đề: UI/unit/mobile, LLM-as-tool, sinh spec, survey).</li>
+          <li><strong>Khử trùng:</strong> theo title + DOI chuẩn hoá → 30 record lõi.</li>
+          <li><strong>Mỗi lần loại đều ghi mã IC/EC</strong> → phễu kiểm toán được.</li>
+          <li class="frag"><strong>Đối soát:</strong> 30 = 7 loại + 23 ✓; 23 = 10 loại + 13 ✓; 13 = 9 LLM + 4 baseline ✓.</li>
+        </ul>
+        <div class="frag"><div class="why"><div class="ic">!</div><div class="tx">Con số 13 nằm trong khoảng khuyến nghị <span class="num">5–15</span> cho SLR phạm vi môn học — đủ sâu để phân tích, không loãng.</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Đây là slide "xương sống" của Phần 2. Đi từ trên xuống: ~280 thô → 30 sau khử trùng → loại 7 (vòng abstract) → 23 → loại 10 (vòng full-text) → 13.</p>
+    <p>Nhấn 2 điều: (1) <b>mỗi lần loại có mã IC/EC</b> nên ai cũng kiểm lại được; (2) phép <b>đối soát số học</b> khớp 100% — đây là thứ hội đồng hay soi. Nguồn: prisma-flow.md.</p>
+    <p>Nếu bị hỏi "~280 lấy đâu ra": là số ước lượng Google Scholar tự báo, có query Q1/Q2 tái lập trong search-log.md, cộng arXiv API cross-check = 26.</p>
+  </div>
+</section>
+
+<!-- ===================== 16 · QA ===================== -->
+<section class="slide" data-title="Đánh giá chất lượng">
+  <div class="kicker">Phương pháp · 7/7</div>
+  <h1 class="title">Đánh giá chất lượng (Kitchenham) — TB 5.73/6</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p style="font-size:15px;margin-bottom:10px">6 tiêu chí, mỗi cái: Yes=1 · Partly=0.5 · No=0. Ngưỡng nhận = ≥ 3.0/6.</p>
+        <table class="grid frag"><tbody>
+          <tr><td><b>QA1</b></td><td>Mục tiêu nghiên cứu rõ?</td></tr>
+          <tr><td><b>QA2</b></td><td>Kỹ thuật mô tả đủ để tái lập?</td></tr>
+          <tr><td><b>QA3</b></td><td>Bối cảnh đánh giá (API/dataset) rõ?</td></tr>
+          <tr><td><b>QA4</b></td><td>Metric &amp; kết quả có số cụ thể?</td></tr>
+          <tr><td><b>QA5</b></td><td>Có baseline/so sánh?</td></tr>
+          <tr><td><b>QA6</b></td><td>Có bàn giới hạn / threats?</td></tr>
+        </tbody></table>
+      </div>
+      <div>
+        <div class="stats frag">
+          <div class="stat"><div class="v">5.73</div><div class="l">Điểm chất lượng trung bình / 6</div></div>
+          <div class="stat"><div class="v">5.0</div><div class="l">Thấp nhất (vẫn ≥ ngưỡng 3.0)</div></div>
+          <div class="stat"><div class="v">6.0</div><div class="l">Cao nhất — 5 paper đạt tuyệt đối</div></div>
+          <div class="stat"><div class="v">13/13</div><div class="l">Đều vượt ngưỡng nhận</div></div>
+        </div>
+        <div class="frag" style="margin-top:14px"><div class="why"><div class="ic">!</div><div class="tx"><b>QA củng cố lập luận GAP:</b> những paper <em>không</em> so với thủ công và <em>chỉ đếm</em> lỗi đều là paper <b>chất lượng cao (5.0–6.0)</b>. Nên khoảng trống là <span class="em">lỗ hổng thiết kế trong nghiên cứu mạnh</span>, không phải do paper yếu bỏ sót.</div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Đánh giá chất lượng kiểu Kitchenham: không chỉ "liên quan" mà còn "đáng tin tới đâu". 6 tiêu chí, thang Yes/Partly/No.</p>
+    <p>Con số chốt: TB 5.73/6, thấp nhất 5.0 — tức corpus rất mạnh. Callout là <b>đòn phòng thủ then chốt</b>: gap không phải do paper yếu, mà là lỗ hổng thiết kế chung của các paper mạnh. Lát ở Phần 4 sẽ nhắc lại. Nguồn: quality-assessment.md.</p>
+  </div>
+</section>
+
+<!-- ===================== 17 · DIVIDER P3 ===================== -->
+<section class="slide divider" data-title="Phần 3 — 13 Bằng chứng">
+  <div class="kicker">Phần 3 / 6</div>
+  <div class="pnum">03</div>
+  <h1 class="title">13 Nghiên cứu — Bằng chứng</h1>
+  <p class="lead">9 paper LLM (#1–#9) + 4 baseline kinh điển (#10–#13). Mỗi con số có trích dẫn verbatim tới <strong>trang</strong> trong PDF gốc + lý do <strong>tại sao</strong> ra con số đó.</p>
+  <div class="snote"><p>Vào phần "ruột". Cách trình bày từng paper: bên trái = số liệu chính, bên phải = <b>câu trích nguyên văn</b> + chip trích dẫn (paper · trang) + ô <b>WHY</b> giải thích cơ chế. Em không đọc hết — chỉ nhấn 1–2 con số đắt nhất mỗi paper. Tổng cộng <b>104 trích dẫn đã verify, 102/104 khớp tuyệt đối</b> với PDF tải về (2 cái lệch trang nhỏ em sẽ nói thẳng ở slide chính trực).</p></div>
+</section>
+
+<!-- ===================== 18 · OVERVIEW 13 ===================== -->
+<section class="slide" data-title="Tổng quan 13 paper + GPT thống trị">
+  <div class="kicker">Phần 3 · Tổng quan</div>
+  <h1 class="title">Bản đồ 13 paper: GPT thống trị, ít ai so với người</h1>
+  <div class="body">
+    <div class="t-wrap frag">
+      <table class="grid dense">
+        <thead><tr><th>#</th><th>Tool / LLM</th><th>Loại</th><th>Năm · Venue</th><th>Coverage tốt nhất</th><th>Fault / bug</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1</td><td>RESTGPT · GPT-3.5</td><td><span class="pill llm">LLM</span></td><td>2024 · ICSE-NIER</td><td class="n">94% F1 (trích luật)</td><td>72.68% input hợp lệ</td></tr>
+          <tr><td class="n">2</td><td>KAT · GPT-3.5-turbo</td><td><span class="pill llm">LLM</span></td><td>2024 · ICST</td><td class="n">74.9% status-code</td><td>+24 mã ẩn</td></tr>
+          <tr><td class="n">3</td><td>RESTSpecIT · DeepSeek/GPT</td><td><span class="pill llm">LLM</span></td><td>2024 · arXiv</td><td class="n">88.6% route</td><td>5xx ở 4 API</td></tr>
+          <tr><td class="n">4</td><td>APITestGenie · GPT-4-Turbo</td><td><span class="pill llm">LLM</span></td><td>2024 · AST'26</td><td class="n">—</td><td>80% script hợp lệ; 12 defect</td></tr>
+          <tr class="rowhl"><td class="n">5</td><td>RestTSLLM · <b>Claude 3.5</b></td><td><span class="pill llm">LLM</span></td><td>2025 · SBES</td><td class="n">71.7% branch</td><td>40.8% mutation</td></tr>
+          <tr><td class="n">6</td><td>AutoRestTest · GPT-3.5+MARL</td><td><span class="pill llm">LLM</span></td><td>2025 · ICSE</td><td class="n">58.3% line</td><td>42 lỗi 500</td></tr>
+          <tr><td class="n">7</td><td>LlamaRestTest · Llama3-8B</td><td><span class="pill llm">LLM</span></td><td>2025 · FSE</td><td class="n">55.8% method</td><td>204 fault</td></tr>
+          <tr><td class="n">8</td><td>LogiAgent · GPT-4o-mini</td><td><span class="pill llm">LLM</span></td><td>2025 · arXiv</td><td class="n">71.78% line</td><td>234 lỗi logic; 49 crash</td></tr>
+          <tr><td class="n">9</td><td>RESTifAI · GPT-4.1-mini</td><td><span class="pill llm">LLM</span></td><td>2026 · ICSE Demo</td><td class="n">128/134 op</td><td>60.87% = bug thật</td></tr>
+          <tr><td class="n">10</td><td>EvoMaster · search-based</td><td><span class="pill base">baseline</span></td><td>2019 · TOSEM</td><td class="n">41% (&lt; tay 82%)</td><td>38 bug thật</td></tr>
+          <tr><td class="n">11</td><td>No-Time-to-Rest (10 tools)</td><td><span class="pill base">study</span></td><td>2022 · ISSTA</td><td class="n">52.76% line (trần)</td><td>33.3 lỗi 500</td></tr>
+          <tr><td class="n">12</td><td>Morest · model-based</td><td><span class="pill base">baseline</span></td><td>2022 · ICSE</td><td class="n">+26–103%</td><td>44 bug (13 mới)</td></tr>
+          <tr><td class="n">13</td><td>DeepREST · deep RL</td><td><span class="pill base">baseline</span></td><td>2024 · ASE</td><td class="n">+17–77% branch</td><td>+25–67% fault</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">!</div><div class="tx"><b>2 quan sát định hình GAP:</b> (1) họ GPT áp đảo (6/9 paper LLM); Claude/Gemini gần như không được benchmark head-to-head — <em>chỉ #5 có Claude và nó thắng</em>. (2) Cột "Compares vs manual?" sẽ <span class="em-red">trống ở mọi paper LLM</span> — giữ ý này tới Phần 4.</div></div></div>
+  </div>
+  <div class="snote">
+    <p>Bảng tổng quan để hội đồng thấy "rừng" trước khi vào "cây". Đừng đọc hết bảng — chỉ vào dòng #5 (Claude, đã tô nền) và 2 dòng baseline #10/#11.</p>
+    <p>Hai quan sát callout là <b>hạt giống của GAP</b>: GPT thống trị (nên thí nghiệm em chọn GPT để đại diện SOTA), và chưa ai so với người (GAP-1). Nói: "Giữ 2 ý này, Phần 4 em sẽ chứng minh bằng ma trận."</p>
+  </div>
+</section>
+
+<!-- ===================== 19 · #1 RESTGPT ===================== -->
+<section class="slide" data-title="#1 RESTGPT">
+  <div class="kicker">Phần 3 · Paper #1 / 13 · <span class="pill llm">ICSE-NIER 2024</span></div>
+  <h1 class="title">#1 · RESTGPT — LLM đọc mô tả ngôn ngữ tự nhiên để làm giàu spec</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">GPT-3.5 Turbo · few-shot · 9 API thật (Spotify, YouTube, FDIC…)</p>
+        <div class="stats">
+          <div class="stat"><div class="v">97%</div><div class="l">precision trích luật (NLP2REST 79%)</div></div>
+          <div class="stat"><div class="v">94%</div><div class="l">F1 trích luật</div></div>
+          <div class="stat"><div class="v amber">72.68%</div><div class="l">input hợp lệ — vs ARTE 16.93% (<b>+329%</b>)</div></div>
+        </div>
+        <p style="font-size:14px;margin-top:14px" class="muted">Ý nghĩa: chưa sinh script chạy được — đây là <em>tiền xử lý</em> làm giàu spec cho các tool sau.</p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>RESTGPT's precision of 97% surpasses even the precision of NLP2REST post-validation, which stands at 79%.</q><span class="src">RESTGPT, arXiv:2312.00894 · trang 4, Table 1 (dòng ~194) — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#1 RESTGPT</span><span class="pg">· p.4 · "ARTE 16.93%, RESTGPT 72.68%"</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao 97% &gt; 79%?</b> NLP2REST dựa từ khoá; RESTGPT dùng LLM <b>hiểu ngữ nghĩa</b> mô tả NL (vd "sort_order" → sinh "ASC/DESC"; tên ngôn ngữ → mã "en-US"). Năng lực ngữ cảnh của LLM bắt được ràng buộc mà kỹ thuật NLP truyền thống bỏ sót.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Paper mở màn, dễ hiểu: LLM giỏi <b>đọc mô tả tiếng người</b>. Nhấn 2 số: 97% precision và +329% input hợp lệ.</p>
+    <p>WHY là phần đắt: vì sao LLM hơn? Vì hiểu ngữ cảnh. Ví dụ sort_order → ASC/DESC. Đây là minh chứng cụ thể cho năng lực #1 ở slide "vì sao LLM" lúc nãy.</p>
+    <p>Trung thực: RESTGPT <b>chưa</b> sinh script chạy được — nó làm giàu spec. Nếu hội đồng hỏi "limitation", nói: paper nêu các hướng đó ở mục Future Work (Sec 5) chứ không gọi thẳng là "limitation" — em sẽ làm rõ ở slide chính trực.</p>
+  </div>
+</section>
+
+<!-- ===================== 20 · #2 KAT ===================== -->
+<section class="slide" data-title="#2 KAT">
+  <div class="kicker">Phần 3 · Paper #2 / 13 · <span class="pill llm">ICST 2024</span></div>
+  <h1 class="title">#2 · KAT — LLM suy luận phụ thuộc operation để tăng status-code coverage</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">GPT-3.5-turbo-1106 · temperature 0 · baseline RestTestGen · 12 dịch vụ</p>
+        <div class="bar frag"><div class="lab">Overall status-code</div><div class="track"><div class="fill" style="width:74.9%"></div></div><div class="val">74.9%</div></div>
+        <div class="bar frag"><div class="lab">↑ so với RTG</div><div class="track"><div class="fill amber" style="width:15.7%"></div></div><div class="val">+15.7%</div></div>
+        <div class="bar frag"><div class="lab">2xx coverage</div><div class="track"><div class="fill" style="width:74.5%"></div></div><div class="val">+18.1%</div></div>
+        <div class="bar frag"><div class="lab">4xx coverage</div><div class="track"><div class="fill" style="width:75.9%"></div></div><div class="val">+8.4%</div></div>
+        <p style="font-size:14px;margin-top:12px" class="frag"><span class="pill">+24 mã status ẩn</span> <span class="pill">94 vs 119 false-positive</span> <span class="pill">500: 23 = 23</span></p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>we noted a 15.7% increase in overall coverage, a 18.1% improvement in 2xx coverage, and a 8.4% increase in 4xx coverage, on average, over RTG.</q><span class="src">KAT, arXiv:2407.10227 · trang 8, Sec V.B — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#2 KAT</span><span class="pg">· p.8 · "+15.7% / +18.1% / +8.4%"</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao tăng?</b> GPT dựng <b>Operation Dependency Graph</b> bắc cầu khi tên không khớp: output <code>id</code> (schema Flight) ↔ input <code>flightId</code> (POST /booking). Heuristic so-tên của RTG bó tay; LLM hiểu ngữ nghĩa → xếp đúng thứ tự gọi → request hợp lệ chạm 2xx, và cố ý vi phạm ràng buộc → 4xx.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>KAT = năng lực #3 (suy luận dependency). Nhấn +15.7% overall và đặc biệt tách 2xx/4xx — KAT là paper <b>duy nhất</b> tách rõ 2xx vs 4xx (giữ ý cho GAP-3).</p>
+    <p>WHY: ví dụ flightId↔id rất trực quan. Temperature 0 = giảm ảo giác, ra kết quả ổn định (paper nói rõ ở Threats, p.10).</p>
+  </div>
+</section>
+
+<!-- ===================== 21 · #3 RESTSpecIT ===================== -->
+<section class="slide" data-title="#3 RESTSpecIT">
+  <div class="kicker">Phần 3 · Paper #3 / 13 · <span class="pill llm">arXiv 2024</span></div>
+  <h1 class="title">#3 · RESTSpecIT — vừa suy ra spec vừa test, không cần spec sẵn</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">DeepSeek V3 / GPT-4.1-mini / GPT-3.5 · zero-shot "prompt masking" · 10 API PRAB</p>
+        <div class="stats">
+          <div class="stat"><div class="v">88.6%</div><div class="l">route discovery TB (DeepSeek V3)</div></div>
+          <div class="stat"><div class="v amber">89.25%</div><div class="l">parameter discovery</div></div>
+          <div class="stat"><div class="v violet">$0.004</div><div class="l">chi phí mỗi lần chạy (thấp nhất)</div></div>
+        </div>
+        <p style="font-size:14px;margin-top:12px" class="frag"><span class="pill">10 route + 4 param ẩn</span> <span class="pill">5xx ở 4 API</span></p>
+        <p style="font-size:13px;margin-top:8px" class="muted">Lưu ý: đây là <em>route/spec discovery</em>, nên số cao — KHÁC code coverage.</p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>the DeepSeek model inferred the best percentages of routes on average (88.62%), followed by the GPT-4.1 model (81.16%), and then the GPT-3.5 model (79.84%).</q><span class="src">RESTSpecIT, arXiv:2402.05102 · trang 14, Sec 4.3.1 — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#3</span><span class="pg">· p.14 route · p.16 param · p.22 5xx</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao không cần spec?</b> "Masking" = che một phần HTTP request rồi hỏi LLM điền giá trị → gửi đi → response 2xx thì hợp lệ → tách ra thành route/param → bồi vào file OAS. Vừa <em>khám phá spec</em> vừa <em>test</em>. DeepSeek rẻ nhất vì giá token thấp + ít re-prompt.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>RESTSpecIT độc đáo: KHÔNG cần spec — nó tự suy ra. Nhấn: route 88.6%, param 89.25%, chi phí $0.004.</p>
+    <p><b>Rất quan trọng cho phòng thủ:</b> 88.6% là <b>route discovery</b>, không phải code coverage. Đây là minh hoạ sống cho "2 loại coverage". Nói: "con số cao này là độ phủ route/endpoint — lát Phần 4 em phân biệt rõ với code coverage để hội đồng không bị nhầm là gap đã được lấp."</p>
+  </div>
+</section>
+
+<!-- ===================== 22 · #4 APITestGenie ===================== -->
+<section class="slide" data-title="#4 APITestGenie">
+  <div class="kicker">Phần 3 · Paper #4 / 13 · <span class="pill llm">arXiv 2024 → AST 2026</span></div>
+  <h1 class="title">#4 · APITestGenie — từ user story + spec ra script chạy được</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">GPT-4-Turbo (128k) · RAG trên spec · 10 API thật</p>
+        <div class="bar frag"><div class="lab">Script hợp lệ (1 lần)</div><div class="track"><div class="fill" style="width:57.3%"></div></div><div class="val">57.3%</div></div>
+        <div class="bar frag"><div class="lab">Script hợp lệ (≤3 lần)</div><div class="track"><div class="fill" style="width:80%"></div></div><div class="val">80%</div></div>
+        <div class="bar frag"><div class="lab">Test case hợp lệ</div><div class="track"><div class="fill amber" style="width:68%"></div></div><div class="val">68%</div></div>
+        <p style="font-size:14px;margin-top:12px" class="frag"><span class="pill">126 s/script</span> <span class="pill">€0.37/script</span> <span class="pill">12 defect thật</span> <span class="pill warn">19 hallucination</span></p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>the probability of generating a valid test script increases from 57.3% with one attempt to 80% with three attempts.</q><span class="src">APITestGenie, arXiv:2409.03838 · trang 4, Figure 3 — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#4</span><span class="pg">· p.4 · 57.3%→80% · p.5 Table 2: 12 defect / 19 hallucination</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao retry giúp?</b> Mỗi lần sinh là một mẫu độc lập; xác suất có ≥1 script hợp lệ cộng dồn qua 3 lần → 80%. <b>Mặt trái:</b> 30.7% lỗi do giới hạn LLM (hallucination — import sai, bịa cấu trúc response) → bằng chứng trực tiếp cho rủi ro LLM.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>APITestGenie = năng lực #4 (sinh script chạy được) + đầu vào mới: <b>user story</b> chứ không chỉ spec. Nhấn 57.3%→80%.</p>
+    <p>WHY cân bằng: retry giúp, nhưng 19 hallucination là cái giá của LLM. Đây là bằng chứng để sau này em nói "LLM mạnh nhưng cần đánh giá có kiểm soát" — không tung hô.</p>
+  </div>
+</section>
+
+<!-- ===================== 23 · #5 RestTSLLM ===================== -->
+<section class="slide" data-title="#5 RestTSLLM (Claude thắng)">
+  <div class="kicker">Phần 3 · Paper #5 / 13 · <span class="pill llm">SBES 2025</span></div>
+  <h1 class="title">#5 · RestTSLLM — so 7 LLM, <span class="em">Claude 3.5 Sonnet thắng tuyệt đối</span></h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">7 LLM (Claude 3.5, DeepSeek R1, Qwen 2.5-32B, Sabiá-3…) · TSL → xUnit · 6 dự án</p>
+        <div class="stats">
+          <div class="stat"><div class="v">100%</div><div class="l">success rate (230 test, 0 fail)</div></div>
+          <div class="stat"><div class="v amber">71.7%</div><div class="l">branch coverage</div></div>
+          <div class="stat"><div class="v violet">40.8%</div><div class="l">mutation score</div></div>
+        </div>
+        <div class="frag" style="margin-top:14px"><div class="why" style="background:var(--green-soft);border-color:color-mix(in srgb,var(--green) 30%,transparent)"><div class="ic" style="background:var(--green)">✓</div><div class="tx"><b>Bài này GỠ được dấu † trong SLR:</b> evidence-table nghi 3 con số (71.7% / 40.8% / 100%) chỉ có ở index thứ cấp. Tui đã tải PDF gốc và tìm thấy chúng nguyên vẹn ở <b>Table 3, trang 9</b>.</div></div></div>
+      </div>
+      <div>
+        <div class="evidence frag"><q>Claude 3.5 Sonnet 70,9% 100% 71,7% 40,8%</q><span class="src">RestTSLLM, arXiv:2509.05540 · trang 9, Table 3 (score / success / branch / mutation) — đã verify trên PDF gốc</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#5</span><span class="pg">· p.9 Table 3 · p.1 abstract "outperformed all other models"</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao Claude thắng?</b> Dùng <b>TSL</b> (Test Specification Language) làm tầng trung gian: Prompt 1 đổi OpenAPI→TSL (tập trung business logic), Prompt 2 đổi TSL→xUnit (tập trung code). Tách bài toán → mỗi bước chỉ lo một việc → chất lượng cao hơn. Claude hiểu business logic tốt nhất trong 7 model.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p><b>Slide "ăn điểm chính trực".</b> Paper #5 là chỗ duy nhất Claude xuất hiện và nó thắng cả GPT. Quan trọng hơn: evidence-table của em từng đánh dấu † (chưa verify được 3 con số). Trong lúc làm bài này em <b>tải PDF gốc và tìm thấy đúng Table 3 trang 9</b> — gỡ được nghi ngờ.</p>
+    <p>Nói thẳng với hội đồng: "Đây là ví dụ em không nhận bừa số liệu — cái gì chưa chắc thì đánh dấu, rồi đi kiểm tới cùng." Đây chính là tinh thần 'không ai bắt bẻ được'.</p>
+    <p>WHY: TSL = chia để trị prompt. Lý do Claude thắng = hiểu business logic.</p>
+  </div>
+</section>
+
+<!-- ===================== 24 · #6 AutoRestTest ===================== -->
+<section class="slide" data-title="#6 AutoRestTest">
+  <div class="kicker">Phần 3 · Paper #6 / 13 · <span class="pill llm">ICSE 2025</span></div>
+  <h1 class="title">#6 · AutoRestTest — đa tác tử (MARL) + đồ thị ngữ nghĩa + LLM</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">GPT-3.5 + Multi-Agent RL + Semantic Property Dependency Graph · 12 dịch vụ</p>
+        <div class="stats">
+          <div class="stat"><div class="v">58.3%</div><div class="l">method &amp; line coverage</div></div>
+          <div class="stat"><div class="v amber">42</div><div class="l">lỗi 500 — vs EvoMaster <b>20</b></div></div>
+          <div class="stat"><div class="v red">−10.9%</div><div class="l">coverage khi BỎ LLM (ablation)</div></div>
+        </div>
+        <p style="font-size:14px;margin-top:12px" class="frag">So với <span class="pill base">EvoMaster 20</span> <span class="pill base">MoRest 20</span> <span class="pill base">RESTler 14</span> <span class="pill base">ARAT-RL 33</span></p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>AutoRestTest detected a total of 42 500 Internal Server Errors... ARAT-RL detected 33 errors, EvoMaster and MoRest detected 20 errors each, and RESTler detected 14 errors.</q><span class="src">AutoRestTest, arXiv:2411.07098 · trang 9, RQ2 / Table III — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#6</span><span class="pg">· p.9 · 42 vs 20 · p.10 ablation −10.9–12.8%</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao 42 &gt; 20?</b> 4 agent (operation/parameter/value/dependency) phối hợp bằng RL; SPDG dùng cosine similarity ≥0.7 (GloVe) ghép dependency ngữ nghĩa; LLM sinh giá trị hợp lệ. <b>Ablation chứng minh nhân quả:</b> bỏ LLM → coverage rớt 10.9–12.8% vì hết giá trị hợp lệ để chạm code sâu.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>AutoRestTest là 1 trong các paper <b>so trực tiếp với EvoMaster</b> (giữ cho GAP-1). Nhấn 42 vs 20.</p>
+    <p>Điểm vàng = <b>ablation</b>: bỏ LLM thì coverage rớt 10.9–12.8%. Đây là bằng chứng nhân–quả mạnh nhất trong cả corpus rằng "chính LLM tạo ra cải thiện", không phải MARL hay SPDG đơn thuần. Nếu hội đồng hỏi "lấy gì chắc LLM có ích?" → chỉ vào ablation này.</p>
+  </div>
+</section>
+
+<!-- ===================== 25 · #7 LlamaRestTest ===================== -->
+<section class="slide" data-title="#7 LlamaRestTest">
+  <div class="kicker">Phần 3 · Paper #7 / 13 · <span class="pill llm">FSE 2025</span></div>
+  <h1 class="title">#7 · LlamaRestTest — model nhỏ fine-tune <span class="em">đánh bại GPT</span></h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">Llama3-8B fine-tuned + quantize (2/4/8-bit) · 2 model chuyên (giá trị + dependency)</p>
+        <div class="stats">
+          <div class="stat"><div class="v amber">204</div><div class="l">fault — vs EvoMaster <b>130</b></div></div>
+          <div class="stat"><div class="v">72.44%</div><div class="l">input hợp lệ — vs RESTGPT 68.82%</div></div>
+          <div class="stat"><div class="v">55.8%</div><div class="l">method coverage (&gt; EvoMaster 45.8%)</div></div>
+        </div>
+        <p style="font-size:14px;margin-top:12px" class="frag">IPD: <span class="pill">12/17 dependency</span> vs RESTGPT 9, base Llama 2</p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>LlamaRestTest demonstrated the highest fault-detection ability, discovering 204 faults in 10 runs... 74 more than EvoMaster (130).</q><span class="src">LlamaRestTest, arXiv:2501.08598 · trang 11, RQ4 / Table 2 — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#7</span><span class="pg">· p.11 · 204 vs 130 · p.12 · 72.44% vs 68.82%</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao model 8B thắng GPT?</b> Fine-tune trên 1.8 triệu ví dụ tham số API → học pattern đặc thù REST. Base Llama chỉ đạt 22.94%; sau fine-tune → 72.44%. Quantize 8-bit giảm thời gian suy luận 48.9s→36.9s/rule → gửi nhiều request hơn trong cùng ngân sách 1h → coverage cao hơn.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Thông điệp ngược trực giác: <b>model nhỏ fine-tune đánh bại GPT lớn</b>. Nhấn 204 fault vs 130, và 72.44% vs RESTGPT 68.82%.</p>
+    <p>WHY 2 tầng: (1) fine-tune trên domain → bù lại kích thước nhỏ; (2) quantize → nhanh hơn → test nhiều hơn trong 1h. Đây là bằng chứng "không cần model khổng lồ" — quan trọng về chi phí.</p>
+    <p>Cũng so trực tiếp EvoMaster (GAP-1).</p>
+  </div>
+</section>
+
+<!-- ===================== 26 · #8 LogiAgent ===================== -->
+<section class="slide" data-title="#8 LogiAgent">
+  <div class="kicker">Phần 3 · Paper #8 / 13 · <span class="pill llm">arXiv 2025</span></div>
+  <h1 class="title">#8 · LogiAgent — oracle logic vượt khỏi việc "chỉ đếm 5xx"</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">GPT-4o-mini · 3 agent (Scenario / Executor / Response Validator) · 12 hệ thống</p>
+        <div class="stats">
+          <div class="stat"><div class="v amber">71.78%</div><div class="l">line coverage (cao nhất nhóm)</div></div>
+          <div class="stat"><div class="v">234</div><div class="l">lỗi logic (139 bug + 95 enhancement)</div></div>
+          <div class="stat"><div class="v red">33.81%</div><div class="l">false-positive (ảo giác LLM)</div></div>
+        </div>
+        <p style="font-size:14px;margin-top:12px" class="frag"><span class="pill">66.19% accuracy</span> <span class="pill">49 crash 500</span> vs baseline 34.90/62.38/67.24</p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>234 (66.19%) are confirmed as true system problems... 139 (38.47%) are classified as logical bugs, while 95 (27.71%)... The remaining 115 (33.81%) are determined to be false positives.</q><span class="src">LogiAgent, arXiv:2503.15079 · trang 8, RQ1 / Table 2 — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#8</span><span class="pg">· p.9 coverage · p.8 234 issues · p.9 Table 3: 49 crash</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao bắt được lỗi logic?</b> Response Validator dùng LLM làm <b>oracle ngữ nghĩa</b>: so response với business logic + tài liệu, không chỉ check 5xx → bắt được lỗi trả 200 nhưng sai. <b>Nhưng:</b> 33.81% false-positive do LLM ảo giác trên domain phức tạp — minh hoạ "bài toán oracle" chưa được giải triệt để.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>LogiAgent giải quyết đúng "bài toán oracle" ở slide nền tảng: dùng LLM làm oracle logic, bắt lỗi mà 5xx-counting bỏ sót. Nhấn 71.78% line (cao nhất nhóm LLM) + 234 lỗi logic.</p>
+    <p>WHY cân bằng: mạnh ở oracle, nhưng 33.81% false-positive = LLM ảo giác. Đây là bằng chứng GAP-2 (fault detection vẫn thiếu ground truth → tỉ lệ nhiễu cao). Nếu bị hỏi "49 crash ở đâu" → Table 3 trang 9, là tổng các dòng (em sẽ ghi rõ ở appendix, đây là 1 trong 2 chỗ trích dẫn lệch nhỏ em chủ động khai báo).</p>
+  </div>
+</section>
+
+<!-- ===================== 27 · #9 RESTifAI ===================== -->
+<section class="slide" data-title="#9 RESTifAI">
+  <div class="kicker">Phần 3 · Paper #9 / 13 · <span class="pill llm">ICSE 2026 Demo</span></div>
+  <h1 class="title">#9 · RESTifAI — happy-path + suy ra negative case, tiết kiệm token</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">Azure OpenAI GPT-4.1-mini · test CI/CD tái dùng · 5 API công khai + 2 dịch vụ công nghiệp</p>
+        <div class="stats">
+          <div class="stat"><div class="v">128/134</div><div class="l">operation OhSome — vs AutoRestTest <b>33</b></div></div>
+          <div class="stat"><div class="v amber">−37%</div><div class="l">token: 32,370 vs LogiAgent 51,188</div></div>
+          <div class="stat"><div class="v">60.87%</div><div class="l">failure = bug/enhancement thật</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="evidence frag"><q>RESTifAI achieved 128 out of 134 successful operations on the OhSome service, compared to 33 operations covered by AutoRestTest, as shown in Table 1.</q><span class="src">RESTifAI, arXiv:2512.08706 · trang 3, Table 1 — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#9</span><span class="pg">· p.3 · 128/134 · p.3 token · p.4 · 60.87%</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao tiết kiệm token?</b> RESTifAI <b>dùng LLM chọn lọc</b> trong workflow: dựng happy-path hợp lệ trước, rồi <em>suy ra</em> negative case từ chính chuỗi đó (không gọi LLM lặp lại như multi-agent của LogiAgent). Tái dùng chuỗi → ít prompt → 37% rẻ hơn mà vẫn phủ 95.5% operation.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>RESTifAI = paper mới nhất (2026), hướng "kỹ thuật" hơn: dùng LLM tiết kiệm, ra test CI/CD tái dùng được. Nhấn 128/134 operation (≈95.5%) và −37% token.</p>
+    <p><b>Cực quan trọng cho GAP-3:</b> 128/134 ≈ 95.5% là <b>operation coverage</b> đã vượt 90%. Nói: "đây là bằng chứng ngưỡng ≥90% endpoint là KHẢ THI — nên RQ1 của em không hỏi 'có đạt được không' mà hỏi 'có đạt trên EMB có lỗi gieo sẵn không, và loại endpoint nào bị bỏ sót'."</p>
+  </div>
+</section>
+
+<!-- ===================== 28 · baselines intro ===================== -->
+<section class="slide" data-title="4 baseline kinh điển (#10-#13)">
+  <div class="kicker">Phần 3 · Baseline non-LLM</div>
+  <h1 class="title">4 baseline kinh điển — vì sao vẫn giữ trong corpus</h1>
+  <div class="body">
+    <p class="lead">Theo <strong>IC4</strong>: câu hỏi của topic so LLM với <em>thủ công</em> &amp; <em>EvoMaster</em>, nên phải giữ các tool non-LLM làm <span class="em">mốc định lượng</span> cho GAP.</p>
+    <div class="cards c4">
+      <div class="card base frag"><div class="tag">#10 · 2019</div><h3>EvoMaster</h3><div style="font-size:14px">Mốc <b>quan trọng nhất</b>: tool duy nhất so với <em>test tay</em>. Baseline thí nghiệm.</div></div>
+      <div class="card base frag"><div class="tag">#11 · 2022</div><h3>No Time to Rest Yet</h3><div style="font-size:14px">Study 10 tool / 20 service → <b>trần ~52% line</b> + benchmark <b>EMB</b>.</div></div>
+      <div class="card base frag"><div class="tag">#12 · 2022</div><h3>Morest</h3><div style="font-size:14px">Model-based RPG — chuẩn so sánh coverage &amp; bug.</div></div>
+      <div class="card base frag"><div class="tag">#13 · 2024</div><h3>DeepREST</h3><div style="font-size:14px">Deep RL mạnh + <b>kiểm định thống kê</b> (mẫu cho Phần 6).</div></div>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">!</div><div class="tx">Hai baseline #10 và #11 cho em 2 thứ thí nghiệm cần: <b>EvoMaster</b> (đối thủ), <b>EMB</b> (tập API chuẩn) và <b>~52% trần code coverage</b> để đặt kỳ vọng đúng.</div></div></div>
+  </div>
+  <div class="snote"><p>Slide cầu nối: giải thích vì sao giữ tool cũ (IC4). Nhấn #10 EvoMaster (đối thủ + so test tay) và #11 (EMB + trần 52%). Hai cái này trực tiếp đẻ ra thiết kế thí nghiệm Phần 6.</p></div>
+</section>
+
+<!-- ===================== 29 · #10 EvoMaster ===================== -->
+<section class="slide" data-title="#10 EvoMaster (paper then chốt)">
+  <div class="kicker">Phần 3 · Paper #10 / 13 · <span class="pill base">ACM TOSEM 2019</span></div>
+  <h1 class="title">#10 · EvoMaster — <span class="em-red">tool sinh test phủ THẤP hơn người</span></h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">White-box · search-based (genetic / MIO) · 3 dịch vụ · oracle = 5xx</p>
+        <div class="bar frag"><div class="lab">FeaturesService (gen)</div><div class="track"><div class="fill gray" style="width:41%"></div></div><div class="val">41%</div></div>
+        <div class="bar frag"><div class="lab">FeaturesService (tay)</div><div class="track"><div class="fill" style="width:82%"></div></div><div class="val">82%</div></div>
+        <div class="bar frag"><div class="lab">Industrial (gen / tay)</div><div class="track"><div class="fill gray" style="width:18%"></div></div><div class="val">18/47</div></div>
+        <div class="bar frag"><div class="lab">ScoutApi (gen / tay)</div><div class="track"><div class="fill gray" style="width:20%"></div></div><div class="val">20/43</div></div>
+        <p style="font-size:14px;margin-top:12px" class="frag"><span class="pill win">38 bug thật</span> — nhưng coverage &lt; test tay ở cả 3 API</p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>the generated test suites obtained between 18% and 41% statement coverage. This is lower than the coverage of the existing test cases in those SUTs.</q><span class="src">EvoMaster, arXiv:1901.01538 · trang 11, Sec V.C / Table III — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#10</span><span class="pg">· p.11 Table III · p.1 "38 real faults"</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao thua người?</b> Giải thuật di truyền không vượt được <b>ràng buộc chuỗi (string), truy vấn DB, và service ngoài</b> — những chỗ chặn đường thực thi. Dev viết tay có <em>tri thức miền</em> nên thoả thẳng các ràng buộc đó. Paper nêu rõ ở RQ3 + Threats (trang 11).</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p><b>Paper then chốt của cả bài.</b> Đây là tool DUY NHẤT trong 13 paper so với <b>test viết tay</b> — và nó <b>thua</b>: 41% vs 82%. Nhấn thật mạnh con số này.</p>
+    <p>Ý nghĩa GAP: nếu năm 2019 tool tự động thua người, thì câu hỏi 2026 là "LLM có lật ngược được không?" — nhưng <b>chưa ai đặt LLM, người, và EvoMaster lên cùng một bàn cân</b>. Đó là GAP-1, và slide này là bằng chứng gốc.</p>
+    <p>WHY: string/DB/external constraints — giải thích vì sao GA thua. Cũng là lý do thí nghiệm em gieo lỗi để đo công bằng.</p>
+  </div>
+</section>
+
+<!-- ===================== 30 · #11 No Time to Rest ===================== -->
+<section class="slide" data-title="#11 No Time to Rest Yet (trần 52% + EMB)">
+  <div class="kicker">Phần 3 · Paper #11 / 13 · <span class="pill base">ISSTA 2022</span></div>
+  <h1 class="title">#11 · "No Time to Rest Yet" — trần ~52% line &amp; benchmark EMB</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">Study so 10 tool trên 20 service · 1 giờ × 10 lần chạy</p>
+        <div class="stats">
+          <div class="stat"><div class="v">52.76%</div><div class="l">line coverage — tool tốt nhất (EvoMaster-WB)</div></div>
+          <div class="stat"><div class="v amber">~53%</div><div class="l">KHÔNG tool nào vượt → còn nhiều dư địa</div></div>
+          <div class="stat"><div class="v violet">0.7881</div><div class="l">tương quan coverage ↔ số lỗi 500</div></div>
+        </div>
+        <p style="font-size:14px;margin-top:12px" class="frag"><span class="pill">20 service = EMB benchmark</span> <span class="pill">black-box 33–45% line</span></p>
+      </div>
+      <div>
+        <div class="evidence frag"><q>the best-performing tool (EvoMasterWB) achieved less than 53% line coverage, less than 37% branch coverage, and less than 53% method coverage.</q><span class="src">No Time to Rest Yet, arXiv:2204.08348 · trang 5–6, RQ1 / Table 3 — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#11</span><span class="pg">· p.5 · 52.76% · p.4 · "20 web services" (EMB) · p.8 · 0.7881</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao trần thấp?</b> Paper chỉ ra 2 nút thắt: (1) sinh <b>giá trị tham số</b> hợp lệ kém → nhiều request bị từ chối; (2) <b>phát hiện phụ thuộc</b> operation yếu → không dựng được test có trạng thái. Đây đúng là 2 chỗ LLM mạnh.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Paper này cho 2 thứ nền tảng: <b>trần ~52% code coverage</b> (để đặt kỳ vọng đúng) và <b>EMB</b> — bộ 20 service chuẩn mà thí nghiệm em sẽ lấy 3 API từ đó.</p>
+    <p>Tương quan 0.7881 giữa coverage và lỗi 500: càng phủ nhiều code càng dễ chạm lỗi — biện minh vì sao coverage là metric đáng đo.</p>
+    <p>WHY: 2 nút thắt (giá trị tham số + dependency) chính là 2 thứ LLM giải tốt → khép vòng lập luận "vì sao LLM hứa hẹn".</p>
+  </div>
+</section>
+
+<!-- ===================== 31 · #12 Morest ===================== -->
+<section class="slide" data-title="#12 Morest">
+  <div class="kicker">Phần 3 · Paper #12 / 13 · <span class="pill base">ICSE 2022</span></div>
+  <h1 class="title">#12 · Morest — model-based với đồ thị thuộc tính động</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">RESTful-service Property Graph (RPG) cập nhật bằng phản hồi thực thi · 6 dự án</p>
+        <div class="stats">
+          <div class="stat"><div class="v">+152–232%</div><div class="l">nhiều operation hơn baseline</div></div>
+          <div class="stat"><div class="v amber">+40–216%</div><div class="l">nhiều bug hơn</div></div>
+          <div class="stat"><div class="v">44</div><div class="l">bug (13 chưa tool nào bắt được; 2 ở Bitbucket)</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="evidence frag"><q>Morest can successfully request an average of 152.66%-232.45% more API operations, cover 26.16%-103.24% more lines of code, and detect 40.64%-215.94% more bugs than state-of-the-art techniques.</q><span class="src">Morest, arXiv:2204.12148 · trang 1–2, Abstract / Intro — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#12</span><span class="pg">· p.1 · 44 bug, 13 mới, 2 Bitbucket</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao bắt thêm 13 bug?</b> RPG có cạnh <b>property-equivalence</b> nối 2 schema dù tên khác nhau (vd <code>Order.petId</code> ↔ <code>Pet.id</code>) → dựng được chuỗi gọi như (placeOrder → getPetById) mà đồ thị tĩnh không tạo nổi → chạm tới lỗi sâu (vd chuỗi 3 bước gây 500 ở Bitbucket).</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Morest = baseline model-based mạnh. Nhấn 44 bug (13 mới) và đặc biệt 2 bug ở Bitbucket (service 6 triệu user) → bằng chứng "tool tự động bắt được bug thật ở hệ thống lớn".</p>
+    <p>WHY: property-equivalence edge — nối schema khác tên. Đây là ý tưởng kỹ thuật hay, nhưng vẫn KHÔNG có ground truth (đếm bug, không biết tổng số lỗi) → giữ cho GAP-2.</p>
+  </div>
+</section>
+
+<!-- ===================== 32 · #13 DeepREST ===================== -->
+<section class="slide" data-title="#13 DeepREST">
+  <div class="kicker">Phần 3 · Paper #13 / 13 · <span class="pill base">ASE 2024</span></div>
+  <h1 class="title">#13 · DeepREST — deep RL học ràng buộc ẩn + kiểm định thống kê</h1>
+  <div class="body">
+    <div class="split w-46">
+      <div>
+        <p class="muted" style="font-size:14px;margin-bottom:10px">Deep RL + curiosity-driven · 11 API EMB · 5 baseline · Wilcoxon p&lt;0.05</p>
+        <div class="stats">
+          <div class="stat"><div class="v">+17–77%</div><div class="l">branch coverage vs baseline</div></div>
+          <div class="stat"><div class="v amber">+25–67%</div><div class="l">unique fault</div></div>
+          <div class="stat"><div class="v green">p&lt;0.05</div><div class="l">khác biệt có ý nghĩa thống kê</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="evidence frag"><q>all the differences are statistically significant according to the Wilcoxon signed rank test (with the only exception of the faults for Restler).</q><span class="src">DeepREST, arXiv:2408.08594 · trang 8, Sec 5.3 RQ1 — đã verify</span></div>
+        <div style="margin:10px 0" class="frag"><span class="cite ok"><span class="pid">#13</span><span class="pg">· p.8 · +17–77% branch · Wilcoxon α=0.05</span></span></div>
+        <div class="why frag"><div class="ic">?</div><div class="tx"><b>Tại sao quan trọng cho bài em?</b> DeepREST <b>học ràng buộc ẩn</b> (thứ tự logic + giá trị) <em>không có</em> trong OpenAPI. Và nó dùng <b>Wilcoxon signed-rank, α=0.05, 10 lần chạy</b> — đúng khuôn mẫu kiểm định mà Phần 6 của em sẽ áp dụng.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>DeepREST = baseline RL mạnh nhất, và là <b>mẫu phương pháp luận</b>: cách họ dùng Wilcoxon + 10 lần chạy + α=0.05 chính là cái em bê vào Phần 6.</p>
+    <p>WHY: "học ràng buộc ẩn ngoài spec" — chính là điểm yếu của tool dựa spec thuần, và là lý do LLM (đọc NL) hoặc RL (học từ phản hồi) cần thiết.</p>
+  </div>
+</section>
+
+<!-- ===================== 33 · 2 kinds of coverage ===================== -->
+<section class="slide" data-title="Hai loại coverage — chốt setup GAP">
+  <div class="kicker">Phần 3 · Tổng hợp then chốt</div>
+  <h1 class="title">Chốt: "độ phủ cao" của LLM là <span class="em">endpoint</span>, không phải <span class="em-red">code</span></h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <div class="card accent frag"><div class="tag">Loại A — Endpoint / Operation / Route coverage</div><h3>CÓ THỂ rất cao</h3>
+          <ul class="clean" style="gap:6px;margin-top:6px">
+            <li style="font-size:15px">RESTifAI: <b>128/134 ≈ 95.5%</b> operation <span class="cite ok" style="font-size:11px"><span class="pid">#9</span> p.3</span></li>
+            <li style="font-size:15px">RESTSpecIT: <b>~88.6%</b> route discovery <span class="cite ok" style="font-size:11px"><span class="pid">#3</span> p.14</span></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card gap frag"><div class="tag">Loại B — Code coverage (line / branch / method)</div><h3>VẪN thấp hơn nhiều</h3>
+          <ul class="clean" style="gap:6px;margin-top:6px">
+            <li style="font-size:15px">Trần kinh điển: <b>~52.76% line</b> <span class="cite ok" style="font-size:11px"><span class="pid">#11</span> p.5</span></li>
+            <li style="font-size:15px">Tốt nhất nhóm LLM: <b>71.78% line</b> (LogiAgent) <span class="cite ok" style="font-size:11px"><span class="pid">#8</span> p.9</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">→</div><div class="tx"><b>Hệ quả cho RQ1 (đừng để hội đồng nhầm):</b> ngưỡng <span class="num">≥90%</span> <em>endpoint</em> coverage là <b>khả thi</b> (đã có tool đạt). Nên câu hỏi mở KHÔNG phải "có đạt ≥90% không", mà là <b>(a)</b> có đạt trên <em>EMB có lỗi gieo sẵn</em> không, và <b>(b) loại endpoint nào</b> (CRUD / auth / error-handling) bị bỏ sót — <span class="em">chưa paper nào trả lời</span>.</div></div></div>
+  </div>
+  <div class="snote">
+    <p><b>Slide bản lề quan trọng nhất Phần 3.</b> Nó ngăn chặn câu phản biện kinh điển: "90% coverage đạt rồi, gap đâu?".</p>
+    <p>Trả lời gọn: có 2 loại coverage. Endpoint (loại A) đã ≥90% — đúng. Code (loại B) vẫn ~52–72%. RQ1 của em đo <b>endpoint</b> coverage NHƯNG thêm 2 điều chưa ai làm: kiểm trên EMB <b>có lỗi gieo sẵn</b>, và <b>bóc tách theo loại endpoint</b>. Nói chậm slide này, nó là cầu sang Phần 4.</p>
+  </div>
+</section>
+
+<!-- ===================== 34 · DIVIDER P4 ===================== -->
+<section class="slide divider" data-title="Phần 4 — Khoảng trống">
+  <div class="kicker">Phần 4 / 6</div>
+  <div class="pnum">04</div>
+  <h1 class="title">GAP — Khoảng trống nghiên cứu</h1>
+  <p class="lead">Một ma trận so sánh chéo phơi bày 3 khoảng trống mà cả 13 paper chất lượng cao đều bỏ ngỏ.</p>
+  <div class="snote"><p>Phần quan trọng nhất. Thông điệp: gap không phải "em cảm thấy thiếu" mà là <b>một cột trống trong bảng</b>. Vào slide ma trận, chỉ tay vào cột cuối tô đỏ.</p></div>
+</section>
+
+<!-- ===================== 35 · cross matrix ===================== -->
+<section class="slide" data-title="Ma trận so sánh chéo — GAP hiện hình">
+  <div class="kicker">Phần 4 · GAP made visible</div>
+  <h1 class="title">Ma trận so sánh: cột cuối <span class="em-red">trống ở MỌI paper</span></h1>
+  <div class="body" style="margin-top:8px">
+    <div class="t-wrap frag">
+      <table class="grid dense">
+        <thead><tr><th>#</th><th>Tool / LLM</th><th class="n">Dùng EMB?</th><th class="n">So vs EvoMaster?</th><th class="n">So vs <b>thủ công</b>?</th><th class="n">Lỗi gieo sẵn → <b>Recall</b>?</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1</td><td>RESTGPT</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">2</td><td>KAT</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">3</td><td>RESTSpecIT</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">4</td><td>APITestGenie</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">5</td><td>RestTSLLM</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="n">~mutation</td></tr>
+          <tr><td class="n">6</td><td>AutoRestTest</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">7</td><td>LlamaRestTest</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">8</td><td>LogiAgent</td><td class="n">Partly</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">9</td><td>RESTifAI</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">10</td><td>EvoMaster</td><td class="n">(gốc)</td><td class="n">(là baseline)</td><td class="yes">Yes</td><td class="no">No</td></tr>
+          <tr><td class="n">11</td><td>No Time to Rest</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">12</td><td>Morest</td><td class="no">No</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td class="n">13</td><td>DeepREST</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td><td class="no">No</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="frag" style="margin-top:10px"><div class="why"><div class="ic">!</div><div class="tx"><b>Đọc bảng:</b> cột "so vs thủ công" chỉ EvoMaster (#10, non-LLM) có Yes — và nó <em>thua</em> người. Cột "Recall trên lỗi gieo sẵn" <span class="em-red">trống toàn bộ</span> (chỉ #5 có mutation score gần đúng). <b>Không paper nào</b> đặt LLM + thủ công + EvoMaster lên cùng một bộ lỗi gieo sẵn.</div></div></div>
+  </div>
+  <div class="snote">
+    <p><b>Slide đắt nhất bài.</b> Đừng đọc từng ô — chỉ tay vào <b>2 cột phải</b>. "So với thủ công": chỉ #10 Yes (và thua). "Recall trên lỗi gieo sẵn": đỏ hết, chỉ #5 gần đúng bằng mutation score.</p>
+    <p>Câu chốt: "Cả 13 paper, không bài nào đặt LLM, người, và EvoMaster lên cùng một bàn cân có ground truth. Đó là khoảng trống — và nó hiện ra thành cột trống, không phải ý kiến của em."</p>
+    <p>Nguồn: evidence-table.md mục C (ma trận) — mọi ô truy được về paper.</p>
+  </div>
+</section>
+
+<!-- ===================== 36 · GAP-1 ===================== -->
+<section class="slide" data-title="GAP-1 · Comparison">
+  <div class="kicker">Phần 4 · GAP-1 / 3 — COMPARISON</div>
+  <h1 class="title">GAP-1 · Chưa ai so LLM ↔ thủ công ↔ EvoMaster <span class="em">cùng lúc</span></h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <p class="lead" style="font-size:18px">Bằng chứng:</p>
+        <ul class="clean">
+          <li class="frag">LLM chỉ được so với baseline <em>tự động</em>: AutoRestTest &amp; LlamaRestTest thắng EvoMaster (<span class="num">42 vs 20</span>; <span class="num">204 vs 130</span>) <span class="cite ok" style="font-size:11px"><span class="pid">#6,#7</span></span></li>
+          <li class="frag">Study #11 xếp hạng 10 tool — nhưng <span class="em-red">không tool nào kèm test người</span>.</li>
+          <li class="frag">So-với-thủ-công <em>duy nhất</em>: EvoMaster #10 — non-LLM, và phủ <span class="em-red">thấp hơn</span> người (41% vs 82%) <span class="cite ok" style="font-size:11px"><span class="pid">#10</span> p.11</span></li>
+        </ul>
+      </div>
+      <div class="frag">
+        <div class="card gap"><div class="tag">→ Khoảng trống</div><div style="font-size:17px;line-height:1.5">Không có đánh giá <b>head-to-head LLM vs thiết kế test thủ công vs EvoMaster</b> trên cùng một tập API.</div></div>
+        <div class="why" style="margin-top:14px"><div class="ic">?</div><div class="tx"><b>Tại sao đây là gap thật:</b> mỗi nhánh đã tồn tại riêng lẻ (LLM-vs-tool; tool-vs-người) nhưng <b>chưa hợp nhất</b>. Thiếu phép so 3 chiều → không biết LLM đã thực sự vượt <em>người</em> chưa, hay chỉ vượt <em>tool</em>.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>GAP-1 = comparison. Lập luận: LLM so với tool thì có (và thắng); tool so với người thì có 1 (EvoMaster, và thua). Nhưng tam giác LLM–người–EvoMaster <b>chưa khép</b>.</p>
+    <p>Tại sao quan trọng: nếu LLM chỉ hơn tool mà chưa chắc hơn người, thì lời hứa "LLM thay thế test thủ công" vẫn chưa được kiểm chứng. RQ2 sẽ khép tam giác này.</p>
+  </div>
+</section>
+
+<!-- ===================== 37 · GAP-2 ===================== -->
+<section class="slide" data-title="GAP-2 · Ground truth / Recall">
+  <div class="kicker">Phần 4 · GAP-2 / 3 — DATASET / GROUND TRUTH</div>
+  <h1 class="title">GAP-2 · Đếm lỗi mà <span class="em-red">không có sự thật nền</span> → không tính được Recall</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <p class="lead" style="font-size:18px">Bằng chứng:</p>
+        <ul class="clean">
+          <li class="frag">Fault chỉ là <b>số đếm</b> trên hệ thống sống: 38 bug (#10), 44 bug (#12), 42 lỗi 500 (#6), 204 fault (#7), 49 crash (#8)…</li>
+          <li class="frag">Vì <span class="em-red">tổng số lỗi thực sự là ẩn số</span> → không ai tính được <b>Recall = lỗi tìm được ÷ lỗi có thật</b>.</li>
+          <li class="frag">Ngoại lệ duy nhất (một phần): RestTSLLM #5 có <b>mutation score 40.8%</b> — nhưng trên mutant tự sinh, 6 API tự dựng, không so người/EvoMaster. <span class="cite ok" style="font-size:11px"><span class="pid">#5</span> p.9</span></li>
+        </ul>
+      </div>
+      <div class="frag">
+        <div class="card gap"><div class="tag">→ Khoảng trống</div><div style="font-size:17px;line-height:1.5">Chưa có đo lường <b>có ground truth</b> (trên benchmark lỗi-gieo-sẵn dùng chung) xem test LLM bắt được <b>bao nhiêu % lỗi đã biết</b>, so với thủ công và EvoMaster.</div></div>
+        <div class="why" style="margin-top:14px"><div class="ic">?</div><div class="tx"><b>Tại sao "đếm" không đủ:</b> "tìm 42 lỗi" vô nghĩa nếu không biết có 50 hay 500 lỗi. Chỉ khi <b>gieo lỗi biết trước</b> mới tính được Recall/Precision — thước đo khoa học thật sự.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>GAP-2 = ground truth. Đây là gap <b>phương pháp đo lường</b>. Ví von: "nói tôi bắt được 42 con cá là vô nghĩa nếu không biết hồ có bao nhiêu con."</p>
+    <p>EMB có <b>API</b> dùng chung nhưng KHÔNG có lỗi-gieo-sẵn. Nên thí nghiệm em sẽ <b>gieo lỗi</b> (pre-seeded faults) để biết tổng → tính được Recall. RQ2 đóng gap này.</p>
+  </div>
+</section>
+
+<!-- ===================== 38 · GAP-3 ===================== -->
+<section class="slide" data-title="GAP-3 · Metric / edge-case">
+  <div class="kicker">Phần 4 · GAP-3 / 3 — METRIC</div>
+  <h1 class="title">GAP-3 · Thiếu metric edge-case &amp; bóc tách <span class="em">loại endpoint</span> bị bỏ sót</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <p class="lead" style="font-size:18px">Bằng chứng:</p>
+        <ul class="clean">
+          <li class="frag">Đa số chỉ đo coverage tổng + đếm 500. Chỉ <b>#2 KAT</b> tách 2xx/4xx <span class="cite ok" style="font-size:11px"><span class="pid">#2</span> p.8</span>; chỉ <b>#3</b> báo 5xx.</li>
+          <li class="frag"><span class="em-red">Không paper nào</span> đo <b>số kịch bản edge-case/endpoint</b> (4xx/5xx + boundary do cố ý vi phạm ràng buộc OpenAPI).</li>
+          <li class="frag"><span class="em-red">Không paper nào</span> bóc tách coverage theo <b>loại endpoint</b> (CRUD / authentication / error-handling) để cho biết <em>loại nào</em> hay bị bỏ.</li>
+        </ul>
+      </div>
+      <div class="frag">
+        <div class="card gap"><div class="tag">→ Khoảng trống</div><div style="font-size:17px;line-height:1.5">Không có metric chất lượng edge-case/error-code <b>theo từng endpoint</b>, không có hồ sơ <b>loại endpoint bị bỏ sót</b>, và chưa kiểm ngưỡng ≥90% endpoint trên benchmark lỗi-gieo-sẵn.</div></div>
+        <div class="why" style="margin-top:14px"><div class="ic">?</div><div class="tx"><b>Tại sao cần:</b> coverage tổng "che" việc API bỏ sót đúng các endpoint <em>nhạy cảm</em> (auth, error-handling). Đếm theo loại + theo kịch bản edge-case mới lộ ra điểm yếu thật. RQ1 + RQ3 đóng gap này.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>GAP-3 = metric. Đây là gap <b>về cách đo</b>. Hai ý: (1) chưa ai đếm kịch bản edge-case theo endpoint; (2) chưa ai bóc tách theo loại endpoint.</p>
+    <p>WHY: coverage tổng có thể 90% nhưng lại bỏ đúng các endpoint auth/error — chỗ nguy hiểm nhất. RQ1 (bóc loại) + RQ3 (đếm edge-case) trả lời trực tiếp.</p>
+  </div>
+</section>
+
+<!-- ===================== 39 · consolidated GAP ===================== -->
+<section class="slide" data-title="GAP hợp nhất + đóng góp">
+  <div class="kicker">Phần 4 · Tuyên bố GAP hợp nhất</div>
+  <h1 class="title">Tuyên bố khoảng trống &amp; đóng góp</h1>
+  <div class="body">
+    <div class="evidence frag" style="border-left-color:var(--red);font-size:16px;background:var(--red-soft)">
+      <q>Dù 2019–2026 đã áp dụng thành công các LLM tiên tiến (chủ yếu hệ GPT, + Llama3-8B fine-tune #7, + Claude 3.5 #5) để sinh test REST API từ OpenAPI, đạt tới 71.78% line coverage (#8) và vượt EvoMaster về phát hiện lỗi 500 (#6: 42 vs 20; #7: 204 vs 130), các nghiên cứu này chia sẻ 3 hạn chế chưa được giải: (1) không bài nào so LLM với CẢ thủ công VÀ EvoMaster trên cùng API; (2) đo fault gần như chỉ bằng ĐẾM lỗi server, không có ground truth dùng chung → Recall chưa từng được tính; (3) không có metric edge-case/error-code theo endpoint, không bóc tách loại endpoint bị bỏ sót.</q>
+      <span class="src">gap-statement.md §3 — tổng hợp từ #1–#13</span>
+    </div>
+    <div class="cards c2 frag" style="margin-top:6px">
+      <div class="card gap"><div class="tag">→ GAP</div><div style="font-size:15px">Thiếu một đánh giá <b>có kiểm soát</b> trên EMB APIs gắn <b>lỗi gieo sẵn</b>, đo: (i) endpoint coverage vs ngưỡng ≥90% + loại endpoint bị bỏ; (ii) Recall fault cho <b>LLM vs thủ công vs EvoMaster</b>; (iii) số kịch bản edge-case/endpoint.</div></div>
+      <div class="card accent"><div class="tag">→ Đóng góp</div><div style="font-size:15px">Một bộ sinh test bằng LLM (tool + repo) + báo cáo đánh giá trên <b>3 API EMB có bản lỗi gieo sẵn</b>, trả lời trực tiếp RQ1 (coverage + miss), RQ2 (fault detection 3 chiều), RQ3 (edge-case) → đóng GAP-1/2/3.</div></div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Slide tổng hợp: đọc chậm tuyên bố GAP (3 hạn chế), rồi 2 ô GAP→Đóng góp. Đây là bản lề sang Phần 5 (RQ).</p>
+    <p>Nhấn: 3 gap không rời rạc — chúng hợp thành MỘT thiết kế thí nghiệm: EMB + lỗi gieo sẵn + 3 generator. Mỗi RQ đóng 1–2 gap.</p>
+  </div>
+</section>
+
+<!-- ===================== 40 · DIVIDER P5 ===================== -->
+<section class="slide divider" data-title="Phần 5 — Từ GAP tới RQ">
+  <div class="kicker">Phần 5 / 6</div>
+  <div class="pnum">05</div>
+  <h1 class="title">Từ GAP → Câu hỏi nghiên cứu</h1>
+  <p class="lead">Mỗi tinh chỉnh so với RQ ban đầu đều truy vết được về một dòng trong evidence table.</p>
+  <div class="snote"><p>Phần này trả lời 2 điểm mơ hồ ở Phần 1. Thông điệp: RQ cuối không phải bịa — nó là RQ thô được <b>tinh chỉnh dựa trên bằng chứng</b>.</p></div>
+</section>
+
+<!-- ===================== 41 · decision log ===================== -->
+<section class="slide" data-title="RQ ban đầu → tinh chỉnh (decision log)">
+  <div class="kicker">Phần 5 · Nhật ký tinh chỉnh</div>
+  <h1 class="title">4 tinh chỉnh — mỗi cái có nguồn từ evidence table</h1>
+  <div class="body">
+    <div class="t-wrap frag">
+      <table class="grid" style="font-size:14px">
+        <thead><tr><th>#</th><th>Thay đổi</th><th>Trước</th><th>Sau</th><th>Nguồn / lý do</th></tr></thead>
+        <tbody>
+          <tr class="frag"><td class="n">1</td><td>Baseline so sánh</td><td>chỉ "thủ công"</td><td>+ <b>EvoMaster</b></td><td>EvoMaster là baseline tái dùng nhiều nhất (#6,#7,#8,#11,#12); chưa ai so 3 chiều → GAP-1</td></tr>
+          <tr class="frag"><td class="n">2</td><td>Dataset</td><td>"REST API có spec" chung</td><td><b>3 API EMB + lỗi gieo sẵn</b></td><td>Paper đếm 500 không ground truth (#6,#8,#13) → gieo lỗi để tính Recall → GAP-2</td></tr>
+          <tr class="frag"><td class="n">3</td><td>LLM cụ thể</td><td>"LLM" chung</td><td><b>GPT-4o / GPT-4-Turbo</b></td><td>Hệ GPT thống trị nhóm LLM (#1,#2,#4,#6) → chọn đại diện SOTA</td></tr>
+          <tr class="frag"><td class="n">4</td><td>Metric O2</td><td>"≥2 bug thật" mơ hồ</td><td><b>số lỗi gieo sẵn bắt được + đếm edge-case</b></td><td>Thiếu metric edge-case/error-code (chỉ #2 tách 2xx/4xx) → GAP-3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">✓</div><div class="tx"><b>Checkpoint 1.7:</b> ≥2 tinh chỉnh so với RQ ban đầu (thực tế 4); mỗi cái <b>truy vết về evidence-table</b> → lựa chọn LLM/dataset/metric/baseline đều có gốc từ GAP, không tự đặt.</div></div></div>
+  </div>
+  <div class="snote">
+    <p>Trả lời thẳng 2 điểm mơ hồ Phần 1: (1) "LLM nào?" → GPT (vì thống trị literature). (2) "Baseline & ngưỡng từ đâu?" → thêm EvoMaster (vì là baseline phổ biến nhất) + dataset EMB + gieo lỗi.</p>
+    <p>Câu phòng thủ vàng: "Em không tự đặt ngưỡng rồi đi chứng minh. 4 thay đổi này đều có cột 'nguồn' chỉ về paper cụ thể." Đây là điểm mạnh nhất về phương pháp luận.</p>
+  </div>
+</section>
+
+<!-- ===================== 42 · PICO experiment ===================== -->
+<section class="slide" data-title="PICO thí nghiệm">
+  <div class="kicker">Phần 5 · PICO cho thí nghiệm</div>
+  <h1 class="title">PICO sau tinh chỉnh</h1>
+  <div class="body">
+    <div class="cards c2">
+      <div class="card accent frag"><div class="tag">P · Population</div><div style="font-size:15px"><b>3 dịch vụ REST từ EMB</b> có OpenAPI, deploy local, gắn <b>bản lỗi gieo sẵn</b> (biết tổng số lỗi = ground truth).</div></div>
+      <div class="card accent frag"><div class="tag">I · Intervention</div><div style="font-size:15px">Bộ sinh test dùng <b>LLM</b> (đọc spec → sinh positive / negative / error-code / boundary). Output: tool + GitHub repo.</div></div>
+      <div class="card accent frag"><div class="tag">C · Comparison</div><div style="font-size:15px">(1) <b>Thiết kế test thủ công</b>; (2) <b>EvoMaster</b> (search-based — baseline phổ biến nhất).</div></div>
+      <div class="card accent frag"><div class="tag">O · Outcome</div><div style="font-size:15px"><b>O1</b> endpoint coverage (≥90% + loại bị bỏ) · <b>O2</b> số lỗi gieo sẵn bắt được (LLM/tay/EvoMaster) · <b>O3</b> số kịch bản edge-case (4xx/5xx + boundary) per endpoint.</div></div>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">→</div><div class="tx">PICO này <b>khớp 1-1 với 3 gap</b>: C (3 chiều) ↔ GAP-1; P (lỗi gieo sẵn) ↔ GAP-2; O3 + bóc loại endpoint ↔ GAP-3.</div></div></div>
+  </div>
+  <div class="snote"><p>PICO là khung chuẩn. Nhấn: P có lỗi gieo sẵn (đóng GAP-2), C ba chiều (đóng GAP-1), O3 edge-case (đóng GAP-3). Mỗi chữ cái nối tới một gap. Nguồn: 01_rq.md §4.</p></div>
+</section>
+
+<!-- ===================== 43 · RQs ===================== -->
+<section class="slide" data-title="Main RQ + RQ1/RQ2/RQ3">
+  <div class="kicker">Phần 5 · Câu hỏi chính thức</div>
+  <h1 class="title">Main RQ + 3 câu hỏi con</h1>
+  <div class="body">
+    <div class="evidence frag" style="border-left-color:var(--teal);font-size:17px">
+      <q>LLM sinh test case từ OpenAPI hiệu quả tới mức nào, so với test thiết kế thủ công và test sinh bởi EvoMaster, trên các bản API có lỗi gieo sẵn?</q>
+      <span class="src">Main RQ — 01_rq.md §3</span>
+    </div>
+    <div class="cards c3" style="margin-top:6px">
+      <div class="card accent frag"><div class="tag">RQ1 · Coverage → GAP-3</div><div style="font-size:14px">Test LLM có đạt endpoint coverage <b>≥90%</b> trên EMB không, và <b>loại endpoint nào</b> (CRUD/auth/error) hay bị bỏ?</div></div>
+      <div class="card accent frag"><div class="tag">RQ2 · Fault → GAP-1+2</div><div style="font-size:14px">LLM bắt được <b>bao nhiêu lỗi gieo sẵn</b> so với <b>thủ công</b> và <b>EvoMaster</b> trên 3 API?</div></div>
+      <div class="card accent frag"><div class="tag">RQ3 · Edge-case → GAP-3</div><div style="font-size:14px">LLM có sinh nhiều <b>kịch bản 4xx/5xx + boundary</b> per endpoint hơn thủ công không?</div></div>
+    </div>
+    <div class="frag" style="margin-top:6px"><div class="why"><div class="ic">!</div><div class="tx">3 RQ <b>không trùng</b>: RQ1 đo <em>phủ</em>, RQ2 đo <em>bắt lỗi có ground truth</em>, RQ3 đo <em>chất lượng edge-case</em>. Cùng nhau đóng cả 3 gap.</div></div></div>
+  </div>
+  <div class="snote"><p>Đọc Main RQ. Rồi 3 RQ con — mỗi cái ghi rõ đóng gap nào. RQ1=coverage+miss, RQ2=fault 3 chiều (gap chính), RQ3=edge-case. Nguồn: 01_rq.md §3.</p></div>
+</section>
+
+<!-- ===================== 44 · DIVIDER P6 ===================== -->
+<section class="slide divider" data-title="Phần 6 — Giả thuyết & Thí nghiệm">
+  <div class="kicker">Phần 6 / 6</div>
+  <div class="pnum">06</div>
+  <h1 class="title">Giả thuyết &amp; Thiết kế thí nghiệm</h1>
+  <p class="lead">Mỗi RQ → một cặp H0/H1, một kiểm định thống kê có tên, một ngưỡng có nguồn, α = 0.05.</p>
+  <div class="snote"><p>Phần đóng: biến RQ thành giả thuyết kiểm định được. Mỗi RQ có H0 (phủ định) + H1 (kỳ vọng) + test + quy tắc "nếu p&lt;0.05 thì…".</p></div>
+</section>
+
+<!-- ===================== 45 · RQ1 hypothesis ===================== -->
+<section class="slide" data-title="Giả thuyết RQ1 (coverage)">
+  <div class="kicker">Phần 6 · RQ1 — Endpoint coverage</div>
+  <h1 class="title">RQ1 · H0/H1 + Wilcoxon một mẫu</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <div class="card gap frag"><div class="tag">H0 (phủ định)</div><div style="font-size:16px">Endpoint coverage trung bình của test LLM <b>≤ 90%</b> (μ ≤ 0.90)</div></div>
+        <div class="card accent frag" style="margin-top:12px"><div class="tag">H1 (kỳ vọng)</div><div style="font-size:16px">Endpoint coverage trung bình <b>&gt; 90%</b> (μ &gt; 0.90)</div></div>
+      </div>
+      <div>
+        <ul class="clean frag">
+          <li><b>Test:</b> Wilcoxon signed-rank <em>một mẫu</em> so coverage per-API với ngưỡng cố định 0.90 (phi tham số, mẫu nhỏ không cần giả định chuẩn).</li>
+          <li><b>Quy tắc:</b> nếu p &lt; 0.05 và median &gt; 0.90 → bác H0.</li>
+          <li>Bổ sung: bóc tách coverage theo <b>loại endpoint</b> (CRUD/auth/error) → báo loại nào bị bỏ (GAP-3).</li>
+        </ul>
+        <div class="why frag" style="margin-top:10px"><div class="ic">!</div><div class="tx"><b>Ngưỡng 90% có nguồn:</b> là target môn đặt; và đã được chứng minh <em>khả thi</em> (RESTifAI 95.5% operation, #9) nhưng <b>chưa kiểm trên EMB lỗi-gieo-sẵn</b> + chưa bóc loại.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>RQ1: ngưỡng 90% endpoint. Wilcoxon một mẫu vì so với 1 ngưỡng cố định, mẫu nhỏ. Nhấn: ngưỡng có nguồn (target môn + #9 chứng minh khả thi), điểm mới = kiểm trên EMB lỗi-gieo-sẵn + bóc loại endpoint. Nguồn: hypotheses.md RQ1.</p></div>
+</section>
+
+<!-- ===================== 46 · RQ2 hypothesis ===================== -->
+<section class="slide" data-title="Giả thuyết RQ2 (fault — gap chính)">
+  <div class="kicker">Phần 6 · RQ2 — Fault detection (gap chính)</div>
+  <h1 class="title">RQ2 · LLM vs Thủ công vs EvoMaster + Friedman</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <div class="card gap frag"><div class="tag">H0</div><div style="font-size:15px">LLM bắt <b>không nhiều hơn</b> max{Thủ công, EvoMaster}</div></div>
+        <div class="card accent frag" style="margin-top:10px"><div class="tag">H1</div><div style="font-size:15px">LLM bắt <b>nhiều hơn</b> cả hai</div></div>
+        <p style="font-size:13px;margin-top:10px" class="muted frag">Metric: số <b>lỗi gieo sẵn</b> bắt được /API (= Recall vì biết tổng).</p>
+      </div>
+      <div>
+        <ul class="clean frag">
+          <li><b>Omnibus:</b> Friedman (3 nhóm liên hệ, đo trên cùng API/lỗi).</li>
+          <li><b>Post-hoc:</b> Wilcoxon signed-rank từng cặp (LLM-vs-tay, LLM-vs-EvoMaster) + hiệu chỉnh Holm.</li>
+          <li>n=3 API → bổ sung <b>McNemar / exact binomial</b> per-fault + effect size (vì power thấp).</li>
+        </ul>
+        <div class="why frag" style="margin-top:8px"><div class="ic">!</div><div class="tx"><b>Đây là phép so ĐẦU TIÊN đặt LLM vs thủ công vs EvoMaster trên cùng bộ lỗi-gieo-sẵn → đóng GAP-1 + GAP-2.</b> Lý do dùng Friedman: 3 nhóm phụ thuộc, phi tham số.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">
+    <p>RQ2 = gap chính. Friedman cho 3 nhóm phụ thuộc, rồi post-hoc Wilcoxon + Holm. Vì chỉ 3 API → thành thật về power thấp, nên thêm McNemar per-fault.</p>
+    <p>Câu chốt: "Đây là lần đầu LLM, người, EvoMaster trên cùng một bộ lỗi biết trước." Nếu hội đồng hỏi "3 API có đủ không?" → trả lời: đó là threat đã nêu, nên em bổ sung phân tích per-fault + effect size, không chỉ dựa omnibus. Nguồn: hypotheses.md RQ2.</p>
+  </div>
+</section>
+
+<!-- ===================== 47 · RQ3 hypothesis ===================== -->
+<section class="slide" data-title="Giả thuyết RQ3 (edge-case)">
+  <div class="kicker">Phần 6 · RQ3 — Edge-case scenarios</div>
+  <h1 class="title">RQ3 · LLM vs Thủ công + Wilcoxon ghép cặp</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <div class="card gap frag"><div class="tag">H0</div><div style="font-size:16px">Số edge-case/endpoint của LLM <b>≤</b> thủ công (median)</div></div>
+        <div class="card accent frag" style="margin-top:12px"><div class="tag">H1</div><div style="font-size:16px">Số edge-case/endpoint của LLM <b>&gt;</b> thủ công</div></div>
+        <p style="font-size:13px;margin-top:10px" class="muted frag">Metric: số kịch bản 4xx/5xx + boundary riêng biệt /endpoint (invalid type, thiếu field bắt buộc, out-of-range, malformed auth…).</p>
+      </div>
+      <div>
+        <ul class="clean frag">
+          <li><b>Test:</b> Wilcoxon signed-rank <em>ghép cặp</em> qua các endpoint (mỗi endpoint góp 1 cặp LLM–Manual), α=0.05.</li>
+          <li><b>Quy tắc:</b> p&lt;0.05 và median chênh nghiêng LLM → bác H0.</li>
+          <li>Báo kèm bóc tách 4xx vs 5xx vs boundary.</li>
+        </ul>
+        <div class="why frag" style="margin-top:10px"><div class="ic">!</div><div class="tx"><b>Tại sao ghép cặp:</b> mỗi endpoint là một đơn vị so sánh tự nhiên (cùng endpoint, 2 phương pháp) → kiểm soát biến nhiễu giữa các endpoint. Không paper nào đo metric này → đóng GAP-3.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>RQ3: edge-case theo endpoint, ghép cặp LLM vs tay. Wilcoxon ghép cặp vì mỗi endpoint cho 2 số (LLM, tay). Đây là metric chưa ai có → đóng GAP-3. Nguồn: hypotheses.md RQ3.</p></div>
+</section>
+
+<!-- ===================== 48 · experiment setup ===================== -->
+<section class="slide" data-title="Thiết kế thí nghiệm + đóng góp">
+  <div class="kicker">Phần 6 · Setup &amp; đóng góp</div>
+  <h1 class="title">Thiết kế thí nghiệm — một bàn cân, ba generator</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <div class="prisma">
+          <div class="stg frag" style="min-width:auto;width:100%">3 API từ <b>EMB</b> (OpenAPI, deploy local) + <b>gieo lỗi biết trước</b></div>
+          <div class="arrow frag">▼ cùng một tập API &amp; tập lỗi</div>
+          <div class="cards c3 frag" style="width:100%;gap:8px">
+            <div class="card" style="padding:12px"><div class="tag llm" style="color:var(--violet)">Generator 1</div><h3 style="font-size:15px">LLM (GPT-4o)</h3></div>
+            <div class="card" style="padding:12px"><div class="tag">Generator 2</div><h3 style="font-size:15px">Thủ công</h3></div>
+            <div class="card" style="padding:12px"><div class="tag">Generator 3</div><h3 style="font-size:15px">EvoMaster</h3></div>
+          </div>
+          <div class="arrow frag">▼ đo O1 / O2 / O3 · α=0.05</div>
+          <div class="stg final frag" style="min-width:auto;width:100%">RQ1 coverage+miss · RQ2 Recall 3 chiều · RQ3 edge-case</div>
+        </div>
+      </div>
+      <div>
+        <div class="card accent frag"><div class="tag">Đóng góp cụ thể</div>
+          <ul class="clean" style="gap:8px;margin-top:6px">
+            <li style="font-size:15px">Tool sinh test bằng LLM + <b>GitHub repo</b></li>
+            <li style="font-size:15px">Báo cáo đánh giá trên 3 EMB API có bản lỗi gieo sẵn</li>
+            <li style="font-size:15px">Phép so <b>3 chiều đầu tiên</b> trên ground truth chung</li>
+            <li style="font-size:15px">Hồ sơ <b>loại endpoint bị bỏ</b> + metric edge-case/endpoint</li>
+          </ul>
+        </div>
+        <div class="why frag" style="margin-top:12px"><div class="ic">✓</div><div class="tx">Thiết kế này khép đúng 3 gap, dùng đúng benchmark (EMB) và baseline (EvoMaster) mà chính literature đã chuẩn hoá → kết quả <b>so sánh được</b> với các paper đã đọc.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>Slide chốt thiết kế: 1 bàn cân (3 API EMB + lỗi gieo sẵn), 3 generator (LLM/tay/EvoMaster), đo O1/O2/O3. Đóng góp: tool+repo + báo cáo + phép so 3 chiều đầu tiên + hồ sơ endpoint miss. Khép cả 3 gap.</p></div>
+</section>
+
+<!-- ===================== 49 · DIVIDER CONCLUSION ===================== -->
+<section class="slide divider" data-title="Kết luận">
+  <div class="kicker">Đóng bài</div>
+  <div class="pnum">✓</div>
+  <h1 class="title">Kết luận, Tính chính trực &amp; Q&amp;A</h1>
+  <p class="lead">Một chuỗi nhân–quả khép kín: bối cảnh → phương pháp → bằng chứng → GAP → RQ → thí nghiệm.</p>
+  <div class="snote"><p>Phần đóng. 3 slide: tóm tắt chuỗi lập luận, slide chính trực (chủ động khai báo điểm yếu), và slide phòng thủ Q&A.</p></div>
+</section>
+
+<!-- ===================== 50 · summary ===================== -->
+<section class="slide" data-title="Tóm tắt chuỗi lập luận">
+  <div class="kicker">Kết luận · 1/3</div>
+  <h1 class="title">Toàn bộ bài gói trong một câu nhân–quả</h1>
+  <div class="body">
+    <ol class="clean">
+      <li class="frag"><strong>Vì</strong> test REST API tự động bị chặn ở <span class="num">~52%</span> code coverage và tool còn thua người (EvoMaster 41% vs 82%),</li>
+      <li class="frag"><strong>và</strong> LLM hứa hẹn vượt qua nhờ đọc mô tả NL + sinh giá trị thực + suy luận dependency (RESTGPT 97% precision, AutoRestTest ablation −10.9%),</li>
+      <li class="frag"><strong>nên</strong> em làm SLR sàng <span class="num">~280→13</span> paper chất lượng cao (TB 5.73/6),</li>
+      <li class="frag"><strong>phát hiện</strong> 3 gap: chưa so LLM↔người↔EvoMaster (GAP-1), đếm lỗi không ground truth (GAP-2), thiếu metric edge-case/loại-endpoint (GAP-3),</li>
+      <li class="frag"><strong>do đó</strong> đề xuất thí nghiệm trên <span class="num">3</span> EMB API có lỗi gieo sẵn, 3 generator, trả lời RQ1/RQ2/RQ3 — khép cả 3 gap.</li>
+    </ol>
+    <div class="frag"><div class="why"><div class="ic">✓</div><div class="tx">Mỗi mệnh đề "vì/nên" đều có <b>số liệu + trích dẫn tới trang</b> phía sau. Đó là điều làm bài này <b>khó bắt bẻ</b>: không bước nào là cảm tính.</div></div></div>
+  </div>
+  <div class="snote"><p>Đọc 5 mệnh đề "vì/và/nên/phát hiện/do đó" như một câu chuyện liền mạch. Đây là phần hội đồng nhớ nhất — luyện nói trôi 30s.</p></div>
+</section>
+
+<!-- ===================== 51 · integrity ===================== -->
+<section class="slide" data-title="Tính chính trực (chủ động khai báo)">
+  <div class="kicker">Kết luận · 2/3 — TÍNH CHÍNH TRỰC</div>
+  <h1 class="title">Chủ động khai báo điểm yếu &amp; cách xử lý</h1>
+  <div class="body">
+    <div class="cards c2">
+      <div class="card frag" style="border-left:3px solid var(--green)"><div class="tag">Đã GỠ nghi ngờ †</div><div style="font-size:14px">RestTSLLM #5: evidence-table đánh dấu † (3 số chưa verify). Tui tải PDF gốc → tìm thấy ở <b>Table 3, trang 9</b> (71.7%/40.8%/100%). Nghi ngờ được giải.</div></div>
+      <div class="card frag" style="border-left:3px solid var(--amber)"><div class="tag">2 trích dẫn lệch trang nhỏ (khai báo)</div><div style="font-size:14px">EvoMaster "only manual comparison" — câu nằm ở Conclusion <b>p.11–12</b> (không phải p.9). LogiAgent "49 crash" — là <b>tổng Table 3 p.9</b>, không phải một câu. Câu trích vẫn có thật.</div></div>
+      <div class="card frag" style="border-left:3px solid var(--red)"><div class="tag">1 claim không tường minh</div><div style="font-size:14px">RESTGPT "limitation" — paper nêu ở mục <b>Future Work (Sec 5)</b>, không gọi thẳng "limitation". Tui trình bày đúng như paper viết.</div></div>
+      <div class="card frag" style="border-left:3px solid var(--ink-3)"><div class="tag">Giới hạn phạm vi (thành thật)</div><div style="font-size:14px">SLR <b>focused</b> (môn học): không kéo cả long-tail Google Scholar; ~280 là số <em>ước lượng</em> GS, có query Q1/Q2 tái lập. #3,#8 là preprint; #9 là demo — nên weight peer-reviewed cao hơn.</div></div>
+    </div>
+    <div class="frag"><div class="why"><div class="ic">✓</div><div class="tx"><b>104 trích dẫn · 102 verify khớp tuyệt đối · 2 lệch trang nhỏ · 1 not-present</b> — tất cả công khai. Chính sự chủ động khai báo này là thứ khiến bài <span class="em">không thể bị bắt bẻ</span>.</div></div></div>
+  </div>
+  <div class="snote">
+    <p><b>Slide ghi điểm cao nhất với hội đồng.</b> Người yếu giấu điểm yếu; người mạnh khai báo trước. 4 ô: (1) gỡ được † — điểm cộng; (2) 2 chỗ lệch trang nhỏ — khai trước khi bị hỏi; (3) 1 claim future-work; (4) giới hạn focused SLR.</p>
+    <p>Nói: "Em chủ động báo 3 chỗ chưa hoàn hảo trong 104 trích dẫn. Đó là lý do hội đồng có thể tin 101 trích dẫn còn lại." Đây là đòn tâm lý mạnh.</p>
+  </div>
+</section>
+
+<!-- ===================== 52 · Q&A defense ===================== -->
+<section class="slide" data-title="Q&A — câu hỏi khó & trả lời">
+  <div class="kicker">Kết luận · 3/3 — PHÒNG THỦ Q&amp;A</div>
+  <h1 class="title">Dự đoán câu hỏi khó — &amp; câu trả lời sẵn</h1>
+  <div class="body">
+    <div class="t-wrap frag">
+      <table class="grid" style="font-size:13.5px">
+        <thead><tr><th style="width:38%">Hội đồng có thể hỏi</th><th>Trả lời sẵn (có dẫn chứng)</th></tr></thead>
+        <tbody>
+          <tr class="frag"><td>"90% coverage đạt rồi, gap đâu?"</td><td>Đó là <b>endpoint</b> coverage (#9: 95.5%). <b>Code</b> coverage vẫn ~52–72%. RQ1 thêm: kiểm trên EMB <b>lỗi-gieo-sẵn</b> + bóc <b>loại endpoint</b> — chưa ai làm.</td></tr>
+          <tr class="frag"><td>"Chỉ 3 API, sao đủ tổng quát?"</td><td>Threat đã nêu. Bù bằng <b>McNemar per-fault</b> + effect size (không chỉ omnibus). EMB là benchmark chuẩn; #10 dùng 3, #12 dùng 6 — đúng tầm.</td></tr>
+          <tr class="frag"><td>"Sao chọn GPT, không phải model khác?"</td><td>Hệ GPT thống trị literature (#1,#2,#4,#6). Decision-log #3. Riêng #5 cho thấy Claude cũng mạnh → có thể mở rộng so model.</td></tr>
+          <tr class="frag"><td>"Lấy gì chắc chính LLM tạo ra cải thiện?"</td><td><b>Ablation #6</b>: bỏ LLM → coverage rớt <b>10.9–12.8%</b> (p.10). Bằng chứng nhân–quả trực tiếp.</td></tr>
+          <tr class="frag"><td>"Mutation score #5 chẳng phải ground truth rồi?"</td><td>Là mutant <em>tự sinh</em> trên 6 API tự dựng, <b>không</b> so người/EvoMaster. Khác lỗi-gieo-sẵn thực tế dùng chung của em.</td></tr>
+          <tr class="frag"><td>"Số liệu SLR có đáng tin?"</td><td>104 trích dẫn verify tới trang, 13 PDF tải sẵn để kiểm. 2 lệch trang nhỏ + 1 not-present đã khai báo ở slide trước.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="snote">
+    <p>Slide "vũ khí". Mỗi câu hỏi khó đều có câu trả lời 1 dòng + dẫn chứng. Học thuộc 6 cặp này. Câu số 1 (2 loại coverage) và số 4 (ablation) là 2 câu hay bị hỏi nhất.</p>
+    <p>Nếu bị hỏi câu ngoài bảng: quay về nguyên tắc "mọi khẳng định của em đều có nguồn — em mở appendix chỉ chính xác trang."</p>
+  </div>
+</section>
+
+<!-- ===================== 53 · DIVIDER APPENDIX ===================== -->
+<section class="slide divider" data-title="Phụ lục">
+  <div class="kicker">Phụ lục</div>
+  <div class="pnum">A</div>
+  <h1 class="title">Phụ lục — Dữ liệu &amp; Trích dẫn</h1>
+  <p class="lead">Evidence table đầy đủ · chỉ mục trích dẫn page/line · kiểm định thống kê · thuật ngữ · tài liệu tham khảo.</p>
+  <div class="snote"><p>Phụ lục để trả lời câu hỏi chi tiết. Không trình bày tuần tự — nhảy tới khi hội đồng hỏi (gõ số slide + Enter, hoặc O để xem lưới).</p></div>
+</section>
+
+<!-- ===================== 54 · full evidence table ===================== -->
+<section class="slide" data-title="Phụ lục · Evidence table đầy đủ">
+  <div class="kicker">Phụ lục A1</div>
+  <h1 class="title">Evidence table — 13 paper (kết quả + metric)</h1>
+  <div class="body" style="margin-top:6px">
+    <div class="t-wrap frag" style="max-height:520px;overflow:auto">
+      <table class="grid dense">
+        <thead><tr><th>#</th><th>Tool</th><th>LLM / approach</th><th>Dataset</th><th>Kết quả chính (số)</th><th>RQ link</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1</td><td>RESTGPT</td><td>GPT-3.5, few-shot</td><td>9 API</td><td>97/92/94 P/R/F1; 72.68% input (+329% vs ARTE)</td><td>I·O1</td></tr>
+          <tr><td class="n">2</td><td>KAT</td><td>GPT-3.5-turbo-1106, t=0</td><td>12 svc</td><td>+15.7% status-code; +24 mã ẩn; 94 vs 119 FP</td><td>I·O1·O3</td></tr>
+          <tr><td class="n">3</td><td>RESTSpecIT</td><td>DeepSeek/GPT, masking</td><td>10 PRAB</td><td>88.6% route; 89.25% param; 5xx/4 API; $0.004</td><td>I·O1·O3</td></tr>
+          <tr><td class="n">4</td><td>APITestGenie</td><td>GPT-4-Turbo, RAG</td><td>10 API</td><td>57.3%→80% script; 12 defect; 19 hallucination</td><td>I·O</td></tr>
+          <tr><td class="n">5</td><td>RestTSLLM</td><td>7 LLM, Claude 3.5 thắng</td><td>6 API</td><td>71.7% branch; 40.8% mutation; 100%/230 test</td><td>I·O1·O2</td></tr>
+          <tr><td class="n">6</td><td>AutoRestTest</td><td>GPT-3.5+MARL+SPDG</td><td>12 svc</td><td>58.3% line/method; 42 lỗi 500; ablation −10.9%</td><td>I·<b>C</b>·O1·O2</td></tr>
+          <tr><td class="n">7</td><td>LlamaRestTest</td><td>Llama3-8B fine-tune</td><td>12 svc</td><td>55.8% method; 204 fault; 72.44% input</td><td>I·<b>C</b>·O1·O2</td></tr>
+          <tr><td class="n">8</td><td>LogiAgent</td><td>GPT-4o-mini, 3 agent</td><td>12 hệ</td><td>71.78% line; 234 lỗi logic; 49 crash; 33.81% FP</td><td>I·O1·O2·O3</td></tr>
+          <tr><td class="n">9</td><td>RESTifAI</td><td>GPT-4.1-mini</td><td>7 svc</td><td>128/134 op; −37% token; 60.87% = bug</td><td>I·O1·O2</td></tr>
+          <tr><td class="n">10</td><td>EvoMaster</td><td>search-based (MIO)</td><td>3 svc</td><td>38 bug; gen 41% &lt; tay 82%</td><td><b>C</b>·O1·O2</td></tr>
+          <tr><td class="n">11</td><td>NoTimeToRest</td><td>study 10 tool</td><td>20 EMB</td><td>52.76% line (trần); 33.3 lỗi 500</td><td><b>C</b>·O1</td></tr>
+          <tr><td class="n">12</td><td>Morest</td><td>model-based RPG</td><td>6 dự án</td><td>+26–103% cov; 44 bug (13 mới)</td><td><b>C</b>·O1·O2</td></tr>
+          <tr><td class="n">13</td><td>DeepREST</td><td>deep RL + curiosity</td><td>11 EMB</td><td>+17–77% branch; +25–67% fault; p&lt;0.05</td><td><b>C</b>·O1·O2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="snote"><p>Bảng đầy đủ để tra cứu. Nguồn: evidence-table.md. Cột RQ link cho thấy mỗi paper hỗ trợ phần nào của thí nghiệm (I=intervention, C=comparison, O1/2/3=outcomes).</p></div>
+</section>
+
+<!-- ===================== 55 · citation index LLM ===================== -->
+<section class="slide" data-title="Phụ lục · Chỉ mục trích dẫn (LLM #1-9)">
+  <div class="kicker">Phụ lục A2 · Citation index — verify tới trang</div>
+  <h1 class="title">Chỉ mục trích dẫn — paper LLM (#1–#9)</h1>
+  <div class="body" style="margin-top:6px">
+    <div class="t-wrap frag" style="max-height:520px;overflow:auto">
+      <table class="grid dense">
+        <thead><tr><th>#</th><th>Claim chính</th><th>arXiv</th><th class="n">Trang</th><th class="n">✓</th></tr></thead>
+        <tbody>
+          <tr><td class="n">1</td><td>"precision of 97% surpasses … NLP2REST … 79%"</td><td>2312.00894</td><td class="n">p.4</td><td class="yes">✓</td></tr>
+          <tr><td class="n">1</td><td>"ARTE 16.93%, RESTGPT 72.68%" (Table 2)</td><td>2312.00894</td><td class="n">p.4</td><td class="yes">✓</td></tr>
+          <tr><td class="n">2</td><td>"15.7% … overall, 18.1% … 2xx, 8.4% … 4xx … over RTG"</td><td>2407.10227</td><td class="n">p.8</td><td class="yes">✓</td></tr>
+          <tr><td class="n">2</td><td>"detecting 24 more status codes than RTG"</td><td>2407.10227</td><td class="n">p.10</td><td class="yes">✓</td></tr>
+          <tr><td class="n">3</td><td>"DeepSeek … (88.62%), … GPT-4.1 (81.16%), … GPT-3.5 (79.84%)"</td><td>2402.05102</td><td class="n">p.14</td><td class="yes">✓</td></tr>
+          <tr><td class="n">3</td><td>"query parameter discovery rate of 89.25%"</td><td>2402.05102</td><td class="n">p.16</td><td class="yes">✓</td></tr>
+          <tr><td class="n">4</td><td>"57.3% … one attempt to 80% with three attempts"</td><td>2409.03838</td><td class="n">p.4</td><td class="yes">✓</td></tr>
+          <tr><td class="n">4</td><td>"126s and €0.37"; Table 2: 12 defect / 19 hallucination</td><td>2409.03838</td><td class="n">p.3,5</td><td class="yes">✓</td></tr>
+          <tr class="rowhl"><td class="n">5</td><td>"Claude 3.5 Sonnet 70,9% 100% 71,7% 40,8%" (Table 3)</td><td>2509.05540</td><td class="n">p.9</td><td class="yes">✓†gỡ</td></tr>
+          <tr><td class="n">6</td><td>"42 500 … Errors … EvoMaster and MoRest 20 … RESTler 14"</td><td>2411.07098</td><td class="n">p.9</td><td class="yes">✓</td></tr>
+          <tr><td class="n">6</td><td>ablation: bỏ LLM → 47.4/19.3/45.8% (−10.9–12.8%)</td><td>2411.07098</td><td class="n">p.10</td><td class="yes">✓</td></tr>
+          <tr><td class="n">7</td><td>"204 faults in 10 runs … 74 more than EvoMaster (130)"</td><td>2501.08598</td><td class="n">p.11</td><td class="yes">✓</td></tr>
+          <tr><td class="n">7</td><td>"LlamaREST-EX … 72.44% … RESTGPT … 68.82%"</td><td>2501.08598</td><td class="n">p.12</td><td class="yes">✓</td></tr>
+          <tr><td class="n">8</td><td>"39.98% branch, 71.78% line, 73.06% method … vs 34.90/62.38/67.24"</td><td>2503.15079</td><td class="n">p.9</td><td class="yes">✓</td></tr>
+          <tr><td class="n">8</td><td>"234 (66.19%) … 139 bug … 95 … 115 (33.81%) false positives"</td><td>2503.15079</td><td class="n">p.8</td><td class="yes">✓</td></tr>
+          <tr><td class="n">9</td><td>"128 out of 134 … operations … compared to 33 … AutoRestTest"</td><td>2512.08706</td><td class="n">p.3</td><td class="yes">✓</td></tr>
+          <tr><td class="n">9</td><td>"60.87% of failed test cases revealed real bugs"</td><td>2512.08706</td><td class="n">p.4</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="snote"><p>Chỉ mục để chỉ chính xác trang khi hội đồng nghi ngờ. Mọi dòng đã verify bằng grep trên PDF tải về (lưu ở presentation/papers/ + paper_text/). Dòng #5 = chỗ gỡ dấu †.</p></div>
+</section>
+
+<!-- ===================== 56 · citation index baselines ===================== -->
+<section class="slide" data-title="Phụ lục · Chỉ mục trích dẫn (baseline #10-13)">
+  <div class="kicker">Phụ lục A3 · Citation index — baseline</div>
+  <h1 class="title">Chỉ mục trích dẫn — baseline (#10–#13)</h1>
+  <div class="body" style="margin-top:6px">
+    <div class="t-wrap frag">
+      <table class="grid dense">
+        <thead><tr><th>#</th><th>Claim chính</th><th>arXiv</th><th class="n">Trang</th><th class="n">✓</th></tr></thead>
+        <tbody>
+          <tr><td class="n">10</td><td>"did automatically find 38 real faults"</td><td>1901.01538</td><td class="n">p.1</td><td class="yes">✓</td></tr>
+          <tr><td class="n">10</td><td>"18% and 41% statement coverage … lower than … existing test cases"</td><td>1901.01538</td><td class="n">p.11</td><td class="yes">✓</td></tr>
+          <tr><td class="n">10</td><td>"only manual-vs-tool comparison" (Conclusion)</td><td>1901.01538</td><td class="n">p.11–12</td><td class="n">⚠ lệch trang</td></tr>
+          <tr><td class="n">11</td><td>"EvoMasterWB … less than 53% line … 37% branch … 53% method"</td><td>2204.08348</td><td class="n">p.5–6</td><td class="yes">✓</td></tr>
+          <tr><td class="n">11</td><td>"this process yielded 20 web services" (EMB)</td><td>2204.08348</td><td class="n">p.4</td><td class="yes">✓</td></tr>
+          <tr><td class="n">11</td><td>"strong positive correlation … 0.7881" (coverage↔500)</td><td>2204.08348</td><td class="n">p.8</td><td class="yes">✓</td></tr>
+          <tr><td class="n">12</td><td>"152.66%-232.45% more … 26.16%-103.24% … 40.64%-215.94% … bugs"</td><td>2204.12148</td><td class="n">p.1</td><td class="yes">✓</td></tr>
+          <tr><td class="n">12</td><td>"44 bugs (13 … cannot be detected by existing approaches)"</td><td>2204.12148</td><td class="n">p.1</td><td class="yes">✓</td></tr>
+          <tr><td class="n">13</td><td>"branch coverage … spans from 17% … to 77%"</td><td>2408.08594</td><td class="n">p.8</td><td class="yes">✓</td></tr>
+          <tr><td class="n">13</td><td>"Wilcoxon signed rank test … α = 0.05 … p-value < 0.05"</td><td>2408.08594</td><td class="n">p.8</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;margin-top:10px" class="frag muted">Tổng: <b>104 trích dẫn</b> · <b>102</b> khớp verbatim tuyệt đối · <b>2</b> lệch trang nhỏ (đã khai báo) · <b>1</b> không-tường-minh (RESTGPT future-work). File gốc: <code>presentation/citations-raw.json</code>.</p>
+  </div>
+  <div class="snote"><p>Chỉ mục baseline. Dòng EvoMaster "only manual comparison" là 1 trong 2 chỗ lệch trang đã khai báo (câu thật nhưng ở Conclusion p.11–12). Toàn bộ JSON gốc lưu trong project.</p></div>
+</section>
+
+<!-- ===================== 57 · stats rationale + glossary ===================== -->
+<section class="slide" data-title="Phụ lục · Kiểm định & Thuật ngữ">
+  <div class="kicker">Phụ lục A4</div>
+  <h1 class="title">Vì sao chọn các kiểm định này + Thuật ngữ</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <h3 style="font-family:var(--display);font-size:17px;margin-bottom:8px">Lý do kiểm định thống kê</h3>
+        <ul class="clean" style="gap:8px">
+          <li style="font-size:14px"><b>Wilcoxon signed-rank:</b> phi tham số, không cần giả định phân phối chuẩn — phù hợp mẫu nhỏ (RQ1 một-mẫu, RQ3 ghép-cặp).</li>
+          <li style="font-size:14px"><b>Friedman (RQ2):</b> omnibus cho 3 nhóm <em>liên hệ</em> (đo trên cùng API/lỗi) — không độc lập nên không dùng ANOVA/Kruskal.</li>
+          <li style="font-size:14px"><b>Holm:</b> hiệu chỉnh đa so sánh post-hoc, kiểm soát sai lầm loại I.</li>
+          <li style="font-size:14px"><b>McNemar / exact binomial:</b> per-fault nhị phân (bắt/không) — bù power thấp khi n=3 API.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-family:var(--display);font-size:17px;margin-bottom:8px">Thuật ngữ</h3>
+        <ul class="clean" style="gap:6px">
+          <li style="font-size:13.5px"><b>EMB:</b> EvoMaster Benchmark — 20 service REST mã nguồn mở (#11).</li>
+          <li style="font-size:13.5px"><b>Pre-seeded faults:</b> lỗi gieo sẵn → biết tổng → tính Recall.</li>
+          <li style="font-size:13.5px"><b>Recall:</b> lỗi tìm được ÷ lỗi có thật.</li>
+          <li style="font-size:13.5px"><b>Mutation score:</b> % mutant (lỗi nhân tạo) bị test giết.</li>
+          <li style="font-size:13.5px"><b>Endpoint vs code coverage:</b> % endpoint gọi tới vs % dòng/nhánh code chạy.</li>
+          <li style="font-size:13.5px"><b>Oracle:</b> cơ chế quyết định response đúng/sai.</li>
+          <li style="font-size:13.5px"><b>SPDG / RPG / ODG:</b> các đồ thị mô hình hoá phụ thuộc operation.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>Slide tra cứu khi bị hỏi sâu về thống kê hoặc thuật ngữ. Điểm mấu chốt: chọn test phi tham số vì mẫu nhỏ + nhóm phụ thuộc; thành thật bù power bằng per-fault analysis.</p></div>
+</section>
+
+<!-- ===================== 58 · references + run ===================== -->
+<section class="slide" data-title="Phụ lục · Tài liệu & Cách chạy">
+  <div class="kicker">Phụ lục A5</div>
+  <h1 class="title">Tài liệu tham khảo &amp; cách chạy bộ slide</h1>
+  <div class="body">
+    <div class="split">
+      <div>
+        <h3 style="font-family:var(--display);font-size:16px;margin-bottom:6px">13 paper (arXiv — đã tải PDF)</h3>
+        <div style="font-family:var(--mono);font-size:11.5px;line-height:1.7;columns:1">
+          [1] 2312.00894 · [2] 2407.10227 · [3] 2402.05102 ·<br>
+          [4] 2409.03838 · [5] 2509.05540 · [6] 2411.07098 ·<br>
+          [7] 2501.08598 · [8] 2503.15079 · [9] 2512.08706 ·<br>
+          [10] 1901.01538 · [11] 2204.08348 · [12] 2204.12148 ·<br>
+          [13] 2408.08594
+        </div>
+        <p style="font-size:12.5px;margin-top:10px" class="muted">PDF: <code>presentation/papers/</code> · text đánh số trang: <code>presentation/paper_text/</code> · trích dẫn JSON: <code>presentation/citations-raw.json</code></p>
+      </div>
+      <div>
+        <h3 style="font-family:var(--display);font-size:16px;margin-bottom:6px">Chạy bộ slide (offline)</h3>
+        <ul class="clean" style="gap:8px">
+          <li style="font-size:14px">Mở <code>presentation/slides/index.html</code> bằng trình duyệt — không cần internet (font bundle sẵn).</li>
+          <li style="font-size:14px"><kbd style="font-family:var(--mono)">→</kbd> sang bước · <kbd style="font-family:var(--mono)">S</kbd> notes · <kbd style="font-family:var(--mono)">O</kbd> lưới · <kbd style="font-family:var(--mono)">T</kbd> sáng/tối · <kbd style="font-family:var(--mono)">?</kbd> trợ giúp</li>
+          <li style="font-size:14px">Xuất PDF: <kbd style="font-family:var(--mono)">Ctrl+P</kbd> → Save as PDF (mỗi slide 1 trang).</li>
+        </ul>
+        <div class="why" style="margin-top:12px"><div class="ic">i</div><div class="tx">Toàn bộ deck là HTML/CSS/JS thuần, font woff2 nhúng local → chạy được trên mọi máy không cần cài gì.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="snote"><p>Slide cuối: nguồn + hướng dẫn. Nhấn: 13 PDF đã tải sẵn trong project để hội đồng kiểm chứng bất kỳ con số nào. Deck chạy offline hoàn toàn.</p></div>
+</section>
+
+<!-- ===================== 59 · closing ===================== -->
+<section class="slide cover" data-title="Cảm ơn">
+  <div class="badge">● SWT301 · SE1916 · LLM × REST API TESTING</div>
+  <h1>Cảm ơn hội đồng.<br><span class="hl">Em sẵn sàng cho câu hỏi.</span></h1>
+  <p class="lead">Mọi khẳng định trong bài đều truy vết được tới <strong>paper · trang · câu</strong> — 13 PDF gốc đã sẵn trong repo để kiểm chứng.</p>
+  <div class="meta">
+    <div><div class="k">Thành viên</div><div class="val">Nguyễn Tiến Dũng — SE190034</div></div>
+    <div><div class="k">Trích dẫn</div><div class="val">104 · verify 102/104</div></div>
+    <div><div class="k">Bằng chứng</div><div class="val">13 PDF · 280→13 PRISMA</div></div>
+  </div>
+  <div class="snote"><p>Slide cảm ơn. Câu chốt: "Mọi con số em nói đều mở được tới trang trong PDF — mời hội đồng kiểm chứng." Tự tin, ngắn gọn, mời câu hỏi.</p></div>
+</section>
+
+</div><!-- /#stage -->
+
+<div id="notes"><h4>Speaker notes — nhấn S để ẩn</h4><div class="ntxt"></div></div>
+
+<div id="overview"></div>
+
+<div id="help"><div class="panel">
+  <h3>Phím tắt</h3>
+  <div class="row"><kbd>→</kbd><kbd>Space</kbd> Bước/slide kế</div>
+  <div class="row"><kbd>←</kbd> Quay lại</div>
+  <div class="row"><kbd>↑</kbd><kbd>↓</kbd> Nhảy slide (bỏ qua bước)</div>
+  <div class="row"><kbd>số</kbd> + <kbd>Enter</kbd> Tới slide số…</div>
+  <div class="row"><kbd>S</kbd> Speaker notes &nbsp; <kbd>O</kbd> Tổng quan lưới</div>
+  <div class="row"><kbd>T</kbd> Sáng/tối &nbsp; <kbd>F</kbd> Toàn màn hình</div>
+  <div class="row"><kbd>Home</kbd><kbd>End</kbd> Đầu / cuối · <kbd>Esc</kbd> đóng</div>
+  <div class="row muted">In PDF: Ctrl+P → Save as PDF (mỗi slide 1 trang).</div>
+</div></div>
+
+<div id="chrome">
+  <span id="brand">SLR · LLM × REST API Testing</span>
+  <span class="ftitle"></span>
+  <span id="counter">01 / 1</span>
+</div>
+
+<script src="js/deck.js?v=2"></script>
+</body>
+</html>

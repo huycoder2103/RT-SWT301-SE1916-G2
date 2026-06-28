@@ -1,0 +1,827 @@
+
+===== PAGE 1 =====
+arXiv:2402.05102v2 [cs.SE] 15 Jul 2025
+
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+ALIX DECROP, NADI, University of Namur, Belgium XAVIER DEVROEY, NADI, University of Namur, Belgium MIKE PAPADAKIS, SnT, University of Luxembourg, Luxembourg PIERRE-YVES SCHOBBENS, NADI, University of Namur, Belgium GILLES PERROUIN, NADI, University of Namur, Belgium
+REST APIs are prevalent among web service implementations, easing interoperability through the HTTP protocol. API testers and users exploit the widely adopted OpenAPI Specification (OAS), a machine-readable standard to document REST APIs. However, documenting APIs is a time-consuming and error-prone task, and existing documentation is not always complete, publicly accessible, or up-to-date. This situation limits the efficiency of testing tools and hinders human comprehension. Large Language Models (LLMs) offer the potential to automatically infer API documentation, using their colossal training data. In this paper, we present RESTSpecIT, the first automated approach that infers documentation and performs black-box testing of REST APIs by leveraging LLMs. Our approach requires minimal user input compared to state-of-the-art tools; Given an API name and an LLM access key, RESTSpecIT generates API request seeds and mutates them with data returned by the LLM. The tool then analyzes API responses for documentation inference and testing purposes. RESTSpecIT utilizes an in-context prompt masking strategy, requiring no prior model fine-tuning. We evaluate the quality of our tool with three state-of-the-art LLMs: DeepSeek V3, GPT-4.1, and GPT-3.5. Our evaluation demonstrates that RESTSpecIT can (1) infer documentation with 88.62% of routes and 89.25% of query parameters found on average, (2) discover undocumented API data, (3) operate efficiently (in terms of model costs, requests sent, runtime), and (4) assist REST API testing by uncovering server errors and generating valid OpenAPI Specification inputs for testing tools.
+CCS Concepts: · Information systems  RESTful web services; Web mining; · Software and its engineering  Documentation; Software testing and debugging.
+Additional Key Words and Phrases: REST API, Large Language Model, OpenAPI Specification, Documentation, Testing, Mutation, Masking
+ACM Reference Format: Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin. 2025. You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations. 1, 1 (July 2025), 30 pages. https://doi.org/10.1145/nnnnnnn. nnnnnnn
+
+1 Introduction
+Web Application Programming Interfaces (APIs) provide many services, such as data retrieval (e.g, wildlife species information), third-party integrations (e.g., weather information on a website), application communication (e.g, adding
+
+Authors' Contact Information: Alix Decrop, alix.decrop@unamur.be, NADI, University of Namur, Namur, Belgium; Xavier Devroey, xavier.devroey@ unamur.be, NADI, University of Namur, Namur, Belgium; Mike Papadakis, michail.papadakis@uni.lu, SnT, University of Luxembourg, Luxembourg, Luxembourg; Pierre-Yves Schobbens, pierre-yves.schobbens@unamur.be, NADI, University of Namur, Namur, Belgium; Gilles Perrouin, gilles.perrouin@ unamur.be, NADI, University of Namur, Namur, Belgium.
+
+© 2025 Copyright held by the owner/author(s). Publication rights licensed to ACM. Manuscript submitted to ACM
+
+Manuscript submitted to ACM
+
+1
+
+
+===== PAGE 2 =====
+2
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+clinic appointments), and much more. Modern web APIs adhere to the REpresentational State Transfer (REST) architectural style [27], characterized by a set of design principles. Notably, REST APIs utilize the HTTP protocol to send requests and receive responses containing usage-related data. To understand a REST API, developers, testers, and users commonly rely on documentation; The OpenAPI Specification (OAS) [28] is a widely adopted standard for this purpose. OAS is machine/human-readable, and relies on the easily interchangeable JSON/YAML formats.
+Unfortunately, documenting REST APIs is a labor-intensive process that developers tend to overlook, resulting in incomplete documentation. A lack of documentation is highly detrimental to (1) API users, as they cannot understand the API properly, and (2) API testers, as they leverage testing tools which invariably rely on an OAS file as input. Indeed, various testing tools have been developed to find bugs and improve the reliability of REST APIs. The testing results consequently depend on the documentation quality provided in the input.
+To overcome these obstacles, we present RESTSpecIT, the first automated approach leveraging LLMs to (1) infer OpenAPI Specifications and (2) test REST APIs in a black-box setup. We hypothesize that LLMs have captured through their training process enough knowledge to support REST API specification inference and testing. At the same time, developers typically use repeated naming conventions [3] that the LLM can learn from. Thus, the LLM can return API-related data that "seems valid" (i.e., conforming to the natural naming conventions of the related projects and requests).
+Tools generating formal documentation in the OpenAPI Specification format already exist [12, 20, 23, 34, 37, 43, 49, 50, 76, 89]. However, they require advanced inputs related to the API business logic, such as HTML web pages or request samples. Obtaining such information can be time-consuming and may introduce additional overhead. Moreover, if a certain API does not have public or complete data, the tools are ineffective at generating the documentation for the API. By contrast, our tool simplifies the process by requiring only basic data: the API name, an API key (if required), and an LLM key. RESTSpecIT offers a streamlined and dynamic approach that eliminates the need for developers to gather and format data, reducing human overhead. This is particularly appreciable when there is limited information about the API under test.
+RESTSpecIT generates and mutates HTTP requests, without prior complex API knowledge. To do so, the tool utilizes an in-context prompt masking strategy, leveraging an LLM without fine-tuning. The leveraged LLM is interchangeable, as the architecture of the tool comprises an independent LLM module. To demonstrate this feature and to compare model results, we utilized three different state-of-the-art LLMs: DeepSeek V3, GPT 3.5, and GPT 4.1. The strategy consists of masking a HTTP request (i.e., hiding a section of it) and prompting the model for possible values that can replace the mask. RESTSpecIT generates mutated requests by replacing the mask of the request with values returned by the LLM. The mutated requests are then sent to the API server. By analyzing the HTTP responses returned, the tool can verify if the mutated requests are valid. If a request is valid, it is decomposed and inferred into an OAS documentation file. Valid requests are also added to a list of seeds for ensuing mutations.
+A notable aspect of our approach is that we can discover and exercise different behaviors of the API (by sending mutated requests). In that case, the tool acts similarly to a fuzzer. RESTSpecIT uncovers API errors by analyzing status codes of HTTP responses, i.e., 5xx status codes that correspond to server errors. Hence, status codes serve as implicit oracles, which the tool exploits with API responses to determine the validity of requests. Moreover, we report related errors to developers for further analysis. To illustrate, RESTSpecIT generated the following request during our analysis: https://api.datamuse.com/words?sp=apple&v=fruit. This is a bug-triggering input for the Datamuse API [10], that leads to an HTTP response with a 500 Internal Server Error status code and the following message: "There
+
+Manuscript submitted to ACM
+
+
+===== PAGE 3 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+3
+
+GET
+
+https://www.my-api.com/api/v1 /users ?name=john&format=json
+
+HTTP Method
+
+Base API URL
+
+Route
+
+Query Parameters
+
+Fig. 1. Structure of a typical HTTP GET request, for requesting data from the REST API server.
+was an error processing your request. It has been logged". Similarly, 5xx status codes were observed in other APIs of the benchmark.
+Overall, this paper makes the following contributions:
+· RESTSpecIT, a new approach leveraging LLMs to automatically infer OpenAPI Specifications and test REST APIs in a black-box environment (Section 3).
+· An empirical evaluation of the effectiveness and efficiency of RESTSpecIT in terms of specification inference and testing usages (Section 4). Our results demonstrate that RESTSpecIT can (1) infer documentation with 88.62% of routes and 89.25% of query parameters found on average, (2) discover undocumented API data, (3) operate efficiently (in terms of model costs, requests sent, runtime), and (4) assist REST API testing by uncovering server errors and generating valid OpenAPI Specification inputs for testing tools.
+· A publicly available replication package with our implementation and evaluation data [17].
+We present the background and related work in Section 2. Then, we describe RESTSpecIT's architecture and design in Section 3. Section 4 presents our research questions, evaluation protocol, and results, while Section 5 offers an additional discussion. Section 6 describes threats to validity. Section 7 wraps up with the conclusion and future work.
+2 Background and Related Work
+2.1 REST APIs
+REpresentational State Transfer (REST) [27] is an architectural style offering several principles for web-based application design. These principles include stateless communication on top of the HTTP protocol (with HTTP methods), using requests to perform various CRUD operations on data resources identified by URIs:
+· Create: Using the POST or PUT methods. · Read: Using the GET method. This method is the most prominent in public REST APIs [18]. · Update: Using the PATCH or PUT methods. The PUT method either creates or updates, depending on the
+presence of the resource. · Delete: Using the DELETE method.
+APIs implementing or extending REST are termed REST (or RESTful [69]) APIs. In a typical HTTP GET request, routes (e.g. /users) and query parameters (e.g. name=john) describe what is requested from the REST API server. Figure 1 presents the structure of such request. For requests aimed at adding or modifying resources contained on the API server (i.e., POST, PUT, PATCH), a data payload often accompanies the request. Additionally, the JSON format is widely adopted for response and payload data.
+To confirm whether a request is valid, its corresponding response includes an HTTP status code. Customarily, REST APIs use status code interpretations such as 200 OK for successful requests and 404 Not Found for non-existing
+Manuscript submitted to ACM
+
+
+===== PAGE 4 =====
+4
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Fig. 2. Example of an OpenAPI Specification excerpt for An API of Ice and Fire, in the YAML format.
+resources. However, as REST is not a standard, status code interpretations cannot be enforced and are thus APIdependent. For the GBIF Species API [25], a response for an invalid request contains a 404 Not Found status code, which is the standard for non-existing resources. However, for the Bored API [80], it would contain a 200 OK status code with the following JSON data: {"error":"Endpoint not found"}. Both APIs adhere to HTTP and utilize it to indicate an invalid route, yet not in the same manner.
+Regarding API terminology, we use the term "REST API" for an API adhering to the REST architectural style defined by Fielding [27]. In this paper, the term "API" is used as a shorthand for a REST API. We also often use the term "parameter" to designate a query parameter.
+2.1.1 REST API Documentation. One can rely on documentation to better understand API usage. The OpenAPI Specification (OAS) [28] - previously known as the Swagger Specification - is a widely adopted format for describing REST APIs. OAS is machine-readable and also human-readable, as some fields can contain natural language descriptions. Moreover, editing tools such as the Swagger Editor [74] can convert OAS into human-readable documents. Figure 2 illustrates an example of an OAS excerpt for An API of Ice and Fire [73]. As displayed, OAS files can describe API server URLs, paths (routes and associated HTTP methods), parameters, and much more. Consequently, due to its exhaustive options to describe REST APIs, the OpenAPI Specification is widely adopted among API developers and testers.
+Another way to document REST APIs is by using Postman [64]. Postman is widely used for developing, testing, and managing REST APIs. It provides tools for crafting and sending requests, managing environments, and automating
+Manuscript submitted to ACM
+
+
+===== PAGE 5 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+5
+
+tests. REST APIs can be organized in a Collection with Postman, containing descriptions regarding their routes, HTTP methods, parameters, etc. Similarly to OAS, one can export a Postman Collection in the JSON format.
+Documenting is important, allowing developers to understand, reuse, and test APIs. For instance, related works [39, 75] underline the effectiveness of documenting API usage examples. However, documenting is time-consuming and error-prone. Neglecting this task results in unavailable, incomplete, or non-machine-readable documentation. As a result, automated documentation generation has been explored in the literature. Some existing methods require a prior form of documentation [12, 34, 43, 49], access to the API source code [20, 50], an HTTP proxy server [76], crawling the API user interface [88, 89], using API call examples [23], or utilizing white-box static analysis [37].
+2.1.2 Black-Box REST API Testing. REST API testing is an active research field, as witnessed by several surveys [24, 33, 72]. State-of-the-art automated testing tools commonly use a black-box approach, requiring an OpenAPI Specification of the API under test [2, 4, 7­9, 16, 31, 32, 36, 41, 44, 45, 51, 52, 54, 55, 71, 78, 83, 87]. REST API testing mainly consists in generating random HTTP requests based on a specification given as input, and analyzing the HTTP responses returned by the API server based on an oracle. However, our tool does not require a specification to test a REST API: the specification will be generated alongside the testing process, providing specification coverage information.
+
+2.2 Large Language Models
+Large Language Models (LLMs), initially designed for Natural Language Processing (NLP) tasks, are now widely used in software engineering due to their capability to learn intricate patterns and semantic representations from vast textual corpora. All modern LLMs are based on the Transformer architecture, which was introduced in a foundational research paper by Vaswani et al. [82] widely known by its title "Attention Is All You Need". One initial and influential LLM is the Bidirectional Encoder Representations from Transformers (BERT) [22]. BERT uses the Encoder-only transformer architecture, focused solely on processing an input sequence and transforming it into abstract representations called embeddings. State-of-the-art Encoder-only LLMs include CodeBERT [26] and GraphCodeBERT [35]. In more recent years, the AI chatbot ChatGPT [62] further popularized LLMs. ChatGPT relies on the Generative Pre-trained Transformer (GPT) [66] model architecture. GPT utilizes the Decoder-only transformer architecture, focused on output sequences based on previously learned representations, without an encoder module. State-of-the-art Decoder-only LLMs include CodeGen [61], the GPT-4 model series, Llama [81], and Deepseek [19]. The merged Encoder-Decoder transformer architecture comprises models such as CodeT5 [85] and PLBART [1]. As the LLM field evolves, models and their related strategies are constantly being improved. Multiple surveys of LLM development and usage have been proposed in the literature [5, 13, 91]. However, as the LLM field is in constant evolution, such surveys can rapidly become outdated. Furthermore, Wang et al. [84] offer a preliminary review of LLMs for software testing.
+2.2.1 In-Context Strategies. LLMs can be specialized for specific tasks with two different strategies: fine-tuning [66] and in-context learning [11, 67]. Fine-tuning takes a pre-trained model and modifies it through additional training on a smaller, domain-specific dataset. In-context learning allows LLMs to dynamically update their comprehension from user prompts, without retraining. Prompt engineering explores efficient in-context learning techniques [84], such as zero-shot learning, few-shot learning, chain-of-thought, and self-consistency.
+2.2.2 Prompt Masking. A certain in-context strategy consists in masking a section of a prompt, and asking the LLM to find values that can replace the masked section. Thus, masking refers to a technique used to hide data from a set of data. This data is replaced with a token, a generic symbol applied onto the data to hide it. The token applied to the
+Manuscript submitted to ACM
+
+
+===== PAGE 6 =====
+6
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Replace the <WORD> token in the following sentence: "The cat is <WORD> home." Replace the <PARAM> token in the following code snippet: "result = add(3, <PARAM>)" Replace the <VALUE> token in the following API request: "/characters?name=<VALUE>"
+
+Fig. 3. Different examples of prompt masking.
+data is called a mask. Figure 3 presents different examples of prompt masking. The concept of hiding text in a sentence originates from the Cloze Procedure by Taylor in 1953 [79]. More recently, Deng et al. [21] fed masked code to an LLM to test deep-learning libraries. Meng et al. [58] used LLMs to guide protocol fuzzing, with a message mutation process via LLM interactions. Moreover, Khanfir et al. [42] applied token masks onto code to obtain mutated code from a CodeBERT variant.
+2.3 REST API Inference and Testing with Large Language Models The use of LLMs in the REST API field is very recent, as the former technology was not yet fully developed and/or effective beforehand. In consequence, various works have been recently proposed in the literature. These works can be classified into two major categories: using LLMs to assist REST API testing [44­46, 77, 78, 90] and documentation generation [14, 20]. The approaches employed in the works mostly rely on prompting LLMs using an in-context strategy (e.g, zero-shot or few-shot) and assisting REST API testing or documentation generation with the obtained responses.
+3 Approach The main idea of RESTSpecIT is to infer documentation in the OpenAPI Specification (OAS) format and test REST APIs by generating and mutating HTTP requests. The process relies on an LLM; The role of the LLM is to find API data (e.g., routes and query parameters) and return values for mutations applied on HTTP request seeds. As LLMs are prone to confabulation [40] (i.e., hallucinations), the tool meticulously analyzes, parses, and verifies prompt responses. The tool uses minimal input: only the name of the API and a valid key for LLM requests is required. However, if the tool is not able to infer documentation solely with these inputs, the user can manually specify the API key, server URL or HTTP request seeds. Nonetheless, this case did not appear during our evaluation. Figure 4 displays an overview of RESTSpecIT.
+3.1 User Input and Initialization To specify the user input, we use a JSON configuration file. In addition to the API name and the LLM key, the configuration file contain fields related to the tool execution (e.g., rate-limit specifies a time to wait between API requests, and temperature specifies the predictability of LLM outputs). The readme file contained in the replication package provides additional information. The user can also specify multiple API configurations in the file to analyze all of these APIs during the same execution.
+3.1.1 Base Data. RESTSpecIT attempts to find the essential data of the API. First, the tool generates an empty OAS template in a JSON file. Then, it queries the LLM via prompts to obtain base API data, such as a short API description,
+Manuscript submitted to ACM
+
+
+===== PAGE 7 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+7
+
+Fig. 4. Overview of RESTSpecIT.
+the documentation URL, and the server URL. The generated base data requires human verification and is not used for testing purposes. If a URL is invalid, the model is re-prompted with the same instruction, however specifying that the previous URL was invalid. If after three attempts the URL is still invalid, the corresponding field in the specification will be ignored. The user still has the option to manually specify the API server URL in the configuration file.
+3.1.2 Default Error Schema. REST APIs can handle invalid requests in different ways, e.g., returning 4xx or 5xx status codes. For some APIs, a 200 OK status code with an error message indicates an invalid request, which is considered as a bad practice and disputed by some developers [48]. To identify the default error schema for the OAS file, RESTSpecIT voluntarily forms an invalid request composed of the API server URL with an invalid route (e.g., /invalidRoute?invalidParam=invalidValue). As it is extremely unlikely that the request is valid, RESTSpecIT stores the response error. It will be added in the specification to describe the schema of an invalid request. Other response schemas are also generated throughout the tool execution, for valid and invalid responses. Invalid responses are documented only when the request includes a route that is already defined in the API documentation (generated by RESTSpecIT). This approach is particularly useful for specifying the various types of invalid behavior that a specific API route may exhibit.
+3.1.3 Initial Seeds. To complete the initialization process, RESTSpecIT generates an initial list of request seeds to be used in ensuing mutations. To do so, we ask the LLM to give us a list containing all routes that exist in the REST API. Then, for each route, we ask the LLM to give us a list containing all query parameters that can be used with the route and that exist in the API. With this data, we generate API requests structured as <base-url>/<route>?<query-parameter>. We then send the generated requests to the corresponding API server. If a request is valid (i.e., generates a valid HTTP response), it is inserted into a seed list, which will store all valid (and unique) requests found by the tool. We also store invalid requests in a separate list. The data of the seeds are then inferred. If no valid seed is found, the user still has the option to manually specify API seeds in the configuration file.
+Manuscript submitted to ACM
+
+
+===== PAGE 8 =====
+8
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Table 1. Mutation operators implemented by RESTSpecIT with corresponding examples of masked requests.
+
+Mutation Operator Name Masked Request Example
+
+add_route remove_route modify_route reset_route add_parameter remove_parameter modify_parameter modify_parameter_name modify_parameter_value reset_parameter
+
+/users/25/<route> /users/25 /users/<route> /<route> ?id=Leo&age=4&<parameter=value> ?id=Leo&age=4 ?id=Leo&<parameter=value> ?id=Leo&<parameter>=4 ?id=Leo&age=<value> ?<parameter=value>
+
+3.2 Masking Process
+3.2.1 Seed Selection. As the seed list grows with every new valid request, we select a seed for each mutation. RESTSpecIT can select a seed randomly (random-seed) from the seed list or based on the previously discovered routes (random-route, used by default). The latter randomly selects a seed from a filtered sub-list of seeds. This sub-list is generated by (i) selecting a random route from the API routes found so far. Then, (ii) we add to the sub-list every seed containing the selected route, and (iii) randomly select a seed from it. This allows all discovered routes to have an equal probability of selection.
+3.2.2 Mutation Operator Selection. A mutation operator is selected based on the utilized mutation strategy (cf. Section 3.6). Our implementation includes multiple mutation operators, to explore different behaviors of the API. Table 1 presents our mutation operators along with application examples. Added and/or modified data is represented in blue, while deleted data is represented in red. The mutation operators were designed based on request elements that are likely to exercise different behaviors of the API, e.g., exploring a different route or adding a parameter.
+3.2.3 Request Masking. Based on the selected request seed and mutation operator, we mask a section of the seed. In this context, masking consists of replacing a section of a request with a mutation operator placeholder token. Depending on the mutation operator, four different tokens can be applied: <route>, <parameter=value>, <parameter> and <value>. The process allows the LLM to "guess" token replacements for this specific request.
+3.3 Mutation Process
+3.3.1 LLM Prompt. The masked request is sent to the LLM in a crafted prompt. The prompt asks the model to return values that can replace the token in the given request to the API. The prompt is based on a template, which is automatically customized for the API and the current mutation operator.
+3.3.2 Request Mutation. When the LLM responds, RESTSpecIT parses the returned data to make sure that the values are of the correct format for the mutation process. If the current mutation operator is related to routes (cf. Table 1), the integer 1 is automatically added as a candidate value for mutations. This is for cases where a route is of the form /{id}, which would be easily found with this process. Then, mutated HTTP requests are generated by replacing the masked request token with each value returned by the model.
+Manuscript submitted to ACM
+
+
+===== PAGE 9 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+9
+
+3.3.3 Mutation Process Summary. Figure 5 presents a simplified mutation process example. As displayed, the /books route of a request chosen from the seed list is masked with the modify_route mutation operator. A prompt is then sent to the model, describing the mask to replace in the request and the expected response structure. The values returned by the model replace the mask and generate new mutated requests. The verification process discovers that the mutated requests containing book, characters, and house are valid. However, the mutated request containing author is not valid as author is not a valid route of the API. The mutated requests containing characters and houses are added to the seed list, as they are not in the list yet. The request containing books is not added as an identical request already exists.
+
+3.4 Verification Process
+3.4.1 Request Validity. Each request generated by the mutation process is sent to the API server, and RESTSpecIT analyzes the API's response. As 2xx status codes are not sufficient to prove the validity of a request, the request must satisfy all following conditions:
+(1) The status code is in the 2xx - successful range. (2) If the response message contains less than 200 characters, it must not contain the following keywords: error,
+not found, invalid, or incorrect. This allows the detection of error messages with 2xx status codes. We chose a threshold of 200 characters as error messages rarely exceed this limit (are short and descriptive), and to avoid invalidating longer responses containing the keywords. The maximum length of the response data prevents valid data containing the keywords (e.g., as part of a longer text) from making the request invalid, as error responses are frequently short and descriptive. (3) The type of the response data must not be HTML. Even though HTML data is perfectly valid for web pages, it does not indicate that an API request is valid. First, HTML data could correspond to an in-page error returned by the API server. Second, by analyzing the response data type of over 60 APIs from REST API benchmarks and repositories [18, 65], none were HTML. A study by Neumann et al. [60] also highlights this finding.
+3.4.2 Error Detection. RESTSpecIT logs requests and their corresponding responses obtained from the API server. By analyzing the request logs, the tool is capable of uncovering 5xx server errors. The errors can then, e.g., be sent to API developers for further analysis.
+
+3.5 Inference Process
+3.5.1 Documentation Structure. If the mutated request is flagged as valid, we append it to the list of valid seeds (if it does not exist yet). Then, we decompose the request into routes and parameters. Sections of routes containing an integer value are replaced with a placeholder /{id}. For instance, the route /users/43 would be replaced by /users/{id}, as 43 can be replaced with the integer value of any other user. Based on the analyzed data, our tool enhances the OpenAPI Specification as described below.
+· Routes: If a route does not exist in the specification, a section is created based on the structure of an OpenAPI path described in the official guide [29]. For a valid request using the route, the valid status code (e.g., 200 OK or 201 Created) is specified along with the expected response data. An example of the route response data is added, corresponding to the response of the request that found the route. The invalid route behavior is also specified, as detailed in Section 3.1.2. For POST, PATCH, or PUT routes, the request body structure is also added.
+Manuscript submitted to ACM
+
+
+===== PAGE 10 =====
+10
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Chosen Request Seed: /api/books/4?page=1
+
+Chosen Mutation Operator: modify_route
+
+Masked Request: /api/<route>/4?page=1
+
+Model Prompt: Return a list containing routes that can replace "<route>" in the following request: "/api/<route>/4?page=1".
+
+Model Response: [books, characters, houses, author]
+
+Mutated Requests: /api/books/4?page=1 /api/characters/4?page=1 /api/houses/4?page=1 /api/author/4?page=1
+
+VALID, EXISTS VALID, ADDED VALID, ADDED
+INVALID, REJECTED
+
+Fig. 5. Simplified example of the mutation process in RESTSpecIT.
+
+· Query Parameters: If the request contains query parameters that do not yet exist in the route structure, they are added to it. The type of the parameter (integer, string, array, object, etc.) is evaluated and specified, along with its value as a starting example.
+· Query Parameter Values: If a request contains query parameter values that do not yet exist in the parameter structure, they are added to it. Thus, the specification can accept different values for the same parameter, to serve as additional examples.
+3.5.2 Human-readable Descriptions. If specified in the configuration file, RESTSpecIT can provide LLM-generated descriptions in the OpenAPI Specification file. Descriptions can be generated for routes, query parameters, responses, status codes, schemas, etc.
+3.6 Inference Strategies RESTSpecIT implements different inference strategies, which all have a specific use case when executing the tool on a REST API:
+· infer-all-base: This strategy asks the LLM to give a list containing all routes that exist in the API. Then, for each route, the LLM is asked to give a list containing all query parameters that can be used with the route. Mutated requests are then generated with these sections, structured as <base-url>/<route>?<query-parameter>. This strategy is useful for finding initial "bulk" of API data and to generate initial seeds. This strategy is used for Section 3.1.3.
+Manuscript submitted to ACM
+
+
+===== PAGE 11 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+11
+
+· infer-all-mutations-routes: This strategy executes all mutation operators on a random seed for all distinct routes of the API found until now. For instance, if the /users routes was found, a random seed containing the route is selected and all mutation operators are applied onto it. This strategy is useful for finding advanced API data related to the route, such as mandatory query parameters and deeper route paths.
+· infer-all-mutations-random: This strategy executes all mutation operators, with a random seed per operator. This strategy is useful for finding additional data that might have been missed in previous mutations.
+
+3.7 HTTP Method Support
+RESTSpecIT is able to support a wide range of HTTP methods:
+· The GET method is well supported by RESTSpecIT, as it is the most prominent in REST APIs (for data retrieval). As GET specifies all of its data in the API request, it is straightforward to implement.
+· The POST method is also supported. However, the POST method does not only require a request to be sent to the server, but also a data payload (i.e., the data for the new resource that will be created). In consequence, for POST methods, we also ask the model to give us a complete example of a data payload in the JSON format. Then, we can send the complete POST request to the API server and analyze the response.
+· The PUT and PATCH methods are easily supported, being analogous to the POST method. Indeed, as such routes are used to modify or replace data on the server, their implementation also requires a request and a payload.
+· The DELETE method is also supported. If an API contains the POST method, we can easily verify the presence of the DELETE method by deleting the data that was just created. This way, we do not need to "guess" a piece of data to be deleted (as RESTSpecIT operates in a black-box environment, there is no access to internal API implementations).
+
+4 Evaluation
+4.1 Research Questions
+For our evaluation, we formulate the following research questions: · RQ.1: How effective is RESTSpecIT in inferring REST API specifications, in terms of routes and parameters, and in the OpenAPI Specification format? · RQ.2: How effective is RESTSpecIT in discovering undocumented and valid data of REST APIs? · RQ.3: How efficient is RESTSpecIT in terms of requests sent, execution time, and model costs? · RQ.4: How can RESTSpecIT be used to test REST APIs?
+
+4.2 Experimental Setup
+
+4.2.1 Benchmark. To assess RESTSpecIT, we formed a benchmark of diverse REST APIs. To do so, we utilized APIs from the Public REST API Benchmark (PRAB), a state-of-the-art benchmark (MSR'25) by Decrop et al. [18]. The benchmark contains the OpenAPI Specification (OAS) and various structural characteristics (HTTP method distribution, authentication method, routes and query parameters, etc.) of over 60 publicly available REST APIs. This allows us to easily extract API data in order to generate the baselines for our evaluation. As the benchmark is aimed to be filtered based on specific experimental needs, we selected all REST APIs matching the following criteria:
+
+· The API is available online. · The API does not require a pricing plan (i.e., no request limits).
+
+Manuscript submitted to ACM
+
+
+===== PAGE 12 =====
+12
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Table 2. REST APIs used for the experiment.
+
+API Name
+An API of Ice and Fire CheapShark Datamuse GBIF Species OMDb Open Brewery DB Random User Generator Refuge Restrooms REST Countries Spring PetClinic REST
+
+Doc. Reference
+[73] [15] [10] [25] [30] [57] [38] [86] [56] [68]
+
+Application Domain
+Game of Thrones Game Prices Word Querying Species Movies Breweries User Generation Safe Restroom Access Countries Pet Clinic
+
+No. Routes
+7 4 2 24 1 6 1 4 11 17
+
+No. Query Parameters
+15 27 25 41 10 13 12 12 4 1
+
+· The API does not require an API key.
+In order to demonstrate the full capabilities of RESTSpecIT, we also selected one local API (Spring PetClinic REST [68]) and one API requiring an access key (OMDb [30]). Indeed, the tool is capable of handling local APIs by providing the localhost URL, and API keys by providing the key query parameter in the configuration file. Based on these criteria and the two additional APIs, we were able to extract 10 distinct REST APIs to be used in our evaluation. Table 2 presents the resulting set; Doc. Reference specifies the documentation source from where the number of routes (No. Routes) and query parameters (No. Query Parameters) were found. No. Routes specifies the number of unique routes that exist in the API. The No. Query Parameters metric corresponds to the number of unique query parameters from all routes of the API. For example, if a fictive API contains a /pet route accepting the parameters [id, name, species] and a /store route accepting the parameters [id, location], the set of unique query parameters for the API consists of [id, name, species, location].
+4.2.2 Evaluation Procedure. For each API of the benchmark, we apply the following process: RESTSpecIT begins by setting up and finding the base data of the API. Then, different strategies are executed consecutively :
+· First, the infer-all-base strategy is applied. This first strategy is aimed to find the "bulk" of the API data, and to generate initial seeds for ensuing mutations.
+· Second, the infer-all-mutations-routes strategy is applied. This second strategy is aimed to find advanced API data related to specific routes, such as mandatory query parameters and deeper route paths.
+· Third, the infer-all-mutations-random strategy is applied. This third and last strategy is aimed to find the "leftovers" of the API data, in case the LLM did not find it in the previous strategies. When the strategy terminates, the inferred data is extracted and compared with the baseline API documentation. The process is iteratively applied again. When two successive iterations for an API yield no new routes or parameters, the tool considers the API as fully explored, and it is no longer executed.
+Figure 6 presents the pseudo-code of the evaluation process. Additionally, when all routes and parameters of an API are found, ensuing strategies are skipped for the run. This evaluation procedure is applied on all LLMs separately.
+4.2.3 Experimental Setup. We ran our evaluation using a laptop with a 2.4GHz processor, 16GB of RAM, and a stable Ethernet connection. We repeated the process five times to account for randomness in prompt responses and seed
+Manuscript submitted to ACM
+
+
+===== PAGE 13 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+13
+
+Fig. 6. Algorithm of the evaluation process in pseudo-code.
+selection. Each run starts without the data found in the previous runs. Accordingly, we report the average results of these runs.
+4.2.4 LLMs. In order to evaluate the capabilities of our tool, we utilized three different state-of-the-art LLMs. The motivation is twofold: (1) so that we can potentially obtain better results with one of the LLMs, and (2) to partially address LLM data leakage (e.g., verify if different training sets can infer REST API documentation). Consequently, we chose the following LLMs:
+· DeepSeek V3 (deepseek-chat): A state-of-the-art LLM that displays excellent performances across various online benchmarks/rankings.
+· GPT-4.1 (gpt-4.1-mini): A state-of-the-art LLM from the GPT series that is fast and affordable while still excelling in tasks.
+· GPT-3.5 (gpt-3.5-turbo): An older LLM from the GPT series. However, it is very fast. This LLM was selected to verify if older/outdated LLMs can compete against state-of-the-art LLMs in inferring REST API documentation.
+4.3 RQ.1 - Effectiveness of RESTSpecIT To evaluate the effectiveness of RESTSpecIT, we extracted the percentages of routes and query parameters found by each LLM, and for each REST API of the benchmark. We computed the average results of the different runs.
+4.3.1 Route Inference. First, we report the percentages of routes found. Figure 7 presents a grouped bar chart illustrating the percentages of routes found (y-axis) across the various REST APIs of the benchmark (x-axis). The results are grouped by the three different LLMs: DeepSeek V3 (in blue), GPT-3.5 (in orange), and GPT-4.1 (in green). In order to illustrate the overall LLM effectiveness, horizontal dashed lines indicate the average percentages of routes found across all APIs for each LLM.
+Manuscript submitted to ACM
+
+
+===== PAGE 14 =====
+% Routes Found
+
+14
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+100 90 80 70 60 50 40 30 20 10 an-a0pi-of-ice-and-fire
+
+cheapshark
+
+datamuse
+
+gbif-species
+
+RomEdSbTopAenP-bIreIwdeerraynn-dtdboifmi-eursesr-generator refuge-restrooms
+
+rest-countriesspring-petclinic-rest
+
+deepseek-chat gpt-3.5-turbo gpt-4.1-mini Averages
+
+Fig. 7. Percentages of routes found for all benchmark APIs, grouped by LLM. Horizontal dashed lines indicate the average percentages of routes found across all APIs for each LLM.
+
+As shown, the DeepSeek model inferred the best percentages of routes on average (88.62%), followed by the GPT-4.1 model (81.16%), and then the GPT-3.5 model (79.84%). This results in DeepSeek V3 outperforming GPT-4.1 by 7.46%, and GPT-3.5 by 8.78%. However, when directly comparing the GPT models, GPT-4.1 only outperforms GPT-3.5 by 1.32%, which is a much smaller difference. Consequently, RESTSpecIT can infer (at best) on average 88.62% of documented API routes.
+Regarding the GPT-3.5 model, it found at best 60.00% of routes for the REST Countries API. Despite the LLM having a training data cutoff in 2023, it was still able to correctly find the new API endpoint (dating from 2024). Indeed, the REST Countries API used to have .eu as top-level domain [56], but now has .com. Similarly, the tool was able to find the latest route of the API version, which is /v3.1.
+4.3.2 Query Parameter Inference. Second, we report the percentages of query parameters found. Figure 8 presents another grouped bar chart, illustrating the percentages of query parameters found across the REST APIs of the benchmark. The y-axis, x-axis, and group organizations are identical to the route chart.
+As shown, the DeepSeek model inferred the best percentages of query parameters on average (89.25%), followed by the GPT-4.1 model (82.87%), and then the GPT-3.5 model (68.90%). Once again, DeepSeek V3 outperforms GPT-4.1 by 6.38%, and GPT-3.5 by 20.35%. When comparing the GPT models, GPT-4.1 is 13.97% more effective than GPT-3.5. Compared to the previous route results, this is a much larger difference. Consequently, RESTSpecIT can infer (at best) on average 89.25% of documented API query parameters.
+RESTSpecIT can sometimes infer invalid query parameters, resulting in false positives for the REST API. Section 5 explains the difficulty of detecting such false positives.
+Manuscript submitted to ACM
+
+
+===== PAGE 15 =====
+% Parameters Found
+
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+15
+
+100 90 80 70 60 50 40 30 20 10 an-a0pi-of-ice-and-fire
+
+cheapshark
+
+datamuse
+
+gbif-species
+
+RomEdSbTopAenP-bIreIwdeerraynn-dtdboifmi-eursesr-generator refuge-restrooms
+
+rest-countriesspring-petclinic-rest
+
+deepseek-chat gpt-3.5-turbo gpt-4.1-mini Averages
+
+Fig. 8. Percentages of query parameters found for all benchmark APIs, grouped by LLM. Horizontal dashed lines indicate the average percentages of query parameters found across all APIs for each LLM.
+
+4.3.3 Overall Effectiveness. The results demonstrate that our tool is effective at inferring specifications of REST APIs, with an average route discovery rate of 88.62% and an average query parameter discovery rate of 89.25%. These results were obtained with the DeepSeek model, outperforming the GPT models in terms of both route and query parameter inference percentages.
+4.3.4 OpenAPI Specification Validity. As RESTSpecIT generates OpenAPI Specifications containing the inferred data, another important aspect is to verify the syntactical validity of such documentation. To do so, we utilized a popular tool entitled Swagger Editor [74], which allows users to create, edit, and validate OpenAPI Specifications. The tool has a real-time preview of the provided OAS file, displaying an interactive documentation alongside.
+We inserted the specifications generated by RESTSpecIT in the Swagger Editor, and all of them were correctly validated. We verified this as no errors were reported by the editor, and the interactive viewer mirrored the documentation in the provided OAS files correctly. Figure 9 illustrates an example, with an OAS file generated by RESTSpecIT on the left side, and the interactive documentation correctly rendered on the right side.
+RQ.1 Summary: RESTSpecIT effectively generates OpenAPI Specifications for REST APIs, with an average route discovery rate of 88.62% and an average query parameter discovery rate of 89.25%. The best results were obtained with the DeepSeek V3 model (deepseek-chat), outperforming the GPT-4.1 model (gpt-4.1-mini) by 7.46% (routes) / 6.38% (query parameters), and the GPT-3.5 model (gpt-3.5-turbo) by 8.78% (routes) / 20.35% (query parameters).
+Manuscript submitted to ACM
+
+
+===== PAGE 16 =====
+16
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Fig. 9. Example of an OAS file generated by RESTSpecIT (on the left side) correctly rendered in the Swagger Editor (on the right side).
+4.4 RQ.2 - Undocumented API Data
+As RESTSpecIT mutates API requests and verifies their validity, it is possible that undocumented (and valid) API data can be inferred by the tool. For instance, an API route can be valid, but not officially documented online for various reasons (e.g., deprecated, not intended for public use, etc.). Accordingly, we extracted all routes and query parameters that were inferred during the tool executions. We compared this data against the API documentations used as baselines. If a route or a query parameter was correctly inferred but does not appear in the baseline documentation, it is added to a separate file for further analysis. We also noted the LLMs that inferred the undocumented data.
+Table 3 presents the undocumented and valid API data found by RESTSpecIT. Each column of the table represents:
+· API Name: The API in which the undocumented data was found. · Undocumented Data: The undocumented data that was found. · Data Type: The type of the undocumented data: a route or a query parameter. · Verif. Method: The verification method that was used to verify if the undocumented data found is valid. · DeepSeek / GPT-4.1 / GPT-3.5: "YES" if the model found the undocumented data during one of its executions,
+"NO" otherwise.
+As shown, a total of 10 undocumented routes and 4 undocumented query parameters were found. To verify their validity, the request seeds that found the undocumented data were re-sent to their corresponding API servers. After, the obtained response were analyzed to verify if the undocumented data is valid.
+For the Datamuse API, the tool found three undocumented parameters: rel_nry, rel_rhy, and rel_rry. By sending requests containing each query parameter to the Datamuse API endpoint, changes in the response data were observed. For instance, adding the parameter rel_rry with the value toto, responses returned data with words similar to toto such as coco, logo, kyoto, etc.
+For the GBIF Species API, the tool found two undocumented routes: a first route /species/lookup, and a second route /species/{id}/typeSpecimen. As requests containing these routes returned 200 OK status codes and no error
+Manuscript submitted to ACM
+
+
+===== PAGE 17 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+17
+
+Table 3. Undocumented and valid data found by RESTSpecIT for the APIs of the benchmark.
+
+API Name
+CheapShark Datamuse Datamuse Datamuse GBIF Species GBIF Species Random User Random User Random User Random User Random User Refuge Restrooms REST Countries REST Countries
+
+Undocumented Data
+/api/1.0/ping rel_nry rel_rhy rel_rry /species/lookup /species/{id}/typeSpecimen /api/1.{id} /api/portraits /api/portraits/{id} /api/portraits/{id}/{id}.jpg lego /api/v1/restrooms.json /v2/callingcode/{id} /v2/regionalbloc/eu
+
+Data Type
+Route Query Parameter Query Parameter Query Parameter Route Route Route Route Route Route Query Parameter Route Route Route
+
+Verif. Method
+Valid Endpoint Response Data Response Data Response Data Dev. Feedback Dev. Feedback Valid Endpoint Valid Endpoint Valid Endpoint Valid Endpoint Response Data Valid Endpoint Valid Endpoint Valid Endpoint
+
+DeepSeek
+NO YES YES NO NO YES YES YES YES YES YES NO NO NO
+
+GPT-4.1
+YES YES YES NO YES YES NO NO NO NO NO YES YES YES
+
+GPT-3.5
+NO YES YES YES YES NO NO YES YES YES YES NO NO NO
+
+messages in the response data, they were flagged as true positives. Furthermore, we sent an email to the GBIF help desk to obtain feedback regarding the validity of the routes. A developer of the API responded, stating that the routes are deprecated but still functional. In an older version of RESTSpecIT, the GPT-3.5 model found two undocumented routes for the GBIF Species API: /species/{id}/identifier and /species/{id}/metrics. We also sent an email to the GBIF help desk to obtain feedback. A developer of the API stated that the routes indeed do exist but are not officially documented. Since then, the GBIF Species API documentation has been updated and the routes are now officially documented, highlighting the usefulness of RESTSpecIT.
+For the Random User Generator API, the undocumented query parameter lego was found. The parameter is a true positive, as adding it to the query of a valid request to the API causes the response data to contain lego-related information. For instance, the nat key in the response has a value of LEGO, in contrast to a usual nationality value (CA, DE, GB, etc.) when the lego parameter is not specified in the request. Moreover, the image values of the picture key in the response change to profile pictures of a lego minifigure. Multiple undocumented routes were also found for the Random User Generator API, such as /api/portraits, /api/portraits/lego, and /api/portraits/women/42.jpg. When sending requests containing such routes to the API server, JPEG images of portraits are returned in the response. Figure 10 illustrates an example with the /portraits/lego/1.jpg route. Moreover, routes for older API versions were found such as /api/1.3.
+RQ.2 Summary: RESTSpecIT is capable of discovering undocumented and valid data for REST APIs. The tool found 10 undocumented routes, returning 2xx status codes without error messages and 4 undocumented query parameters, causing response data changes.
+
+4.5 RQ.3 - Efficiency of RESTSpecIT To evaluate RESTSpecIT's efficiency, we considered execution time, cost, and request metrics. We report the start and end time of each execution, along with the total cost of input and output tokens for the LLM prompts, to be paid by the user. The exact efficiency results for the runs can be found in our replication package.
+4.5.1 Execution Time. Figure 11 presents a grouped bar chart illustrating the different execution times in seconds (y-axis) across the REST APIs of the benchmark (x-axis). The results are grouped by the three different LLMs: DeepSeek
+Manuscript submitted to ACM
+
+
+===== PAGE 18 =====
+18
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Execution Time (in Seconds)
+
+Fig. 10. Example of an undocumented and valid route for the Random User Generator API, returning an image of the requested resource.
+
+1400
+
+1200
+
+1000
+
+800
+
+600
+
+400
+
+200
+
+an-a0pi-of-ice-and-fire
+
+cheapshark
+
+datamuse
+
+gbif-species
+
+RomEdSbTopAePn-bIreIdweerryna-ndtdbiofmie-ursser-generator refuge-restrooms
+
+rest-countriesspring-petclinic-rest
+
+deepseek-chat gpt-3.5-turbo gpt-4.1-mini Averages
+
+Fig. 11. Execution time in seconds for all benchmark APIs, grouped by LLM. Horizontal dashed lines indicate the average execution time across all APIs for each LLM.
+
+V3 (in blue), GPT-3.5 (in orange), and GPT-4.1 (in green). Horizontal dashed lines indicate the average execution time across all APIs for each LLM.
+As displayed, RESTSpecIT takes on average 264 seconds to execute an API using the GPT-3.5 model, which is the fastest. With the GPT-4.1 model, the average execution time becomes 282 seconds, only 18 seconds more compared to GPT-3.5. With the DeepSeek model, the average execution time greatly increases to 597 seconds. Compared to GPT-4.1,
+Manuscript submitted to ACM
+
+
+===== PAGE 19 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+19
+
+deepseek-chat
+
+800
+
+gpt-3.5-turbo gpt-4.1-mini
+
+Averages
+
+600
+
+Requests Sent
+
+400
+
+200
+
+an-0api-of-ice-and-fire
+
+cheapshark
+
+datamuse
+
+gbif-species
+
+RomEdSbTopAePn-IbrIedweerryna-ndtdbiofmie-ursser-generator refuge-restrooms
+
+rest-countriesspring-petclinic-rest
+
+Fig. 12. Requests sent to the API servers for all benchmark APIs, grouped by LLM. Horizontal dashed lines indicate the average requests sent across all APIs for each LLM.
+
+DeepSeek V3 requires an additional 315 seconds. In other words, the DeepSeek model requires (on average) over 2x more time to execute compared to the GPT models.
+In Section 4.3, we observed that the DeepSeek model yielded the best inference results compared to the other models. A high execution time could thus impact the LLM choice. However, 597 seconds corresponds to roughly 10 minutes, which is relatively fast to execute an API with RESTSpecIT. Nonetheless, execution time could become problematic if a user needs to execute the tool multiple times on a single API, or with multiple APIs.
+4.5.2 Requests Sent. Another metric to consider is the amount of requests that the tool sends to the API servers. Indeed, it is important as (1) sending too many requests can cause API server issues, and (2) some APIs have a strict rate limiting policy. Figure 12 presents a grouped bar chart illustrating the requests sent to the API servers (y-axis) for the REST APIs of the benchmark (x-axis). The results are grouped by the three different LLMs: DeepSeek V3 (in blue), GPT-3.5 (in orange), and GPT-4.1 (in green). Horizontal dashed lines indicate the average requests sent across all APIs for each LLM.
+As shown, the average amount of requests sent is relatively stable for all LLMs, ranging from 270 (DeepSeek V3) to 282 (GPT-4.1) and 297 (GPT-3.5). One possible explanation for the lower number of requests with the DeepSeek model is that it infers API data more efficiently, reducing the need to execute additional mutation strategies and therefore resulting in fewer requests to the API servers.
+4.5.3 Model Costs. One last efficiency metric to consider is the cost of leveraging the LLMs. As of July 2025, the leveraged models had the following costs, per one million tokens:
+· DeepSeek V3 (deepseek-chat): $0.27 / 1M tokens for input and $1.10 / 1M tokens for output. · GPT-4.1 (gpt-4.1-mini): $0.40 / 1M tokens for input and $1.60 / 1M tokens for output. · GPT-3.5 (gpt-3.5-turbo): $3.00 / 1M tokens for input and $6.00 / 1M tokens for output.
+Manuscript submitted to ACM
+
+
+===== PAGE 20 =====
+Input Tokens Consumed
+
+20 20000 15000
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin deepseek-chat gpt-3.5-turbo gpt-4.1-mini Averages
+
+10000
+
+5000
+
+an-a0pi-of-ice-and-fire
+
+cheapshark
+
+datamuse
+
+gbif-species
+
+RomEdSbTopAenP-bIreIdweerrayn-ndtdbiofmie-ursesr-generator refuge-restrooms
+
+rest-countriesspring-petclinic-rest
+
+Fig. 13. Input tokens consumed for all benchmark APIs, grouped by LLM. Horizontal dashed lines indicate the average input tokens consumed across all APIs for each LLM.
+
+To calculate the model costs, we reported the amount of input and output tokens consumed by the LLMs for all APIs. Figures 13 and 14 present grouped bar charts illustrating the input/output tokens consumed (y-axis) for the REST APIs of the benchmark (x-axis). The results are grouped by the three different LLMs: DeepSeek V3 (in blue), GPT-3.5 (in orange), and GPT-4.1 (in green). Horizontal dashed lines indicate the average input/output tokens consumed across all APIs for each LLM.
+Considering the average input and output tokens consumed, we can calculate the average cost of executing an API with RESTSpecIT (per LLM) :
+· DeepSeek V3 (deepseek-chat): 4841 (input) + 2569 (output) = $0.004 · GPT-4.1 (gpt-4.1-mini): 6966 (input) + 2647 (output) = $0.007 · GPT-3.5 (gpt-3.5-turbo): 7000 (input) + 2802 (output) = $0.037
+Consequently, executing RESTSpecIT is relatively cheap with any of the three LLMs. While GPT-3.5 has a more expensive model pricing, it remains very cheap when used with the tool.
+RQ.3 Summary: RESTSpecIT is efficient regarding execution time, API requests sent, and model costs. On average, a user can expect the following when executing the tool on a REST API:
+· An execution time of 597s (DeepSeek V3), 282s (GPT-4.1), or 264s (GPT-3.5). · A total of 270 (DeepSeek V3), 282 (GPT-4.1), or 297 (GPT-3.5) requests sent to the API server. · Model costs of $0.004 (DeepSeek V3), $0.007 (GPT-4.1), or $0.037 (GPT-3.5).
+Manuscript submitted to ACM
+
+
+===== PAGE 21 =====
+Output Tokens Consumed
+
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+21
+
+10000
+
+deepseek-chat
+
+gpt-3.5-turbo
+
+gpt-4.1-mini
+
+8000
+
+Averages
+
+6000
+
+4000
+
+2000
+
+an-a0pi-of-ice-and-fire
+
+cheapshark
+
+datamuse
+
+gbif-species
+
+RomEdSbTopAenP-bIreIdweerrayn-ndtdbiofmie-ursesr-generator refuge-restrooms
+
+rest-countriesspring-petclinic-rest
+
+Fig. 14. Output tokens consumed for all benchmark APIs, grouped by LLM. Horizontal dashed lines indicate the average output tokens consumed across all APIs for each LLM.
+
+4.6 RQ.4 - API Testing with RESTSpecIT
+4.6.1 Server Errors Found by RESTSpecIT. As RESTSpecIT sends mutated requests based on plausible mutations found by the leveraged LLM, it exercises the behavior of APIs. Thus, analyzing status codes obtained from API server responses could potentially uncover bugs. To do so, we extracted API responses from the different executions of our evaluation, regardless of the LLM. In these responses, we analyzed the corresponding status codes and messages. Figure 15 presents a stacked bar chart of the response status codes for each API. Each bar shows the absolute count of successful responses (2xx, in green), responses with client errors (4xx, in orange), and responses with server errors (5xx, in red). APIs with very few occurrences of server errors are emphasized with a red background.
+As displayed, RESTSpecIT generated requests triggering server errors in four different APIs. The errors were manually replicated after the runs, which proved to be valid server errors. (1) For instance, when sending an errortriggering request to the Datamuse API, a 5xx status code was observed along with the following response data: {"code":500,"message":"There was an error processing your request. It has been logged."}. (2) Similarly, error-triggering requests sent to the CheapShark API caused 5xx status codes and displayed an "Internal Server Error" web page. (3) For the Spring Petclinic API, when an invalid route or parameter is encountered, a 5xx status code along with the Spring exception name are returned (e.g., NoResourceFoundException). This causes a high percentage of server errors, which should instead be treated as 4xx client errors by the API. (4) Finally, five server errors were triggered in the REST Countries API. These errors demonstrate the purpose of RESTSpecIT to also behave as a testing tool, while also being able to generate OpenAPI Specifications for REST APIs.
+4.6.2 RESTSpecIT Outputs as Testing Tool Inputs. Additionally, as RESTSpecIT generates machine-readable data (i.e., OpenAPI Specifications and API request seeds), we verified if these outputs could be used as inputs of state-of-the-art REST API testing tools, which rely on OAS. Kim et al. [47] mention RESTler [7], Evomaster [6], and RestTestGen [83],
+Manuscript submitted to ACM
+
+
+===== PAGE 22 =====
+REST API Identifiers
+
+22
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+an-api-of-ice-and-fire
+
+1321
+
+384
+
+cheapshark
+
+1798
+
+1491
+
+607
+
+datamuse
+
+1589
+
+3096
+
+5
+
+gbif-species
+
+5498
+
+omdb 582 652
+
+open-brewery-db 1153
+
+1931
+
+random-user-generator 857 887
+
+refuge-restrooms 1004
+
+2360
+
+rest-countries
+
+1758
+
+5616
+
+spring-petclinic-rest
+
+1983
+
+180
+
+1660
+
+6091 5
+
+0
+
+2000
+
+4000
+
+6000
+
+8000
+
+Number of Requests
+
+2xx (Success) 4xx (Client Error) 5xx (Server Error) 10000
+
+Fig. 15. Status codes of responses obtained by RESTSpecIT for each API of the benchmark.
+
+which all require an OAS file as input. As RESTSpecIT generated OAS of REST APIs that did not exist beforehand, such APIs can now - to a certain extent - be tested with existing tools. The validity and relevance of the generated specifications were verified with the widely used state-of-the-art tool RESTler. RESTler implements a compile mode, which takes an OAS file given as input and parses it for testing purposes. Then, the test mode allows displaying the endpoints and methods of the given specification covered by RESTler. We analyzed the acceptance and coverage of the OAS generated by RESTSpecIT when used in RESTler. As the test mode uncovers API bugs, we also report the number of 5xx status codes found by RESTler.
+Table 4 displays the acceptance and coverage of the OpenAPI Specifications generated by RESTSpecIT when used in RESTler. As the test mode uncovers API bugs, we also report the number of 5xx status codes found by RESTler.
+RESTler successfully compiled all generated OAS files, and covered all routes contained in these files. However, some APIs have more routes covered than the total number of routes referenced in their documentations (cf. Table 2). Indeed, RESTSpecIT does not regroup paths with a string as an identifier. For instance, the /v3.1/name/{id} route of the REST Countries API requires {id} to be replaced by a country string such as Belgium. However, as RESTSpecIT found routes with valid identifiers such as Canada, France, and Germany, RESTler analyzed them. Lastly, RESTler found a 5xx server error for the Datamuse API, which caused a similar response compared to the server errors uncovered by RESTSpecIT for the same API. While we only used RESTler for this experiment, it demonstrates the potential of RESTSpecIT in a testing pipeline. For this experiment, only RESTler was used as a baseline. Indeed, as the goal of the experiment was to verify if OpenAPI Specifications generated by RESTSpecIT could be understood by testing tools, using a single tool (i.e. RESTler) is sufficient to prove so.
+Manuscript submitted to ACM
+
+
+===== PAGE 23 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+23
+
+Table 4. Results of OAS files generated by RESTSpecIT when used in RESTler.
+
+API Name
+An API of Ice and Fire CheapShark Datamuse GBIF Species OMDb Open Brewery DB Random User Generator Refuge Restrooms REST Countries Spring PetClinic REST
+
+Compiled
+True True True True True True True True True True
+
+% Route Coverage
+100.00% (7/7) 100.00% (4/4) 50.00% (1/2) 100.00% (17/17) 100.00% (1/1) 100.00% (6/6) 100.00% (1/1) 100.00% (3/3) 100.00% (22/22) 100.00% (14/14)
+
+No. 5xx Codes
+0 0 1 0 0 0 0 0 0 0
+
+RQ.4 Summary: RESTSpecIT can be used in REST API testing for two main reasons: (1) RESTSpecIT can be considered as a testing tool, as it can uncover server errors in REST APIs through its request mutation process. Our evaluation demonstrated this, as server errors were triggered in four different APIs. (2) OpenAPI Specifications generated by RESTSpecIT can be successfully used as input for other testing tools. Our evaluation demonstrated this by providing generated OAS files to the popular testing tool RESTler. All files were correctly compiled and analyzed by the testing tool.
+5 Discussion
+5.1 Data Leakage Concerns
+A key concern with the use of LLMs is the so-called data leakage problem, i.e., the case that the data we are trying to predict already resides in the training set of the LLM [70]. In our case, it would be that the LLM has been trained on an OpenAPI Specification and thus, the LLM simply recalls instead of inferring the specification. This concern is somehow limited since we aim at inferring specifications that are consistent with API implementations, which is not the case for most of the APIs we use (cf. Section 4.4). The specific format we are composing (OAS) cannot always be found on the web. Nevertheless, if it exists, it can be incomplete/inconsistent with the existing implementations; Our results in Section 4.4 demonstrate that we can find undocumented and inconsistent cases. This is because REST APIs are subject to change; The LLM might have learned specifications at a given time, but they might not be up-to-date.
+Moreover, we are using the LLM as a "vocabulary" of names/values and not to find the entire routes/specifications, as these are built through our dynamic execution and validation synthesis scheme (cf. Section 3). Therefore, LLMs are a good fit since they provide relevant names, assuming the widely known and validated naturalness hypothesis. This means that even if an API is not documented properly, the LLM will probably be able to benefit from learned naming conventions. We also included in our benchmark some APIs that are less popular, do not have OpenAPI Specifications, and that the LLMs seems to ignore (e.g. the Datamuse API, which was finalized in 2016 [10]).
+A simple experiment to verify the data leakage severity is to directly prompt the model with the following question: Do you know the OpenAPI Specification of the X API?, X being the name of the API. If the LLM can correctly respond with the full specification, the approach would be much simpler than RESTSpecIT. This question was sent to the LLM,
+Manuscript submitted to ACM
+
+
+===== PAGE 24 =====
+24
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Table 5. Percentages of routes and parameters found by RESTSpecIT for 3 local and "unknown" APIs.
+
+Local API Name
+Currency Exchange API Soccer API Weather API
+Total Average
+
+% Routes Found
+71.00% 60.00% 45.00%
+58.67%
+
+% Parameters Found
+57.00% 76.00% 80.00%
+71.00%
+
+10 times per API. However, no response generated a specification as complete and in the OpenAPI format compared to RESTSpecIT. Common issues with this simplistic approach were:
+· The LLM responds with: As of my last update in 2023, I don't have specific knowledge of the X API specification, or I can't provide the specification for the X API as it is a third-party API and its specification may be subject to change.
+· The LLM responds with a summary of the specification, however (1) it is in plain text, which is not machinereadable and (2) it is very incomplete, as the LLM only answers with a couple of routes, frequently omitting parameters.
+To further address the data leakage concern, we created 3 different mocks of REST APIs locally. This ensures that the LLM has zero knowledge of the API data. The APIs have a "generic" theme: soccer, weather and currency exchange, each with 10 routes and 10 parameters containing keywords related to the theme (e.g., /players, /clubs, /leagues for the soccer API). The routes and parameters created for each API can be found in our replication package. The experiment was carried out with the same conditions as in RQ1, with HTTP requests redirected locally. Table 5 displays the percentages of routes and parameters found by the tool, over 10 different executions. As shown, RESTSpecIT still allows the inference of routes and parameters, even though the API is entirely local and unknown by the LLM. An average of 58.67% routes and 71.00% parameters were found, solely with naming conventions learned by the LLM.
+5.2 Query Parameter Values
+As a query parameter consists of a key-value pair, it is also interesting to analyze if RESTSpecIT can infer parameter values. The validity of a parameter value can simply consist of a type, e.g., an integer or a string. However, some parameters may require a more advanced type, e.g., a UNIX timestamp or a country code. Table 6 presents examples of valid values found by RESTSpecIT for a parameter from each API.
+To illustrate, the codes parameter of the REST Countries API requires a country code as value. The LLM was able to infer valid country codes such as au (Australia), fr (France), and gb (Great Britain). Moreover, the steamAppID parameter of the CheapShark API requires a game ID as a value. By using the parameter with one of the values found, the response returned different game data each time. The LLM is thus capable of associating adequate values with parameters.
+5.3 False Positives
+Inferred query parameters can yield false positives. Given that REST is an architectural design and not a standard, the treatment of invalid query parameters varies depending on the API. However, REST APIs tend to ignore invalid parameters in seemingly valid requests due to the robustness principle [59] [63]. The principle conveys that programs receiving messages should accept non-conformant input as long as the meaning is clear. Consequently, a meaningful
+Manuscript submitted to ACM
+
+
+===== PAGE 25 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+25
+
+Table 6. Examples of valid query parameter values inferred by RESTSpecIT.
+
+API Name
+An API of Ice and Fire CheapShark Datamuse GBIF Species OMDb Open Brewery DB Random User Generator Refuge Restrooms REST Countries Spring Petclinic
+
+Query Parameter
+culture steamAppID rel_jjb phylum t by_city inc lat codes lastName
+
+Examples of Valid Values Found
+Andal, Northmen, Valyrian 115800, 289650, 377160 blue, funny, happy Arthropoda, Chordata, Mollusca Avengers, Breaking Bad, Inception Chicago, New York, Seattle email, name, phone 37.7749, 40.7128, -74.0060 au, fr, gb Doe, Jones, Smith
+
+request containing an invalid parameter can be treated as valid by an API, which will ignore the invalid parameter and only analyze the valid section of the request. Nevertheless, as the LLM can find parameters not indicated in the API documentation source, false positives are a side effect of this quality.
+5.4 Additional OpenAPI Data Section 4.3 covered the inference of routes and parameters in OpenAPI Specifications. However, such specifications can contain more data, e.g., API-related URLs (contact page), inter-parameter dependencies, and schemas. Such data is not considered in the work, as routes and parameters consist of a strong base for usage and testing purposes; The data inferred by the tool was sufficient to discover errors in REST APIs.
+5.5 Large Language Model Reliance RESTSpecIT relies on LLMs for inference. As such models have training data cut-off dates, APIs created after these cut-off dates might not yield adequate inference results. However, Section 4.3 demonstrated that the LLMs were up-to-date with the new REST Countries API endpoint and version. The LLM is also capable of guessing API specifications based on naming conventions, as shown in Section 5.1.
+Our approach also depends on model updates, costs, and response times, which are prone to changes in the future. However, LLMs are interchangeable, only requiring the LLM API call component module to be modified. Thus, other models such as Gemini can be used, as long as a Python API binding exists for the model.
+6 Threats to Validity
+6.1 Internal Validity 6.1.1 Large Language Model Usage. To mitigate threats related to LLM usage in software engineering, we followed the guidelines proposed by Sallou et al. [70], including data leakage (Section 5), variability (multiple runs per experiment) and execution metadata for reproducibility (i.e., model temperature, prompt and request logs, which can be found in our replication package).
+6.1.2 Large Language Model Responses. The LLMs could have introduced internal validity threats. As the leveraged models are black-box and non-deterministic (chosen model temperature of 0.7), responses could be incorrect w.r.t. the evaluated APIs. We experimented with model prompts and in-context strategies beforehand to mitigate this threat.
+Manuscript submitted to ACM
+
+
+===== PAGE 26 =====
+26
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+Moreover, RESTSpecIT meticulously parses, analyzes, and validates data after each model prompt to mitigate such errors.
+6.1.3 Tool Implementation. The implementation of RESTSpecIT is prone to undetected bugs, leading to potential execution and evaluation errors. The tool's code was meticulously reviewed and tested to mitigate this threat. As RESTSpecIT is publicly available, it is open for reviews. Similarly, the evaluation process was automated based on output files obtained to avoid manual errors, and the corresponding results were carefully analyzed thereafter.
+6.1.4 Benchmark Data. The number of routes and parameters of the benchmark APIs described in Table 2 might not reflect their documentation source. To mitigate this threat, the documentation were explored multiple times to find all routes and parameters. Similarly, various documentation elements were read to discover all available API features. All-in-all, we found inconsistencies in the number of routes and parameters that are described in the documentation and inferred by our tool (i.e., differences between Table 2 and Table 3), which indicate that either the API implementation is incorrect or the documentation is incomplete. We deemed this finding interesting as it points to potential issues that the developers would need to verify.
+
+6.2 External Validity
+6.2.1 Chosen REST APIs. The REST APIs chosen for the benchmark of the evaluation process might not be representative. To mitigate this threat, we chose REST APIs with distinct application domains, from a trustworthy and peer-reviewed REST API benchmark [18]. They varied in terms of structure, such as the number of routes to parameters ratio, static/dynamic routes, and source documentation format.
+6.2.2 Large Language Model Server Load. The LLM server load could have influenced time results when waiting for prompt responses. To mitigate this threat, we repeated our executions at different times of the day. This was especially verified with the DeepSeek model, as initial execution times were much longer compared to the GPT models (cf. Figure 11).
+
+7 Conclusion and Future Work
+We presented RESTSpecIT, a novel approach that can automatically infer documentation in the OpenAPI Specification (OAS) format and test REST APIs in a black-box environment. Compared to state-of-the-art API inference and testing tools, RESTSpecIT requires minimal user input: The name of the API and a key for LLM requests. RESTSpecIT leverages an LLM by using an in-context prompt masking strategy to retrieve API data, requiring no fine-tuning. Based on the LLM responses, the tool can mutate HTTP requests. By sending mutated requests to the API and analyzing HTTP responses returned, the OpenAPI Specification can be inferred with request data. The API can be tested by uncovering 5xx status codes (i.e., server errors) in responses. To evaluate our tool, we utilized three state-of-the-art LLMs: DeepSeek V3, GPT-4.1, and GPT-3.5. Our evaluation demonstrates that RESTSpecIT: (1) effectively infers API specifications in the OAS format, (2) discovers undocumented and valid API data, (3) is efficient regarding requests sent, execution time, and model costs, and (4) serves REST API testing. Indeed, RESTSpecIT can uncover server errors in APIs and generate valid OpenAPI Specifications that can be used as input for testing tools. We provide our tool and evaluation results in a publicly available replication package.
+There is room for future work. First, analyzing query parameters in-depth could reduce false positives. Since adding a parameter changes the request structure and/or the API response, comparing the response data of requests with (and
+Manuscript submitted to ACM
+
+
+===== PAGE 27 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+27
+
+without) a parameter could prevent such false positives. Second, we will also integrate inter-parameter dependencies in our tool (e.g., [53]). Third, we will experiment with additional APIs and LLMs. Finally, we want to further optimize RESTSpecIT in terms of requests sent to API servers and models.
+Acknowledgments
+This research was funded by the CyberExcellence by DigitalWallonia project (No. 2110186), funded by the Public Service of Wallonia (SPW Recherche); Gilles Perrouin is an FNRS Research Associate.
+References
+[1] Wasi Ahmad, Saikat Chakraborty, Baishakhi Ray, and Kai-Wei Chang. 2021. Unified Pre-training for Program Understanding and Generation. In Proceedings of the 2021 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies, Kristina Toutanova, Anna Rumshisky, Luke Zettlemoyer, Dilek Hakkani-Tur, Iz Beltagy, Steven Bethard, Ryan Cotterell, Tanmoy Chakraborty, and Yichao Zhou (Eds.). Association for Computational Linguistics, Online, 2655­2668. doi:10.18653/v1/2021.naacl-main.211
+[2] Seif Ahmed and Abeer Hamdy. 2023. Artificial Bee Colony for Automated Black-Box Testing of RESTful API. In International Conference on Frontiers of Intelligent Computing: Theory and Applications. Springer, Springer-Verlag GmbH, Heidelberg, 1­17.
+[3] Miltiadis Allamanis, Earl T. Barr, Christian Bird, and Charles Sutton. 2014. Learning natural coding conventions. In Proceedings of the 22nd ACM SIGSOFT International Symposium on Foundations of Software Engineering (Hong Kong, China) (FSE 2014). Association for Computing Machinery, New York, NY, USA, 281­293. doi:10.1145/2635868.2635883
+[4] Juan C Alonso, Alberto Martin-Lopez, Sergio Segura, Jose Maria Garcia, and Antonio Ruiz-Cortes. 2022. ARTE: Automated Generation of Realistic Test Inputs for Web APIs. IEEE Transactions on Software Engineering 49, 1 (2022), 348­363.
+[5] Yadagiri Annepaka and Partha Pakray. 2025. Large language models: a survey of their development, capabilities, and applications. Knowledge and Information Systems 67, 3 (2025), 2967­3022.
+[6] Andrea Arcuri. 2019. RESTful API automated test case generation with EvoMaster. ACM Transactions on Software Engineering and Methodology (TOSEM) 28, 1 (2019), 1­37.
+[7] Vaggelis Atlidakis, Patrice Godefroid, and Marina Polishchuk. 2019. Restler: Stateful rest api fuzzing. In 2019 IEEE/ACM 41st International Conference on Software Engineering (ICSE) (Montreal, Canada). IEEE, New York, USA, 748­758.
+[8] Vaggelis Atlidakis, Patrice Godefroid, and Marina Polishchuk. 2020. Checking security properties of cloud service REST APIs. In 2020 IEEE 13th International Conference on Software Testing, Validation and Verification (ICST). IEEE, New York, USA, 387­397.
+[9] Ovidiu Banias, Diana Florea, Robert Gyalai, and Daniel-Ioan Curiac. 2021. Automated specification-based testing of REST APIs. Sensors 21, 16 (2021), 5375.
+[10] Doug Beeferman. 2016. Datamuse API Documentation. https://www.datamuse.com/api/. [11] Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind Neelakantan, Pranav Shyam, Girish Sastry,
+Amanda Askell, et al. 2020. Language models are few-shot learners. Advances in neural information processing systems 33 (2020), 1877­1901. [12] Hanyang Cao, Jean-Rémy Falleri, and Xavier Blanc. 2017. Automated generation of REST API specification from plain HTML documentation. In
+Service-Oriented Computing: 15th International Conference, ICSOC 2017, Malaga, Spain, November 13­16, 2017, Proceedings. Springer, Springer-Verlag GmbH, Heidelberg, 453­461. [13] Yupeng Chang, Xu Wang, Jindong Wang, Yuan Wu, Linyi Yang, Kaijie Zhu, Hao Chen, Xiaoyuan Yi, Cunxiang Wang, Yidong Wang, et al. 2024. A survey on evaluation of large language models. ACM transactions on intelligent systems and technology 15, 3 (2024), 1­45. [14] Saurabh Chauhan, Zeeshan Rasheed, Abdul Malik Sami, Zheying Zhang, Jussi Rasku, Kai-Kristian Kemell, and Pekka Abrahamsson. 2025. LLMGenerated Microservice Implementations from RESTful API Definitions. arXiv:2502.09766 [cs.SE] https://arxiv.org/abs/2502.09766 [15] CheapShark. 2025. CheapShark API Documentation. https://apidocs.cheapshark.com/. [16] Davide Corradini, Michele Pasqua, and Mariano Ceccato. 2023. Automated Black-Box Testing of Mass Assignment Vulnerabilities in RESTful APIs. In Proceedings of the 45th International Conference on Software Engineering (Melbourne, Victoria, Australia) (ICSE '23). IEEE Press, New York, USA, 2553­2564. doi:10.1109/ICSE48619.2023.00213 [17] Alix Decrop. 2025. RESTSpecIT Replication Package. https://github.com/alixdecr/RESTSpecIT. [18] Alix Decrop, Sara Eraso, Xavier Devroey, and Gilles Perrouin. 2025. A Public Benchmark of REST APIs . In 2025 IEEE/ACM 22nd International Conference on Mining Software Repositories (MSR). IEEE Computer Society, Los Alamitos, CA, USA, 421­433. doi:10.1109/MSR66628.2025.00072 [19] DeepSeek. 2025. DeepSeek. https://www.deepseek.com/. [20] Sida Deng, Rubing Huang, Man Zhang, Chenhui Cui, Dave Towey, and Rongcun Wang. 2025. LRASGen: LLM-based RESTful API Specification Generation. arXiv:2504.16833 [cs.SE] https://arxiv.org/abs/2504.16833 [21] Yinlin Deng, Chunqiu Steven Xia, Haoran Peng, Chenyuan Yang, and Lingming Zhang. 2023. Large Language Models are Zero-Shot Fuzzers: Fuzzing Deep-Learning Libraries via Large Language Models. In Proceedings of the 32nd ACM SIGSOFT international symposium on software testing and analysis. ACM, New York, NY, 423­435.
+Manuscript submitted to ACM
+
+
+===== PAGE 28 =====
+28
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+[22] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. 2019. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. arXiv:1810.04805 [cs.CL]
+[23] Hamza Ed-Douibi, Javier Luis Cánovas Izquierdo, and Jordi Cabot. 2017. Example-driven web API specification discovery. In European Conference on Modelling Foundations and Applications. Springer, Springer-Verlag GmbH, Heidelberg,, 267­284.
+[24] Adeel Ehsan, Mohammed Ahmad ME Abuhaliqa, Cagatay Catal, and Deepti Mishra. 2022. RESTful API testing methodologies: Rationale, challenges, and solution directions. Applied Sciences 12, 9 (2022), 4369.
+[25] Global Biodiversity Information Facility. 2025. GBIF Species API Documentation. https://techdocs.gbif.org/en/openapi/v1/species. [26] Zhangyin Feng, Daya Guo, Duyu Tang, Nan Duan, Xiaocheng Feng, Ming Gong, Linjun Shou, Bing Qin, Ting Liu, Daxin Jiang, et al. 2020. Codebert:
+A pre-trained model for programming and natural languages. [27] Roy Thomas Fielding. 2000. Architectural styles and the design of network-based software architectures. University of California, Irvine, Irvine, USA. [28] Linux Foundation. 2025. OpenAPI Specification. https://www.openapis.org. [29] Linux Foundation. 2025. OpenAPI Specification Guide. https://swagger.io/specification. [30] Brian Fritz. 2019. OMDb API Documenation. https://www.omdbapi.com/. [31] Patrice Godefroid, Bo-Yuan Huang, and Marina Polishchuk. 2020. Intelligent REST API data fuzzing. In Proceedings of the 28th ACM Joint Meeting on
+European Software Engineering Conference and Symposium on the Foundations of Software Engineering. ACM, New York, USA, 725­736. [32] Patrice Godefroid, Daniel Lehmann, and Marina Polishchuk. 2020. Differential regression testing for REST APIs. In Proceedings of the 29th ACM
+SIGSOFT International Symposium on Software Testing and Analysis. ACM, New York, USA, 312­323. [33] Amid Golmohammadi, Man Zhang, and Andrea Arcuri. 2023. Testing RESTful APIs: A Survey. ACM Trans. Softw. Eng. Methodol. 33, 1, Article 27
+(nov 2023), 41 pages. doi:10.1145/3617175 [34] César González-Mora, Cristina Barros, Irene Garrigós, Jose Zubcoff, Elena Lloret, and Jose-Norberto Mazón. 2023. Improving open data web API
+documentation through interactivity and natural language generation. Computer Standards & Interfaces 83 (2023), 103657. [35] Daya Guo, Shuo Ren, Shuai Lu, Zhangyin Feng, Duyu Tang, Shujie Liu, Long Zhou, Nan Duan, Alexey Svyatkovskiy, Shengyu Fu, et al. 2020.
+Graphcodebert: Pre-training code representations with data flow. [36] Zac Hatfield-Dodds and Dmitry Dygalo. 2022. Deriving semantics-aware fuzzers from web api schemas. In Proceedings of the ACM/IEEE 44th
+International Conference on Software Engineering: Companion Proceedings. ACM/IEEE, New York, USA, 345­346. [37] Ruikai Huang, Manish Motwani, Idel Martinez, and Alessandro Orso. 2024. Generating REST API Specifications through Static Analysis. In
+Proceedings of the IEEE/ACM 46th International Conference on Software Engineering (Lisbon, Portugal) (ICSE '24). Association for Computing Machinery, New York, NY, USA, Article 107, 13 pages. doi:10.1145/3597503.3639137 [38] Arron Hunt and Keith Armstrong. 2025. Random User Generator API Documentation. https://randomuser.me/. [39] Kush Jain, Kiran Kate, Jason Tsay, Claire Le Goues, and Martin Hirzel. 2025. Improving Examples in Web API Specifications using Iterated-Calls In-Context Learning. arXiv:2504.07250 [cs.SE] https://arxiv.org/abs/2504.07250 [40] Ziwei Ji, Nayeon Lee, Rita Frieske, Tiezheng Yu, Dan Su, Yan Xu, Etsuko Ishii, Ye Jin Bang, Andrea Madotto, and Pascale Fung. 2023. Survey of hallucination in natural language generation. Comput. Surveys 55, 12 (2023), 1­38. [41] Stefan Karlsson, Adnan Causevi, and Daniel Sundmark. 2020. QuickREST: Property-based test generation of OpenAPI-described RESTful APIs. In 2020 IEEE 13th International Conference on Software Testing, Validation and Verification (ICST). IEEE, New York, USA, 131­141. [42] Ahmed Khanfir, Renzo Degiovanni, Mike Papadakis, and Yves Le Traon. 2023. Efficient Mutation Testing via Pre-Trained Language Models. ArXiv abs/2301.03543 (2023), 1­14. https://api.semanticscholar.org/CorpusID:255545954 [43] Myeongsoo Kim, Davide Corradini, Saurabh Sinha, Alessandro Orso, Michele Pasqua, Rachel Tzoref-Brill, and Mariano Ceccato. 2023. Enhancing REST API Testing with NLP Techniques. In Proceedings of the 32nd ACM SIGSOFT International Symposium on Software Testing and Analysis. ACM, New York, NY, 1232­1243. [44] Myeongsoo Kim, Saurabh Sinha, and Alessandro Orso. 2025. Llamaresttest: Effective rest api testing with small language models. Proceedings of the ACM on Software Engineering 2, FSE (2025), 465­488. [45] Myeongsoo Kim, Tyler Stennett, Dhruv Shah, Saurabh Sinha, and Alessandro Orso. 2024. Leveraging Large Language Models to Improve REST API Testing. In Proceedings of the 2024 ACM/IEEE 44th International Conference on Software Engineering: New Ideas and Emerging Results (Lisbon, Portugal) (ICSE-NIER'24). Association for Computing Machinery, New York, NY, USA, 37­41. doi:10.1145/3639476.3639769 [46] Myeongsoo Kim, Tyler Stennett, Saurabh Sinha, and Alessandro Orso. 2025. A Multi-Agent Approach for REST API Testing with Semantic Graphs and LLM-Driven Inputs. arXiv:2411.07098 [cs.SE] https://arxiv.org/abs/2411.07098 [47] Myeongsoo Kim, Qi Xin, Saurabh Sinha, and Alessandro Orso. 2022. Automated Test Generation for REST APIs: No Time to Rest Yet. In Proceedings of the 31st ACM SIGSOFT International Symposium on Software Testing and Analysis. ACM, New York, USA, 289­301. [48] krzakov. 2015. Returning http 200 OK with error within response body. https://stackoverflow.com/questions/27921537/returning-http-200-ok-witherror-within-response-body. [Online; Last Accessed 01-October-2024]. [49] Koren Lazar, Matan Vetzler, Guy Uziel, David Boaz, Esther Goldbraich, David Amid, and Ateret Anaby-Tavor. 2024. SpeCrawler: Generating OpenAPI Specifications from API Documentation Using Large Language Models. arXiv:2402.11625 [cs.CL] https://arxiv.org/abs/2402.11625 [50] Alexander Lercher, Christian Macho, Clemens Bauer, and Martin Pinzger. 2024. Generating Accurate OpenAPI Descriptions from Java Source Code. arXiv:2410.23873 [cs.SE] https://arxiv.org/abs/2410.23873
+Manuscript submitted to ACM
+
+
+===== PAGE 29 =====
+You Can REST Now: Automated REST API Documentation and Testing via LLM-Assisted Request Mutations
+
+29
+
+[51] Yi Liu, Yuekang Li, Gelei Deng, Yang Liu, Ruiyuan Wan, Runchao Wu, Dandan Ji, Shiheng Xu, and Minli Bao. 2022. Morest: model-based RESTful API testing with execution feedback. In Proceedings of the 44th International Conference on Software Engineering. ACM/IEEE, New York, USA, 1406­1417.
+[52] Riyadh Mahmood, Jay Pennington, Danny Tsang, Tan Tran, and Andrea Bogle. 2022. A Framework for Automated API Fuzzing at Enterprise Scale. In 2022 IEEE Conference on Software Testing, Verification and Validation (ICST). IEEE, New York, USA, 377­388.
+[53] Alberto Martin-Lopez, Sergio Segura, Carlos Müller, and Antonio Ruiz-Cortés. 2021. Specification and automated analysis of inter-parameter dependencies in web APIs. IEEE Transactions on Services Computing 15, 4 (2021), 2342­2355.
+[54] Alberto Martin-Lopez, Sergio Segura, and Antonio Ruiz-Cortés. 2021. RESTest: automated black-box testing of RESTful web APIs. In Proceedings of the 30th ACM SIGSOFT International Symposium on Software Testing and Analysis. ACM, New York, USA, 682­685.
+[55] Alberto Martin-Lopez, Sergio Segura, and Antonio Ruiz-Cortés. 2022. Online testing of RESTful APIs: Promises and challenges. In Proceedings of the 30th ACM Joint European Software Engineering Conference and Symposium on the Foundations of Software Engineering. ACM, New York, USA, 408­420.
+[56] Alejandro Matos and Pascal Casier. 2025. REST Countries API Documentation. https://restcountries.com/. [57] Chris J Mears and Wandering Leaf Studios LLC. 2025. Open Brewery DB API Documentation. https://www.openbrewerydb.org/documentation. [58] Ruijie Meng, Martin Mirchev, Marcel Böhme, and Abhik Roychoudhury. 2024. Large Language Model guided Protocol Fuzzing. In 31st Annual
+Network and Distributed System Security Symposium (NDSS) 2024. The Internet Society, Reston, USA. [59] Lauren Murphy, Tosin Alliyu, Andrew Macvean, Mary Beth Kery, and Brad A Myers. 2017. Preliminary analysis of REST API style guidelines. Ann
+Arbor 1001 (2017), 48109. [60] Andy Neumann, Nuno Laranjeiro, and Jorge Bernardino. 2018. An analysis of public REST web service APIs. IEEE Transactions on Services Computing
+14, 4 (2018), 957­970. [61] Erik Nijkamp, Bo Pang, Hiroaki Hayashi, Lifu Tu, Huan Wang, Yingbo Zhou, Silvio Savarese, and Caiming Xiong. 2022. Codegen: An open large
+language model for code with multi-turn program synthesis. [62] OpenAI. 2025. ChatGPT. https://chatgpt.com/. [63] Jon Postel. 1981. Transmission control protocol. Technical Report. Internet Engineering Task Force (IETF). [64] Postman. 2023. Create API documentation with Postman. https://www.postman.com/api-documentation-tool. [65] public-apis. 2023. Public APIs. https://github.com/public-apis/public-apis. [Online; Last Accessed 14-November-2023]. [66] Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever, et al. 2018. Improving language understanding by generative pre-training. [67] Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever, et al. 2019. Language models are unsupervised multitask learners.
+OpenAI blog 1, 8 (2019), 9. [68] Antoine Rey and Vitaliy Fedoriv. 2025. Spring PetClinic REST API Documentation. https://github.com/spring-petclinic/spring-petclinic-rest. [69] Leonard Richardson, Mike Amundsen, and Sam Ruby. 2013. RESTful Web APIs: Services for a Changing World. "O'Reilly Media, Inc.", Sebastopol,
+California. [70] June Sallou, Thomas Durieux, and Annibale Panichella. 2024. Breaking the Silence: the Threats of Using LLMs in Software Engineering. In Proceedings
+of the 2024 ACM/IEEE 44th International Conference on Software Engineering: New Ideas and Emerging Results (Lisbon, Portugal) (ICSE-NIER'24). Association for Computing Machinery, New York, NY, USA, 102­106. doi:10.1145/3639476.3639764 [71] Sergio Segura, José A Parejo, Javier Troya, and Antonio Ruiz-Cortés. 2018. Metamorphic testing of RESTful web APIs. In Proceedings of the 40th International Conference on Software Engineering. IEEE/ACM, New York, USA, 882­882. [72] Abhinav Sharma, M Revathi, et al. 2018. Automated API testing. In 2018 3rd International Conference on Inventive Computation Technologies (ICICT). IEEE, New York, USA, 788­791. [73] Joachim Skoog. 2025. An API of Ice and Fire Documentation. https://github.com/joakimskoog/AnApiOfIceAndFire/wiki. [74] SmartBear Software. 2025. Swagger Editor. https://editor.swagger.io. [75] SM Sohan, Frank Maurer, Craig Anslow, and Martin P Robillard. 2017. A study of the effectiveness of usage examples in REST API documentation. In 2017 IEEE symposium on visual languages and human-centric computing (VL/HCC). IEEE, New York, USA, 53­61. [76] Sheikh Mohammed Sohan, Craig Anslow, and Frank Maurer. 2015. Spyrest: Automated restful API documentation using an HTTP proxy server (N). In 2015 30th IEEE/ACM International Conference on Automated Software Engineering (ASE). IEEE, New York, NY, 271­276. [77] S Deepika Sri, Mohammed Aadil S, Sanjjushri Varshini R, Raja CSP Raman, Gopinath Rajagopal, and S Taranath Chan. 2024. Automating REST API Postman Test Cases Using LLM. arXiv:2404.10678 [cs.SE] https://arxiv.org/abs/2404.10678 [78] Tyler Stennett, Myeongsoo Kim, Saurabh Sinha, and Alessandro Orso. 2025. AutoRestTest: A Tool for Automated REST API Testing Using LLMs and MARL. arXiv:2501.08600 [cs.SE] https://arxiv.org/abs/2501.08600 [79] Wilson L Taylor. 1953. "Cloze procedure": A new tool for measuring readability. Journalism quarterly 30, 4 (1953), 415­433. [80] Drew Thoennes. 2024. Bored API Documentation. https://www.boredapi.com/documentation. [81] Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier Martinet, Marie-Anne Lachaux, Timothée Lacroix, Baptiste Rozière, Naman Goyal, Eric Hambro, Faisal Azhar, Aurelien Rodriguez, Armand Joulin, Edouard Grave, and Guillaume Lample. 2023. LLaMA: Open and Efficient Foundation Language Models. arXiv:2302.13971 [cs.CL] https://arxiv.org/abs/2302.13971 [82] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2023. Attention Is All You Need. arXiv:1706.03762 [cs.CL] https://arxiv.org/abs/1706.03762
+Manuscript submitted to ACM
+
+
+===== PAGE 30 =====
+30
+
+Alix Decrop, Xavier Devroey, Mike Papadakis, Pierre-Yves Schobbens, and Gilles Perrouin
+
+[83] Emanuele Viglianisi, Michael Dallago, and Mariano Ceccato. 2020. RestTestGen: Automated Black-Box Testing of RESTful APIs. In 2020 IEEE 13th International Conference on Software Testing, Validation and Verification (ICST). IEEE, New York, USA, 142­152.
+[84] Junjie Wang, Yuchao Huang, Chunyang Chen, Zhe Liu, Song Wang, and Qing Wang. 2023. Software Testing with Large Language Model: Survey, Landscape, and Vision. ArXiv abs/2307.07221 (2023), 1­20. https://api.semanticscholar.org/CorpusID:259924919
+[85] Yue Wang, Weishi Wang, Shafiq Joty, and Steven C.H. Hoi. 2021. CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing, Marie-Francine Moens, Xuanjing Huang, Lucia Specia, and Scott Wen-tau Yih (Eds.). Association for Computational Linguistics, Online and Punta Cana, Dominican Republic, 8696­8708. doi:10.18653/v1/2021.emnlp-main.685
+[86] Teagan Widmer. 2025. Refuge Restrooms API Documentation. https://www.refugerestrooms.org/api/docs/. [87] Huayao Wu, Lixin Xu, Xintao Niu, and Changhai Nie. 2022. Combinatorial testing of restful apis. In Proceedings of the 44th International Conference
+on Software Engineering. ACM, New York, USA, 426­437. [88] Rahulkrishna Yandrapally, Saurabh Sinha, Rachel Tzoref-Brill, and Ali Mesbah. 2023. Carving UI Tests to Generate API Tests and API Specification.
+In Proceedings of the 45th International Conference on Software Engineering (Melbourne, Victoria, Australia) (ICSE '23). IEEE Press, New York, USA, 1971­1982. doi:10.1109/ICSE48619.2023.00167 [89] Jinqiu Yang, Erik Wittern, Annie TT Ying, Julian Dolby, and Lin Tan. 2018. Towards Extracting Web API Specifications from Documentation. In Proceedings of the 15th International Conference on Mining Software Repositories. ACM, New York, USA, 454­464. [90] Ke Zhang, Chenxi Zhang, Chong Wang, Chi Zhang, YaChen Wu, Zhenchang Xing, Yang Liu, Qingshan Li, and Xin Peng. 2025. LogiAgent: Automated Logical Testing for REST Systems with LLM-Based Multi-Agents. arXiv:2503.15079 [cs.SE] https://arxiv.org/abs/2503.15079 [91] Wayne Xin Zhao, Kun Zhou, Junyi Li, Tianyi Tang, Xiaolei Wang, Yupeng Hou, Yingqian Min, Beichen Zhang, Junjie Zhang, Zican Dong, et al. 2023. A survey of large language models.
+
+Manuscript submitted to ACM
+

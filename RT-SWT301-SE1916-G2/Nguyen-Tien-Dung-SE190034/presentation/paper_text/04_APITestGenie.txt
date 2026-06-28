@@ -1,0 +1,227 @@
+
+===== PAGE 1 =====
+Theme Article: Special Issue on Next-generation Software Testing: AI-powered Test Automation
+APITestGenie: Automated API Test Generation through Generative AI
+André Pereira, FEUP, Porto, Portugal Bruno Lima, FEUP, UMaia and LIACC, Porto, Portugal João Pascoal Faria, FEUP and INESC TEC, Porto, Portugal
+
+arXiv:2409.03838v1 [cs.SE] 5 Sep 2024
+
+Abstract--Intelligent assistants powered by Large Language Models (LLMs) can generate program and test code with high accuracy, boosting developers' and testers' productivity. However, there is a lack of studies exploring LLMs for testing Web APIs, which constitute fundamental building blocks of modern software systems and pose significant test challenges. Hence, in this article, we introduce APITestGenie, an approach and tool that leverages LLMs to generate executable API test scripts from business requirements and API specifications. In experiments with 10 real-world APIs, the tool generated valid test scripts 57% of the time. With three generation attempts per task, this success rate increased to 80%. Human intervention is recommended to validate or refine generated scripts before integration into CI/CD pipelines, positioning our tool as a productivity assistant rather than a replacement for testers. Feedback from industry specialists indicated a strong interest in adopting our tool for improving the API test process.
+
+G enerative Artificial Intelligence (AI) has witnessed remarkable progress in recent years, reshaping the landscape of intelligent systems with applications in many domains. Studies show that intelligent assistants powered by Large Language Models (LLMs) can now generate program and test code with high accuracy based on textual prompts,1 boosting developers' and testers' productivity.
+Although LLMs have been explored for several test generation tasks, there is a lack of studies exploring them for testing Web APIs, which constitute fundamental building blocks of modern software systems. Guaranteeing the proper functioning of API services has become substantially more challenging due to the significant increase in the number of APIs in recent years.2
+Identifying and creating relevant API tests is a tedious, time-consuming task,3 requiring significant programming expertise, particularly as system complexity increases. While integration and system tests ensure functional integrity, they are more challenging
+
+to generate due to their abstract nature. Existing API test automation tools often fail to leverage high-level requirements to produce comprehensive test cases and detect semantic faults.
+To overcome such limitations by taking advantage of the recent developments in Generative AI, we present APITestGenie ­ a tool that leverages LLMs to generate executable API test scripts from business requirements written in natural language and API specifications documented using OpenAPI4 the most widely adopted standard for documenting API services.
+The main research questions we aim to address in the development and evaluation of APITestGenie are:
+> RQ1--How effectively and efficiently can LLMs be used to generate API test scripts from business requirements and API specifications?
+> RQ2--Can the industry adopt Generative AI to assist in API test generation?
+
+XXXX-XXX © 2024 IEEE Digital Object Identifier 10.1109/XXX.0000.0000000
+
+In the next sections, we analyze related work, present our solution and its evaluation, and point out the main conclusions and future work.
+
+Month
+
+Published by the IEEE Computer Society
+
+Publication Name
+
+1
+
+
+===== PAGE 2 =====
+THEME/FEATURE/DEPARTMENT
+
+RELATED WORK
+In recent years, several approaches and tools have emerged for testing REST APIs, with a significant rise in research since 2017, focusing on test automation using black-box techniques and OpenAPI schemas.5 However, these approaches, including AI-driven ones, have not utilized LLMs.
+In a 2022 study,6 the authors compare the performance of 10 state-of-the-art REST API testing tools from industry and academia on a benchmark of 20 real-world open-source APIs, in terms of code coverage and failures triggered (5xx status codes), signaling out EvoMaster among the best-performent.
+EvoMaster7 can generate test cases for REST APIs in both white-box and black-box testing mode, with worse results in the former due to the lack of code analysis. It works by evolving test cases from an initial population of random ones, trying to maximize measures like code coverage (only in white-box mode) and fault detection, using several kinds of AI heuristics.8 Potential faults considered for fault finding are based on HTTP responses with 5xx status codes and discrepancies between the API responses and what is expected based on the OpenAPI schemas.
+However, like other approaches that rely solely on the OpenAPI specs as input,9]­[11 EvoMaster is limited by the absence of requirements specifications and context awareness, which restricts the variety of tests that can be generated and the types of faults that can be detected. Our goal is to leverage requirements specifications and the context awareness capabilities of LLMs to overcome these limitations, enabling the generation of more comprehensive and effective tests.
+Recent work has started leveraging LLMs for REST API testing. RESTGPT12 enhances testing by extracting rules from OpenAPI descriptions but does not generate executable scripts. RESTSpecIT13 uses LLMs for automated specification inference, discovering undocumented routes and query parameters, and identifying server errors. Both approaches complement ours, as the enhanced or inferred specifications can be used as input for subsequent test script generation.
+To our knowledge, APITestGenie is the first approach that leverages the context awareness and natural language processing capabilities of LLMs to generate executable scripts for testing REST APIs, based on the specification of the business requirements in natural language and the specification of the APIs under test in OpenAPI, overcome some limitations of prior methods.
+
+FIGURE 1. APITestGenie flow diagram, showcasing the interactions of the main flows in the system, inputs and outputs.
+SOLUTION
+Architecture and Workflow
+APITestGenie autonomously generates, improves, and executes test cases. Its architecture (see Figure 1) is divided into three modular flows: Test Generation, Test Improvement, and Test Execution. While each flow can operate independently, they are designed to work together for a more complete solution.
+The Test Generation flow receives as input the API Specification and the business requirement to generate a test script. Depending on the API size, we use either retrieval augmented generation (RAG) for larger API specs or full processing for smaller ones. We then construct system and user prompts based on the TELeR taxonomy14 for a <single turn, instruction, high detail, defined> use case. Lastly, we call the LLM and parse the content generated, outputting the test script. An example of a generated test script can be found in our GitHub at https://github.com/Andrepereira2001/ APITestGenie_CatFactTestScript/blob/main/test.ts.
+The Test Improvement flow can be used to improve the generated script, based on previous test results and improvement user instructions. The Test Execution flow uses JEST in a Typescript environment to execute the generated test script and report the results.
+System and User Prompt
+The system prompt is structured as follows: 1) Context--specifies the task to be performed. a) High-level goal. b) Target user and objective guidelines. c) Test structure example d) Information on available environment variables.
+2) Performance--guidelines describing how the LLM will be evaluated.
+
+2
+
+Publication Title
+
+Month 2024
+
+
+===== PAGE 3 =====
+THEME/FEATURE/DEPARTMENT
+
+a) Output evaluation metrics. b) Generation guidelines.
+3) Output--details how the model output should be formulated. a) Reasoning steps. b) Output components and structure.
+The user prompt is structured as follows: 1) Requirement--business requirement under test. 2) API--API specification under test.
+Prompt with the API Specification
+A significant limitation of current LLM models is their context window size. Therefore, we created a script that simplifies the raw API specification by removing all the <img> tags content and all the admin and deprecated resources.
+Additionally, we use RAG15 to filter relevant information, allowing us to test APIs of any size. To do so, we first slice the API specifications into chunks according to JSON syntax. Then, we expand the business requirement into five versions used in the RAG process to retrieve a set of similar chunks.
+Prompt with the Business Requirement
+A key input for test generation, besides the API specification, is the prompt provided by the user (or fetched from a tool) with the description of the business requirement to be tested.
+Experiments showed that detailed business requirements are crucial to test complex or poorly documented APIs. We classify APIs along two dimensions (Figure 2): documentation detail and complexity/restrictions. The horizontal axis assesses the thoroughness of resource explanations, while the vertical axis evaluates API complexity and security constraints. Each quadrant suggests a corresponding prompt level.
+Three prompt levels are recommended as follows:
+1) LEVEL 1--Basic requirement description
+> Basic description of a business requirement, typically using a user story structure.
+> Example--As a user, I want to receive a new and random cat fact every time I open the app or refresh the content so that I can learn intriguing information about cats and stay engaged with the app.
+2) LEVEL 2--Experimental data inclusion
+> Adds experimental data to use in the API request, such as parameter values, or relations between inputs and expected outputs.
+> Example--As a user, I want to retrieve all the available models in the eu27+ country
+
+FIGURE 2. Characterization of the APIs under test based on their internal complexity and the level of detail of the documentation, with associated prompt levels recommended.
+so that I can know which vehicles are available.
+3) LEVEL 3--Comprehensive guiding information
+> Adds guidance, such as test plans, acceptance criteria, or tips to use API resources.
+> Example-- As a user, I want to retrieve the price of accessories for a car in the Italian market. First, use the vehicle's service to get a list of all available vehicle models in the market. Then, using the accessories service and with a random model previously selected, retrieve the list of all available accessories on 17/05/2024. Lastly, use the pricing service to calculate the price of the available car accessories.
+EVALUATION
+We evaluated APITestGenie in two phases. In the first phase, we evaluated its performance by collecting metrics to assess the correctness of the generated test scripts and the generation costs. In the second phase, we conducted a practical workshop with our industry partner to gather user feedback on the tool's capabilities and industry adoption.
+Experimental Evaluation
+We assessed the robustness of test scripts generated by APITestGenie for 10 APIs with varying complexity and documentation levels (see Figure 2 and Table 1). We used 25 unique user prompts as input, repeating the generation process three times per prompt, resulting in 75 test scripts. Using GPT-4-Turbo with a 128k token Window, the average time and cost per test generation were 126s and AC0.37, respectively.
+We then executed the generated test scripts, identifying seven distinct result types, each with specific
+
+Month 2024
+
+Publication Title
+
+3
+
+
+===== PAGE 4 =====
+THEME/FEATURE/DEPARTMENT
+
+Servicea
+Cat Factf Pet Shopg C1 C2 S1 V1 V2 V3 V4 V5 Total
+
+Access
+Public Public Private Private Private Private Private Private Private Private
+
+Original tokensb
+754 4,070 25,966 47,497 49,761 882,272 430,739 1,620,488 417,109 5,021,555 9,254,211
+
+Simplified tokensc
+754 4,070 25,475 47,004 49,761 14,018 16,094 82,267 108,724h 424,465h 772,632
+
+User Prompts (L1,L2,L3)d
+1 (1,-,-) 2 (2,-,-) 2 (1,1,-) 2 (-,2,-) 2 (-,-,2) 2 (2,-,-) 5 (2,1,2) 2 (1,1,-) 4 (2,1,1) 3 (-,-,3) 25 (11,6,8)
+
+Generated Test Scriptse 3 6 6 6 6 6 15 6 12 9 75
+
+Valid Test Scripts 2 4 5 3 0 3 15 2 8 1
+43 (57.3%)
+
+Generation Time (avg.)
+92s 75s 113s 98s 154s 115s 102s 131s 146s 227s 126s
+
+a. Private API names from our automotive partner are just identified by the initials C-customer, S-shopping, and V-vehicle. b. Number of tokens in the original OpenAPI specification of the service under test counted with the tiktoken tokenizer. c. Number of tokens in the simplified spec (used as input for test generation), after removing irrelevant tags and resources. d. Number of business requirements tested, discriminating the level of detail (L1 to L3) of the user prompts elaborated. e. Three test script generation attempts were performed for each user prompt. f. Available at https://catfact.ninja/. g. Available at https://petstore.swagger.io/. h. RAG was used to filter simplified API specs with over 100K tokens, reducing them to fit the LLM's maximum prompt size.
+
+TABLE 1. Experimental API test generation results. In 75 generation attempts for 10 different APIs, 57.3% of the generated test
+
+scripts were valid (further details in Table 2). The average generation time was 126s per script.
+
+FIGURE 3. Estimated test generation success probability by number of attempts and prompt level (L1 to L3) or overall (All). valid@k shows the average probability of generating at least one valid test script in k attempts across all test generation tasks. Overall, valid@1  57.3% and valid@3  80%.
+errors and resolution methods (see Table 2). APITestGenie successfully generated valid test scripts 57.3% of the time, with 12.0% invalid due to external factors and 30.7% due to generator limitations. The 75 scripts contained 90 test cases, 68% of which were valid.
+Figure 3 shows that the probability of generating a valid test script increases from 57.3% with one attempt to 80% with three attempts. L2 prompts perform better than L1, likely due to the inclusion of test data. L3 prompts, used for more complex APIs, show less improvement.
+We found that API complexity affects test case generation results, but good documentation and tailored business requirements can improve tool performance.
+
+Most issues were related to semantic errors, not syntax. Despite this, the test structure remains useful, providing a solid starting point.
+User Feedback
+We conducted a hands-on APITestGenie workshop with technical staff from our industry partner, who provided informed feedback on the relevance and completeness of the generated tests. During the workshop, we created four unique test scripts, demonstrating the tool's ability to handle progressively more complex requirements and APIs. Out of 15 participants, 11 responded to an anonymous survey (see Figure 4).
+Overall, APITestGenie was well received, with most collaborators finding the tests complete and relevant and showing interest in using the tool daily. However, some participants noted the need for improvements in data security and integration with existing testing environments.
+Answers to Research Questions
+Based on the evaluation conducted, we can answer the research questions as follows.
+RQ1: LLMs can effectively be used to generate executable API test scripts from business requirements and API specifications, achieving up to 80% test validity with clear prompts in three attempts. The process is efficient (126 seconds per test case), requiring minimal human intervention, though performance depends on high-quality business requirements and API specifications, with increased complexity requiring more human involvement.
+
+4
+
+Publication Title
+
+Month 2024
+
+
+===== PAGE 5 =====
+THEME/FEATURE/DEPARTMENT
+
+Result type Pass & valid a API defect
+Environment setup error Missing API information Hallucination
+Syntax error Empty script Total
+
+Test Scripts 31 12
+7 2
+19
+3 1 75
+
+Description
+Test execution succeeds, and the script is considered valid in manual inspection. Test execution fails due to a defect in the API specification or implementation. The failures identified include inconsistencies with requirements in test cases involving multiple endpoints.
+Test execution fails due to contamination of the generated script by incorrect environment setup (e.g., access tokens). Test execution fails because key information needed for generating valid tests is missing in the API specification.
+Test execution fails because of LLM hallucinations: wrong or non-existent import, attribute, data manipulation operation, response structure validation, etc. The generated test script cannot be executed due to syntax errors. No test script is generated.
+
+Resolution Save test script for regression testing. Fix API specification or implementation and re-run test script.
+Fix environment setup and regenerate test script.
+Fix API specification and regenerate test script.
+Fix test script, re-generate test script (possibly with a refined user prompt), or run test improvement flow. Same as above.
+Re-generate test script b.
+
+a. In our experiment, all the test scripts that executed successfully and passed were considered valid in the manual inspection. b. In our experiment, this was sufficient to generate a non-empty test script.
+TABLE 2. Assessment of the generated test scripts. The first two cases represent valid test scripts (57.3%). The remaining ones represent invalid test scripts, either due to factors external to the generator (12.0%) or limitations of the generator (30.7%).
+
+quality of the generated test scripts. > Feedback from the workshop is statistically lim-
+ited due to the small sample size.
+
+FIGURE 4. Staff opinions on APITestGenie generated tests. Opinions from 11 industry experts from our industry partner with over five years of experience in the product were collected anonymously after a workshop presentation.
+RQ2: Generative AI tools like APITestGenie can enhance test generation efficiency by automating complex tasks, but adoption faces challenges due to security concerns, given the reliance on external closedsource LLMs, and the need for tight integration into existing workflows.
+These conclusions are affected by the following threats to validity:
+> Results may not generalize well to other domains or industries.
+> The evaluation metrics may not fully capture the
+
+CONCLUSION
+We presented APITestGenie, an approach and tool that leverages LLMs and RAG to generate executable test scripts from business requirements and API specifications for API testing.
+In experiments with 10 real-world APIs, the tool generated valid test scripts 57.3% of the time. With three generation attempts per task, this success rate increased to 80%. Feedback from an automotive industry partner indicated a strong interest in adopting our tool to improve their testing process.
+Human intervention is recommended to validate or refine generated scripts before integration into CI/CD pipelines, positioning our tool as a productivity assistant rather than a replacement for testers.
+Our results are not directly comparable to other tools in related work because of the different inputs used and our focus on generating tests that validate system requirements. Unlike traditional tools that typically focus on single endpoint testing, our approach leverages business requirements to generate tests that simulate real-world scenarios, often involving multiple endpoints, enabling comprehensive integration tests
+
+Month 2024
+
+Publication Title
+
+5
+
+
+===== PAGE 6 =====
+THEME/FEATURE/DEPARTMENT
+
+that ensure accurate service interactions and data flow. This makes our approach complementary to others.
+Future work includes tighter integration into industrial workflows, collecting further metrics, applying multi-agent systems, and exploring open-source models to address cost and privacy concerns.
+REFERENCES
+1. M. Wermelinger, "Using github copilot to solve simple programming problems," in Proceedings of the 54th ACM Technical Symposium on Computer Science Education V. 1, SIGCSE 2023, (New York, NY, USA), p. 172­178, Association for Computing Machinery, 2023.
+2. Postman, "2023 state of the api report," tech. rep., Postman, 2023.
+3. M. Polo, P. Reales, M. Piattini, and C. Ebert, "Test automation," IEEE Software, vol. 30, no. 1, pp. 84­ 89, 2013.
+4. SmartBear Software, "Openapi specification." [Online]. Available: https://swagger.io/specification/.
+5. A. Golmohammadi, M. Zhang, and A. Arcuri, "Testing RESTful APIs: A Survey," ACM Transactions on Software Engineering and Methodology, vol. 33, no. 1, pp. 1­41, 2023.
+6. M. Kim, Q. Xin, S. Sinha, and A. Orso, "Automated test generation for REST APIs: No time to rest yet," in Proceedings of the 31st ACM SIGSOFT International Symposium on Software Testing and Analysis, pp. 289­301, 2022.
+7. EvoMaster, "Evomaster: A tool for automatically generating system-level test cases." [Online]. Available: www.evomaster.org.
+8. A. Arcuri, "RESTful API Automated Test Case Generation," in 2017 IEEE International Conference on Software Quality, Reliability and Security (QRS), pp. 9­20, 2017.
+9. S. Karlsson, A. C ausevic´, and D. Sundmark, "Quickrest: Property-based test generation of openapidescribed restful apis," in 2020 IEEE 13th International Conference on Software Testing, Validation and Verification (ICST), pp. 131­141, 2020.
+10. Y. Tang, Z. Liu, Z. Zhou, and X. Luo, "Chatgpt vs sbst: A comparative assessment of unit test suite generation," 2023.
+11. E. Viglianisi, M. Dallago, and M. Ceccato, "Resttestgen: Automated black-box testing of restful apis," in 2020 IEEE 13th International Conference on Software Testing, Validation and Verification (ICST), pp. 142­152, 2020.
+12. M. Kim, T. Stennett, D. Shah, S. Sinha, and A. Orso, "Leveraging Large Language Models to improve REST API testing," in Proceedings of the 2024
+
+ACM/IEEE 44th International Conference on Software Engineering: New Ideas and Emerging Results, pp. 37­41, 2024. 13. A. Decrop, G. Perrouin, M. Papadakis, X. Devroey, and P.-Y. Schobbens, "You Can REST Now: Automated Specification Inference and Black-Box Testing of RESTful APIs with Large Language Models," arXiv preprint arXiv:2402.05102, 2024. 14. S. K. K. Santu and D. Feng, "Teler: A general taxonomy of llm prompts for benchmarking complex tasks," 2023. 15. P. Lewis, E. Perez, A. Piktus, F. Petroni, V. Karpukhin, N. Goyal, H. Küttler, M. Lewis, W.-t. Yih, T. Rocktäschel, S. Riedel, and D. Kiela, "Retrievalaugmented generation for knowledge-intensive nlp tasks," in Advances in Neural Information Processing Systems (H. Larochelle, M. Ranzato, R. Hadsell, M. Balcan, and H. Lin, eds.), vol. 33, pp. 9459­9474, Curran Associates, Inc., 2020.
+André Pereira is a graduated master's student in Informatics and Computing Engineering at the Faculty of Engineering of the University of Porto (FEUP). His current research interests include LLM, Generative AI, and agent systems. Contact him at adbp@live.com.pt. Bruno Lima is an Assistant Professor in Software Engineering at UMaia and FEUP. He is also a researcher at LIACC. Contact him at brunolima@fe.up.pt. João P. Faria is a full professor in Software Engineering at FEUP and a senior researcher at INESC TEC. He is an IEEE member. Contact him at jpf@fe.up.pt.
+
+6
+
+Publication Title
+
+Month 2024
+
