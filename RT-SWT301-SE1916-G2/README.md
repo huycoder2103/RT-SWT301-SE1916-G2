@@ -1,8 +1,9 @@
-# [Tên đề tài ngắn gọn]
+# []
 **Topic:** RT-SWT301-SE1916-G2
 **Môn:** SWT301 — Research-Based Learning
-**Nhóm:** SE1916-G2 — [Học kỳ, năm]
-**Thành viên:** Nguyễn Hoàng Huy - SE190240 (PL), [Tên] (DG), [Tên] (LR), [Tên] (MS), [Tên] (RW)
+**Nhóm:** SE1916-G2 — [Summer 2026]
+**Thành viên:** Nguyễn Hoàng Huy - SE190240 (PL), Nguyen Thanh Dat (SE190239) (DG), Nguyen Tien Dung (SE190034) (LR), 
+                Vo Le Trung Nguyen (SE190220) (MS), Nguyen Le Thuan (SE190305) (RW)
 **GV hướng dẫn:** L.T.Q.Chi
 
 ## Tiến độ
