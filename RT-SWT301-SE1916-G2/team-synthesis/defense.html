@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RBL-3 Defense — LLM vs Manual vs EvoMaster (SWT301_SU26_Group2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAF9F6; --panel:#fff; --ink:#16161D; --mut:#6b7280; --line:#e6e6e6;
+  --teal:#0E7C7B; --amber:#B45309; --red:#B91C1C; --green:#15803D; --violet:#6D28D9;
+  --shadow:0 10px 40px rgba(20,20,30,.10);
+  --disp:"Space Grotesk",sans-serif; --body:"Inter",sans-serif; --mono:"JetBrains Mono",monospace;
+}
+[data-theme=dark]{--paper:#0d0d12;--panel:#16161d;--ink:#f3f4f6;--mut:#9aa0aa;--line:#2a2a35;--shadow:0 10px 40px rgba(0,0,0,.5)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);font-family:var(--body);overflow:hidden}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--violet));width:0;z-index:50;transition:width .35s ease}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+.slide{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;background:var(--panel);
+  border-radius:18px;box-shadow:var(--shadow);padding:52px 64px;opacity:0;pointer-events:none;display:flex;flex-direction:column;overflow:hidden}
+.slide.active{opacity:1;pointer-events:auto}
+.slide.enter .secno,.slide.enter h1,.slide.enter .title,.slide.enter .lead{animation:rise .5s cubic-bezier(.22,.61,.36,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.slide.dark{background:linear-gradient(135deg,#101018,#1c1c2b);color:#fff}
+.slide.dark .mut{color:#aab}
+.kicker{font-family:var(--mono);font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin:0 0 12px}
+.slide.dark .kicker{color:#5eead4}
+h1{font-family:var(--disp);font-weight:700;font-size:58px;line-height:1.05;margin:0 0 16px;letter-spacing:-.02em}
+h2.title{font-family:var(--disp);font-weight:700;font-size:37px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mut);font-size:18px;margin:0 0 22px;max-width:1010px}
+.lead{font-size:22px;line-height:1.5;max-width:1040px}
+.mut{color:var(--mut)} b,strong{font-weight:600}
+.hl{color:var(--teal);font-weight:600}.hl-a{color:var(--amber);font-weight:600}.hl-r{color:var(--red);font-weight:600}.hl-g{color:var(--green);font-weight:600}
+.secno{font-family:var(--disp);font-weight:700;font-size:17px;color:#fff;background:var(--ink);width:38px;height:38px;border-radius:11px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px}
+[data-theme=dark] .secno{background:var(--teal)}
+.grid{display:grid;gap:16px;margin-top:6px}
+.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+[data-theme=dark] .card{background:#1d1d27}
+.card h3{font-family:var(--disp);font-size:19px;margin:0 0 7px}
+.card p{margin:0;font-size:15.5px;line-height:1.5;color:var(--mut)}
+.tag{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;padding:3px 9px;border-radius:7px;margin-bottom:9px;color:#fff}
+.t-c{background:var(--violet)}.t-d{background:var(--amber)}.t-m{background:var(--teal)}
+.kpis{display:flex;gap:22px;flex-wrap:wrap;margin-top:8px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 24px;min-width:200px;flex:1}
+[data-theme=dark] .kpi{background:#1d1d27}
+.kpi .n{font-family:var(--disp);font-weight:700;font-size:42px;line-height:1;letter-spacing:-.02em}
+.kpi .l{color:var(--mut);font-size:14px;margin-top:7px}
+.kpi.win .n{color:var(--teal)}.kpi.warn .n{color:var(--amber)}
+.bars{margin-top:12px}
+.brow{display:grid;grid-template-columns:140px 1fr 64px;align-items:center;gap:14px;margin:10px 0;font-size:16px}
+.track{height:18px;border-radius:9px;background:var(--line);overflow:hidden}
+.fill{height:100%;width:0;border-radius:9px;transition:width 1s cubic-bezier(.22,.61,.36,1)}
+.slide.active .fill{width:var(--w)}
+table{border-collapse:collapse;width:100%;font-size:15.5px;margin-top:4px}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--disp);font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.role{font-family:var(--mono);font-weight:600;color:var(--teal)} td .mut{font-size:13px}
+/* steps flow */
+.steps{display:flex;gap:14px;margin-top:10px}
+.step{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 16px 18px;position:relative}
+[data-theme=dark] .step{background:#1d1d27}
+.step .sn{font-family:var(--disp);font-weight:700;font-size:15px;color:#fff;background:var(--teal);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.step h4{font-family:var(--disp);font-size:16px;margin:0 0 5px}.step p{margin:0;font-size:13.5px;color:var(--mut);line-height:1.45}
+.step:not(:last-child):after{content:"›";position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:22px;z-index:2}
+/* example: spec vs code vs result */
+.ex{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ex>div{padding:18px 20px}.ex>div+div{border-left:1px solid var(--line)}
+.ex .lab{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+.ex code,code.blk{display:block;font-family:var(--mono);font-size:14px;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:10px 12px;line-height:1.55;white-space:pre-wrap}
+[data-theme=dark] .ex code{background:#0a0a10}
+code.in{font-family:var(--mono);background:var(--paper);border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:.92em}
+.ex .big{font-family:var(--disp);font-weight:700;font-size:30px}
+/* comparison 3-col */
+.cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+.cmp .col{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.cmp .ch{padding:12px 16px;color:#fff;font-family:var(--disp);font-weight:700;font-size:17px}
+.cmp .cb{padding:14px 16px;background:var(--paper)}.cmp .cb p{margin:0 0 7px;font-size:14.5px;color:var(--mut);line-height:1.45}
+[data-theme=dark] .cmp .cb{background:#1d1d27}
+/* qa */
+.qa{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:12px;padding:14px 18px;margin-bottom:12px}
+[data-theme=dark] .qa{background:#1d1d27}
+.qa .q{font-family:var(--disp);font-weight:600;font-size:16.5px;margin:0 0 5px}
+.qa .a{margin:0;font-size:14.5px;color:var(--mut);line-height:1.5}
+.qa .q:before{content:"Hỏi · ";color:var(--amber)} .qa .a:before{content:"Đáp · ";color:var(--green);font-weight:600}
+.tldr{font-family:var(--disp);font-weight:500;font-size:30px;line-height:1.32;max-width:1080px}
+.hint{font-size:13.5px;color:var(--mut);font-style:italic;margin-top:auto;padding-top:10px;border-top:1px dashed var(--line)}
+.pillrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pill{font-family:var(--mono);font-size:13px;border:1px solid var(--line);border-radius:20px;padding:4px 12px;color:var(--mut)}
+.frag{opacity:.12;transition:opacity .45s ease, transform .45s ease;transform:translateY(6px)}
+.frag.in{opacity:1;transform:none}
+.snote{display:none}
+#chrome{position:fixed;bottom:0;left:0;right:0;height:30px;display:flex;align-items:center;gap:14px;padding:0 16px;background:var(--panel);border-top:1px solid var(--line);font-size:13px;z-index:40}
+#chrome .ftitle{font-family:var(--mono);color:var(--mut);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#counter{font-family:var(--mono);color:var(--mut)}
+.ctrls{display:flex;gap:4px}
+.ctrls button{font-family:var(--mono);font-size:12px;border:1px solid var(--line);background:transparent;color:var(--mut);border-radius:6px;padding:2px 8px;cursor:pointer}
+.ctrls button:hover{color:var(--ink);border-color:var(--teal)}
+.ctrls button:focus-visible,.ov:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+#notes{position:fixed;right:0;top:0;bottom:30px;width:380px;background:var(--panel);border-left:1px solid var(--line);padding:22px;transform:translateX(100%);transition:transform .3s;z-index:45;overflow:auto}
+#notes.show{transform:none}
+#notes h4{font-family:var(--disp);margin:0 0 10px}
+#notes .ntxt{font-size:15px;line-height:1.6}#notes .ntxt b{color:var(--teal)}
+#overview{position:fixed;inset:0;background:var(--paper);z-index:60;padding:42px 52px;display:none;grid-template-columns:repeat(5,1fr);gap:13px;align-content:start;overflow:auto}
+#overview.show{display:grid}
+.ov{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px;cursor:pointer;transition:.2s}
+.ov:hover{border-color:var(--teal);transform:translateY(-2px)}.ov.current{border-color:var(--teal);box-shadow:0 0 0 2px var(--teal)}
+.ovn{font-family:var(--mono);color:var(--mut);font-size:12px}.ovt{font-family:var(--disp);font-size:14px;margin-top:4px}
+#help{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:70;display:none;align-items:center;justify-content:center}
+#help.show{display:flex}.box{background:var(--panel);border-radius:16px;padding:28px 36px;max-width:540px}
+#help kbd{font-family:var(--mono);background:var(--paper);border:1px solid var(--line);border-radius:5px;padding:1px 7px;font-size:13px}
+#help li{margin:7px 0;color:var(--mut)}
+.brand{position:fixed;left:16px;top:13px;font-family:var(--mono);font-size:12px;color:var(--mut);z-index:40}
+/* evidence chip + modal (bằng chứng: bấm mở file thật, tô vàng dòng) */
+.cite{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--teal);
+  background:rgba(14,124,123,.10);border:1px solid rgba(14,124,123,.35);border-radius:7px;padding:0 8px;cursor:pointer;vertical-align:middle;white-space:nowrap;transition:.15s}
+.cite:before{content:"📎"}.cite:hover{background:var(--teal);color:#fff}
+.slide.dark .cite{color:#5eead4;background:rgba(94,234,212,.12);border-color:rgba(94,234,212,.4)}
+#evidence{position:fixed;inset:0;background:rgba(8,8,12,.74);z-index:80;display:none;align-items:center;justify-content:center;padding:40px}
+#evidence.show{display:flex}
+#evidence .ev{background:var(--panel);border-radius:16px;max-width:940px;width:100%;max-height:86vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#evidence .evhead{padding:15px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--panel)}
+#evidence .evhead .t{font-family:var(--disp);font-weight:700;font-size:18px;flex:1}
+#evidence .evhead .x{font-family:var(--mono);font-size:13px;cursor:pointer;color:var(--mut);border:1px solid var(--line);border-radius:7px;padding:3px 10px}
+#evidence .evpath{font-family:var(--mono);font-size:12.5px;color:var(--amber);padding:12px 22px 0}
+#evidence .evcode{margin:10px 22px;font-family:var(--mono);font-size:13px;line-height:1.65;background:#0f172a;color:#cbd5e1;border-radius:10px;padding:14px 0;overflow:auto}
+#evidence .ln{padding:0 18px;white-space:pre-wrap;display:block}
+#evidence .evhi{background:rgba(250,204,21,.20);border-left:3px solid #facc15;color:#fde68a;font-weight:600}
+#evidence .evsrc{padding:4px 22px 20px;font-size:13.5px;color:var(--mut);line-height:1.5}#evidence .evsrc b{color:var(--green)}
+/* glossary */
+.gl{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 26px;margin-top:6px}
+.gl div{font-size:15px;line-height:1.4;color:var(--mut)}.gl .term{font-family:var(--disp);font-weight:600;color:var(--teal)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{overflow:visible;height:auto;background:#fff}
+  #progress,#chrome,#notes,#overview,#help,.brand{display:none!important}
+  #stage{position:static!important;display:block!important}
+  .slide{position:relative!important;left:auto!important;top:auto!important;transform:none!important;opacity:1!important;
+    width:1280px;height:720px;margin:0;border-radius:0;box-shadow:none;break-after:page;page-break-after:always;animation:none!important}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .frag{opacity:1!important;transform:none!important}.fill{width:var(--w)!important}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="brand">SWT301_SU26_Group2 · SE1916 · RBL-3 · phím S = lời thoại</div>
+<div id="stage">
+
+  <!-- 1 COVER -->
+  <section class="slide dark" data-title="Cover">
+    <p class="kicker">RBL-3 · Bảo vệ đề xuất nghiên cứu</p>
+    <h1>LLM có sinh test REST API<br>tốt bằng người &amp; EvoMaster?</h1>
+    <p class="lead" style="color:#cdd">So sánh <b style="color:#fff">AI (LLM)</b> vs <b style="color:#fff">test thủ công</b> vs <b style="color:#fff">EvoMaster</b>
+      trên các API <b style="color:#fff">đã cài lỗi sẵn</b> — để đo được chính xác ai bắt được nhiều lỗi hơn.</p>
+    <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end">
+      <div class="mut">Nhóm <b style="color:#fff">SWT301_SU26_Group2</b> · Topic <b style="color:#fff">SE1916</b><br>Dung · Huy · Dat · Thuận · Nguyên</div>
+      <div class="mut" style="text-align:right">v1.0 · 2026-06-13 · chờ GV duyệt</div>
+    </div>
+    <div class="snote"><b>🎤 Mở đầu (nói chậm):</b> "Em chào thầy/cô và cả lớp. Nhóm em là SWT301_SU26_Group2, đề tài SE1916.
+      Câu hỏi lớn của nhóm rất đơn giản: <b>AI có sinh test cho REST API tốt bằng con người và bằng công cụ EvoMaster không?</b>
+      Điểm đặc biệt là tụi em test trên những API đã <b>cài lỗi sẵn</b>, nên đo được chính xác ai bắt lỗi giỏi hơn.
+      Em xin đi qua 6 phần." <br><br><b>Mẹo:</b> bấm <b>→</b> hoặc Space để qua slide; mỗi slide có lời thoại như thế này ở phím <b>S</b>.</div>
+  </section>
+
+  <!-- 2 TL;DR -->
+  <section class="slide" data-title="Tóm tắt 30 giây">
+    <div class="secno">★</div>
+    <h2 class="title">Tóm tắt 30 giây (nếu chỉ nhớ 1 slide)</h2>
+    <p class="sub">Toàn bộ nghiên cứu gói trong 3 câu.</p>
+    <p class="tldr frag">① Tụi em cho <b class="hl">AI</b>, <b>người</b>, và <b>EvoMaster</b> cùng viết test cho 3 API thật.</p>
+    <p class="tldr frag" style="margin-top:16px">② Tụi em <b class="hl-a">cài lỗi sẵn</b> vào code → biết chính xác có bao nhiêu lỗi → đo <b>ai bắt được bao nhiêu</b>.</p>
+    <p class="tldr frag" style="margin-top:16px">③ Kết quả pilot: AI <b class="hl-g">phủ hết endpoint + nhiều kịch bản lỗi hơn người</b>, nhưng EvoMaster <b class="hl-a">bắt lỗi tính toán giỏi hơn</b>.</p>
+    <div class="hint frag">Đây là "thang máy pitch" — nếu thầy hỏi gấp "nghiên cứu của em là gì?", đọc đúng 3 câu này.</div>
+    <div class="snote"><b>🎤 Nói:</b> "Nếu thầy/cô chỉ nhớ một slide thì là slide này. Một, tụi em cho AI, người, và EvoMaster cùng viết test cho 3 API.
+      Hai, tụi em cố tình cài lỗi vào code để biết chính xác có bao nhiêu lỗi, rồi đo mỗi bên bắt được bao nhiêu.
+      Ba, kết quả thử nghiệm: AI phủ hết endpoint và nghĩ ra nhiều kịch bản lỗi hơn người, nhưng EvoMaster bắt lỗi tính toán tốt hơn."
+      <br><br>Bấm Space 3 lần để hiện từng câu.</div>
+  </section>
+
+  <!-- 3 ROADMAP -->
+  <section class="slide" data-title="Dàn ý">
+    <div class="secno">00</div>
+    <h2 class="title">Dàn ý buổi bảo vệ</h2>
+    <p class="sub">6 phần — đi theo mạch chuyện: vấn đề → khoảng trống → ý tưởng → cách làm → kết quả → bảo vệ.</p>
+    <div class="grid g3">
+      <div class="card frag"><h3>① Vấn đề</h3><p>Test API tốn; AI hứa hẹn — nhưng có đáng tin?</p></div>
+      <div class="card frag"><h3>② Khoảng trống</h3><p>59 paper, 3 lỗ hổng chưa ai lấp.</p></div>
+      <div class="card frag"><h3>③ Ý tưởng &amp; câu hỏi</h3><p>3 đấu thủ + lỗi gieo sẵn → RQ1/2/3.</p></div>
+      <div class="card frag"><h3>④ Cách làm (5 bước)</h3><p>Step-by-step + ví dụ thật.</p></div>
+      <div class="card frag"><h3>⑤ Kết quả pilot</h3><p>Số liệu + cách đọc.</p></div>
+      <div class="card frag"><h3>⑥ Bảo vệ</h3><p>Threats + câu hỏi GV hay hỏi.</p></div>
+    </div>
+    <div class="snote"><b>🎤 Nói:</b> "Bài của em gồm 6 phần, đi theo một mạch chuyện. Bắt đầu từ vấn đề, đến khoảng trống nghiên cứu,
+      rồi ý tưởng và câu hỏi, sau đó là cách làm chi tiết 5 bước có ví dụ, kết quả thử nghiệm, và cuối cùng là phần bảo vệ trước các câu hỏi."</div>
+  </section>
+
+  <!-- 4 CONTEXT -->
+  <section class="slide" data-title="Bối cảnh">
+    <div class="secno">01</div>
+    <h2 class="title">Vì sao test REST API lại quan trọng &amp; tốn?</h2>
+    <p class="sub">REST API = cách các phần mềm "nói chuyện" với nhau (app ↔ server).</p>
+    <div class="grid g3">
+      <div class="card frag"><h3>Ở khắp nơi</h3><p>Mọi app mobile/web đều gọi REST API. Một lỗi API = nhiều app hỏng theo.</p></div>
+      <div class="card frag"><h3>Test rất tốn</h3><p>Mỗi endpoint phải thử: input đúng, input sai, giá trị biên, lỗi… Viết tay rất lâu.</p></div>
+      <div class="card frag"><h3>Ví von</h3><p>Như đi kiểm tra <b>mọi cánh cửa</b> của một toà nhà: đúng khoá, sai khoá, cửa kẹt, cửa cấm…</p></div>
+    </div>
+    <p class="lead frag" style="margin-top:24px">→ Nếu có công cụ <b class="hl">tự sinh test</b> tốt, tiết kiệm cực nhiều công sức QA.</p>
+    <div class="snote"><b>🎤 Nói:</b> "Trước hết, REST API là cách các phần mềm nói chuyện với nhau — app gọi server qua API.
+      Nó có ở khắp nơi, nên một lỗi API kéo theo nhiều app hỏng. Mà test API thì rất tốn: mỗi endpoint phải thử input đúng, input sai, giá trị biên, các trường hợp lỗi.
+      Ví von như phải đi kiểm tra mọi cánh cửa của một toà nhà. Vì vậy, nếu có công cụ tự sinh test tốt thì tiết kiệm rất nhiều."</div>
+  </section>
+
+  <!-- 5 WHAT LLM DOES -->
+  <section class="slide" data-title="LLM làm gì ở đây">
+    <div class="secno">01</div>
+    <h2 class="title">AI (LLM) làm gì trong bài này?</h2>
+    <p class="sub">Cho AI đọc bản mô tả API (OpenAPI spec) → AI tự viết ra code test.</p>
+    <div class="ex frag">
+      <div><div class="lab">Đầu vào: OpenAPI spec</div><code>GET /api/bessj/{n}/{x}
+trả về: số (JSON)
+n: integer, x: number</code></div>
+      <div><div class="lab">AI (LLM) suy luận</div><code>"n là số nguyên →
+thử n âm, n=0, n rất lớn,
+thử x sai kiểu…"</code></div>
+      <div><div class="lab">Đầu ra: test tự động</div><code>@Test bessj_n1()
+ get("/api/bessj/1/2.0")
+ .statusCode(anyOf(200,400))</code></div>
+    </div>
+    <p class="lead frag" style="margin-top:22px">AI <b class="hl">chỉ nhìn spec, không nhìn code nguồn</b> (black-box) — y như một tester thật ngoài đời.</p>
+    <div class="hint frag">Quan trọng cho phần bảo vệ: AI "mù" với code → công bằng, không gian lận.</div>
+    <div class="snote"><b>🎤 Nói:</b> "AI ở đây làm việc rất cụ thể: tụi em đưa cho nó bản mô tả API — gọi là OpenAPI spec — rồi nó tự viết ra code test.
+      Ví dụ spec nói endpoint bessj nhận một số nguyên n; AI suy luận 'vậy thử n âm, n bằng 0, n rất lớn' rồi sinh test tương ứng.
+      Điểm mấu chốt: AI <b>chỉ nhìn spec, không nhìn code nguồn</b> — gọi là black-box — đúng như một tester thật. Điều này làm thí nghiệm công bằng."</div>
+  </section>
+
+  <!-- 6 CORE QUESTION -->
+  <section class="slide dark" data-title="Câu hỏi cốt lõi">
+    <p class="kicker">Câu hỏi cốt lõi</p>
+    <h1 style="font-size:50px">Câu hỏi không phải<br>"AI sinh được test không?"</h1>
+    <p class="lead frag" style="color:#cdd;font-size:26px;margin-top:8px">Mà là: <b style="color:#5eead4">"Test đó có tốt BẰNG người / EvoMaster không —
+      trên những lỗi ta ĐẾM ĐƯỢC?"</b></p>
+    <p class="lead frag" style="color:#aab;margin-top:24px">Vì AI sinh test thì dễ; nhưng nếu test toàn dễ, bỏ sót lỗi thật → vô dụng mà ta không hề biết.</p>
+    <div class="snote"><b>🎤 Nói (nhấn mạnh):</b> "Đây là tim của đề tài. Câu hỏi <b>không phải</b> 'AI có sinh được test không' — cái đó ai cũng biết là được.
+      Câu hỏi thật là: 'Test của AI có tốt <b>bằng</b> người và EvoMaster không, trên những lỗi mà ta đếm được?'
+      Bởi vì AI sinh test rất dễ, nhưng nếu test toàn loại dễ và bỏ sót lỗi thật, thì vô dụng — mà tệ hơn là ta không hề hay biết. Nghiên cứu này trả lời câu đó."</div>
+  </section>
+
+  <!-- 7 SLR FUNNEL -->
+  <section class="slide" data-title="Tìm khoảng trống (SLR)">
+    <div class="secno">02</div>
+    <h2 class="title">Tụi em tìm khoảng trống thế nào?</h2>
+    <p class="sub">Đọc có hệ thống (Systematic Literature Review) — không đoán mò.</p>
+    <div class="steps frag">
+      <div class="step"><div class="sn">1</div><h4>Gom</h4><p>Tìm các paper 2018–2026 về LLM &amp; test REST API.</p></div>
+      <div class="step"><div class="sn">2</div><h4>Lọc</h4><p>Theo tiêu chí → còn <b>59 paper</b> chất lượng.</p></div>
+      <div class="step"><div class="sn">3</div><h4>Lập bảng</h4><p>Mỗi paper: tool, dataset, metric, kết quả.</p></div>
+      <div class="step"><div class="sn">4</div><h4>Tìm lỗ hổng</h4><p>Cái gì <b>chưa ai làm</b> dù quan trọng?</p></div>
+    </div>
+    <p class="lead frag" style="margin-top:24px">→ Lộ ra <b class="hl">3 khoảng trống</b> lặp đi lặp lại ở cả những công trình mạnh.</p>
+    <div class="snote"><b>🎤 Nói:</b> "Tụi em không đoán mò khoảng trống mà đọc có hệ thống — SLR. Bốn bước: gom các paper từ 2018 đến 2026,
+      lọc theo tiêu chí còn 59 bài chất lượng, lập bảng mỗi bài ghi rõ dùng tool gì, dataset nào, đo gì, kết quả ra sao;
+      rồi tìm xem cái gì quan trọng mà chưa ai làm. Từ đó lộ ra 3 khoảng trống."</div>
+  </section>
+
+  <!-- 8 GAPS -->
+  <section class="slide" data-title="3 khoảng trống">
+    <div class="secno">02</div>
+    <h2 class="title">Ba khoảng trống (lỗ hổng) tìm được</h2>
+    <p class="sub">Mỗi cái kèm bằng chứng từ paper.</p>
+    <div class="grid g3">
+      <div class="card frag"><span class="tag t-c">GAP-C · So sánh</span>
+        <p style="color:var(--ink)">Đúng <b>1</b> nghiên cứu so với <b>người</b> (EvoMaster) — mà lại là tool cũ, <b class="hl-r">thua người 41% vs 82%</b>. <b>Chưa ai</b> đặt AI vs người vs EvoMaster cùng lúc. <span class="cite" data-ev="gapc">proposal §2.3</span></p></div>
+      <div class="card frag"><span class="tag t-d">GAP-D · Dữ liệu</span>
+        <p style="color:var(--ink)">Lỗi chỉ được báo dạng <b>đếm 500-error</b> trên API sống; không có bộ <b>lỗi gieo sẵn</b> → <b class="hl-a">không tính được Recall thật</b> (bắt được mấy % lỗi).</p></div>
+      <div class="card frag"><span class="tag t-m">GAP-M · Đo lường</span>
+        <p style="color:var(--ink)">Đánh giá thiên về coverage; <b>không có</b> thước đo <b>kịch bản lỗi/biên cho từng endpoint</b>.</p></div>
+    </div>
+    <p class="lead frag" style="margin-top:22px">Nhóm tụi em <b class="hl">lấp cả 3</b> — đó là điểm mới.</p>
+    <div class="snote"><b>🎤 Nói:</b> "Khoảng trống một, GAP-C về so sánh: chỉ đúng một nghiên cứu so test tự động với người, mà lại là tool cũ EvoMaster, và nó còn thua người — 41 so với 82 phần trăm. Chưa ai đặt AI, người, và EvoMaster cạnh nhau.
+      Hai, GAP-D về dữ liệu: các paper chỉ đếm số lỗi 500 trên API sống, không có bộ lỗi gieo sẵn nên không tính được Recall thật.
+      Ba, GAP-M về đo lường: chỉ chăm chăm coverage, không ai đo số kịch bản lỗi cho từng endpoint. Nhóm em lấp cả ba."</div>
+  </section>
+
+  <!-- 9 IDEA -->
+  <section class="slide" data-title="Ý tưởng nghiên cứu">
+    <div class="secno">03</div>
+    <h2 class="title">Ý tưởng: một "trận đấu" công bằng</h2>
+    <p class="sub">3 đấu thủ cùng viết test cho cùng API; trọng tài là bộ lỗi gieo sẵn.</p>
+    <div class="cmp frag">
+      <div class="col"><div class="ch" style="background:var(--teal)">AI · LLM</div><div class="cb"><p>Đọc spec → sinh test tự động</p><p class="mut">đại diện "tự động hoá mới"</p></div></div>
+      <div class="col"><div class="ch" style="background:var(--mut)">Người · Manual</div><div class="cb"><p>Tester viết tay (EP/BVA)</p><p class="mut">chuẩn vàng truyền thống</p></div></div>
+      <div class="col"><div class="ch" style="background:var(--violet)">EvoMaster</div><div class="cb"><p>Tool tự động kỳ cựu (SOTA)</p><p class="mut">baseline mạnh nhất ngành</p></div></div>
+    </div>
+    <p class="lead frag" style="margin-top:22px">Trọng tài = <b class="hl-a">lỗi gieo sẵn</b>: ta biết chính xác có bao nhiêu lỗi, nên đo được <b>ai bắt được bao nhiêu %</b>.</p>
+    <div class="hint frag">Đây là điểm "không ai bắt bẻ được": có đáp án sẵn (ground truth) nên kết quả khách quan.</div>
+    <div class="snote"><b>🎤 Nói:</b> "Ý tưởng tụi em ví như một trận đấu công bằng: ba đấu thủ cùng viết test cho cùng API.
+      Đấu thủ một là AI; hai là người viết tay theo kỹ thuật EP và BVA — chuẩn vàng truyền thống; ba là EvoMaster, tool tự động mạnh nhất ngành.
+      Trọng tài là bộ lỗi gieo sẵn — vì biết trước có bao nhiêu lỗi nên đo được chính xác ai bắt được bao nhiêu phần trăm. Đây là chỗ làm kết quả khách quan."</div>
+  </section>
+
+  <!-- 10 RQs -->
+  <section class="slide" data-title="3 câu hỏi NC">
+    <div class="secno">03</div>
+    <h2 class="title">Ba câu hỏi nghiên cứu</h2>
+    <p class="sub">Chốt trước, GV duyệt rồi KHÔNG đổi (tránh "chỉnh sau khi thấy số" — No-HARKing).</p>
+    <div class="grid g3">
+      <div class="card frag"><span class="tag t-m">RQ1</span><h3>Phủ endpoint</h3>
+        <p style="color:var(--ink)">AI có chạm <b>≥ 90%</b> số endpoint? Loại nào hay bị bỏ?</p>
+        <p style="margin-top:7px;font-family:var(--mono);font-size:12.5px">H0: ≤90% · H1: &gt;90%</p></div>
+      <div class="card frag"><span class="tag t-c">RQ2</span><h3>Bắt lỗi gieo</h3>
+        <p style="color:var(--ink)">AI bắt nhiều lỗi gieo hơn người &amp; EvoMaster? (Recall)</p>
+        <p style="margin-top:7px;font-family:var(--mono);font-size:12.5px">H0: AI ≤ max(người,Evo)</p></div>
+      <div class="card frag"><span class="tag t-m">RQ3</span><h3>Kịch bản lỗi/biên</h3>
+        <p style="color:var(--ink)">AI sinh nhiều kịch bản <b>4xx/5xx + biên</b> per endpoint hơn người?</p>
+        <p style="margin-top:7px;font-family:var(--mono);font-size:12.5px">H0: AI ≤ người</p></div>
+    </div>
+    <p class="lead frag" style="margin-top:20px;font-size:18px"><b>H0</b> = "không có gì khác biệt" (giả thuyết cần bác bỏ) · <b>H1</b> = điều tụi em muốn chứng minh.</p>
+    <div class="snote"><b>🎤 Nói:</b> "Ba câu hỏi. RQ1: AI có chạm tới ít nhất 90% endpoint không, và loại endpoint nào hay bị bỏ sót.
+      RQ2: AI có bắt nhiều lỗi gieo hơn người và EvoMaster không — đo bằng Recall, tức phần trăm lỗi bắt được.
+      RQ3: AI có sinh nhiều kịch bản lỗi và biên cho mỗi endpoint hơn người không.
+      Mỗi câu có H0 và H1: H0 là 'không khác biệt' — cái tụi em muốn bác bỏ; H1 là điều muốn chứng minh. Tụi em chốt trước khi chạy để khỏi gian lận số liệu."</div>
+  </section>
+
+  <!-- 11 PIPELINE OVERVIEW -->
+  <section class="slide" data-title="Pipeline 5 bước">
+    <div class="secno">04</div>
+    <h2 class="title">Cách làm — bức tranh lớn (5 bước)</h2>
+    <p class="sub">Nhìn slide này là nắm toàn bộ quy trình; 4 slide sau zoom vào từng bước.</p>
+    <div class="steps frag">
+      <div class="step"><div class="sn">1</div><h4>Chọn API</h4><p>3 API thật từ EMB, dựng chạy được.</p></div>
+      <div class="step"><div class="sn">2</div><h4>Sinh test</h4><p>AI + Người + EvoMaster cùng viết.</p></div>
+      <div class="step"><div class="sn">3</div><h4>Gieo lỗi</h4><p>Tạo bản API lỗi (mutant) có đáp án.</p></div>
+      <div class="step"><div class="sn">4</div><h4>Chạy &amp; đo</h4><p>Coverage · Recall · edge-case.</p></div>
+      <div class="step"><div class="sn">5</div><h4>Phân tích</h4><p>Thống kê → trả lời RQ.</p></div>
+    </div>
+    <p class="lead frag" style="margin-top:24px">Tất cả <b class="hl">tự động + lặp lại được</b> (script + dữ liệu công khai EMB).</p>
+    <div class="snote"><b>🎤 Nói:</b> "Đây là bức tranh lớn, 5 bước. Một: chọn 3 API thật và dựng cho chạy được. Hai: cho AI, người, và EvoMaster cùng viết test.
+      Ba: gieo lỗi vào code tạo ra các bản lỗi có đáp án sẵn. Bốn: chạy mọi bộ test và đo coverage, Recall, số edge-case. Năm: chạy thống kê để trả lời câu hỏi.
+      Toàn bộ tự động và lặp lại được vì dùng dữ liệu công khai EMB và script. Bốn slide sau em zoom vào từng bước."</div>
+  </section>
+
+  <!-- 12 STEP 1 DATASET -->
+  <section class="slide" data-title="Bước 1 · Dataset">
+    <div class="secno">04</div>
+    <h2 class="title">Bước 1 — Chọn API: bộ EMB</h2>
+    <p class="sub">EMB = bộ "đề thi chuẩn" công khai của giới nghiên cứu (EvoMaster Benchmark).</p>
+    <div class="grid g2" style="grid-template-columns:1.1fr .9fr">
+      <table class="frag">
+        <tr><th>API</th><th>Loại</th><th>Endpoint</th></tr>
+        <tr><td><b>rest-ncs</b></td><td>tính toán số</td><td>6</td></tr>
+        <tr><td><b>rest-scs</b></td><td>xử lý chuỗi</td><td>11</td></tr>
+        <tr><td><b>features-service</b></td><td>CRUD + DB thật</td><td>18</td></tr>
+        <tr><td><b>TỔNG</b></td><td>—</td><td><b>35</b></td></tr>
+      </table>
+      <div>
+        <div class="card frag" style="margin-bottom:12px"><h3>Vì sao EMB?</h3><p>Công khai, nhiều paper dùng → uy tín, so sánh công bằng, không tự bịa data.</p></div>
+        <div class="card frag"><h3>Vì sao 3 cái này?</h3><p>ncs/scs nhỏ &amp; ổn định (dễ kiểm soát); features là app thật có DB (thuyết phục).</p></div>
+      </div>
+    </div>
+    <div class="hint frag">Con số 35 endpoint khớp đúng tài liệu gốc EMB — không cãi được. <span class="cite" data-ev="emb">table_emb.md</span></div>
+    <div class="snote"><b>🎤 Nói:</b> "Bước một, chọn API. Tụi em dùng EMB — bộ đề thi chuẩn công khai mà nhiều paper dùng, nên uy tín và so sánh công bằng.
+      Tụi em lấy 3 API: rest-ncs 6 endpoint về tính toán số, rest-scs 11 endpoint xử lý chuỗi, và features-service 18 endpoint CRUD có database thật — tổng 35 endpoint.
+      ncs và scs nhỏ gọn dễ kiểm soát, còn features là app thật để thuyết phục. Con số 35 này khớp đúng tài liệu gốc của EMB."</div>
+  </section>
+
+  <!-- 13 STEP 2 ARMS -->
+  <section class="slide" data-title="Bước 2 · 3 đấu thủ">
+    <div class="secno">04</div>
+    <h2 class="title">Bước 2 — Ba đấu thủ sinh test thế nào?</h2>
+    <p class="sub">Cùng 1 đầu vào (spec), không ai thấy lỗi gieo (blind).</p>
+    <div class="cmp frag">
+      <div class="col"><div class="ch" style="background:var(--teal)">AI (LLM)</div><div class="cb">
+        <p>Claude Sonnet 4.6 (pilot + full)</p><p>Đọc spec → sinh JUnit + RestAssured</p><p class="mut">prompt cố định, nhiệt độ 0</p></div></div>
+      <div class="col"><div class="ch" style="background:var(--mut)">Người</div><div class="cb">
+        <p>Kỹ thuật EP + BVA</p><p>Chia lớp tương đương + thử giá trị biên</p><p class="mut">"chuẩn vàng" QA</p></div></div>
+      <div class="col"><div class="ch" style="background:var(--violet)">EvoMaster</div><div class="cb">
+        <p>v6.0 black-box, 120 giây</p><p>Thuật toán tiến hoá tự dò</p><p class="mut">baseline mạnh</p></div></div>
+    </div>
+    <p class="lead frag" style="margin-top:20px"><b class="hl-a">Blind protocol:</b> cả 3 viết test <b>TRƯỚC</b> khi lỗi được gieo → không ai "học tủ" → công bằng. <span class="cite" data-ev="blind">log AI: tool_uses=0</span></p>
+    <div class="snote"><b>🎤 Nói:</b> "Bước hai, ba đấu thủ. AI dùng model Claude Sonnet 4.6 cho cả pilot lẫn bản đầy đủ, đọc spec rồi sinh test JUnit với RestAssured, prompt cố định nhiệt độ 0.
+      Người dùng kỹ thuật chia lớp tương đương và thử giá trị biên — chuẩn vàng của QA. EvoMaster chạy chế độ black-box 120 giây bằng thuật toán tiến hoá.
+      Quan trọng: cả ba viết test TRƯỚC khi gieo lỗi — gọi là blind — nên không ai học tủ, hoàn toàn công bằng."</div>
+  </section>
+
+  <!-- 14 STEP 3 MUTATION -->
+  <section class="slide" data-title="Bước 3 · Gieo lỗi">
+    <div class="secno">04</div>
+    <h2 class="title">Bước 3 — "Gieo lỗi" (mutation) là gì?</h2>
+    <p class="sub">Cố ý sửa nhẹ code để tạo một con bug — rồi xem test nào phát hiện.</p>
+    <div class="ex frag">
+      <div><div class="lab">Code gốc (đúng)</div><code>if (n &lt; 2)
+   return 400;</code></div>
+      <div><div class="lab">Mutant (đã gieo lỗi)</div><code>if (n &lt;= 2)
+   return 400;
+// đổi &lt; thành &lt;=</code></div>
+      <div><div class="lab">Hậu quả</div><code>n = 2:
+gốc → 200 (đúng)
+mutant → 400 (SAI!)</code></div>
+    </div>
+    <p class="lead frag" style="margin-top:20px">Test <b class="hl-g">"giết" được mutant</b> nếu: <b>pass</b> trên code gốc nhưng <b>fail</b> trên mutant.</p>
+    <p class="lead frag" style="margin-top:10px;font-size:19px"><b>Recall</b> = số mutant bị giết / tổng mutant. Pilot: <b class="hl-a">133 mutant</b> (đáp án biết trước).</p>
+    <div class="snote"><b>🎤 Nói:</b> "Bước ba là phần hay nhất — gieo lỗi. Tụi em cố ý sửa nhẹ code để tạo một con bug.
+      Ví dụ code gốc kiểm tra 'nếu n nhỏ hơn 2 thì báo lỗi'; tụi em đổi thành 'nhỏ hơn hoặc bằng 2'. Giờ với n bằng 2, code gốc trả đúng nhưng mutant trả sai.
+      Một test được tính là 'giết' mutant nếu nó pass trên code gốc nhưng fail trên mutant. Recall là số mutant giết được chia tổng mutant. Pilot tụi em gieo 133 mutant, biết trước đáp án."</div>
+  </section>
+
+  <!-- 15 STEP 4 MEASURE -->
+  <section class="slide" data-title="Bước 4 · Đo">
+    <div class="secno">04</div>
+    <h2 class="title">Bước 4 — Đo 3 thứ</h2>
+    <p class="sub">Mỗi thước đo trả lời một câu hỏi khác nhau.</p>
+    <div class="grid g3">
+      <div class="card frag"><span class="tag t-m">→ RQ1</span><h3>Coverage</h3><p style="color:var(--ink)">% endpoint được ít nhất 1 test chạm tới. <b>"Có gọi tới chưa?"</b></p></div>
+      <div class="card frag"><span class="tag t-c">→ RQ2</span><h3>Recall lỗi gieo</h3><p style="color:var(--ink)">% mutant bị giết. <b>"Bắt được lỗi thật không?"</b></p></div>
+      <div class="card frag"><span class="tag t-m">→ RQ3</span><h3>Edge-case</h3><p style="color:var(--ink)">Số kịch bản negative/boundary/errorcode mỗi endpoint. <b>"Test có kỹ không?"</b></p></div>
+    </div>
+    <p class="lead frag" style="margin-top:24px">3 thước đo cùng nhau = <b class="hl">bức tranh đầy đủ</b>: rộng (coverage) + sâu (edge-case) + thật (Recall).</p>
+    <div class="snote"><b>🎤 Nói:</b> "Bước bốn, đo ba thứ vì mỗi thứ trả lời một câu khác nhau. Coverage là phần trăm endpoint được chạm tới — trả lời 'có gọi tới chưa'.
+      Recall là phần trăm mutant bị giết — 'có bắt được lỗi thật không'. Edge-case là số kịch bản lỗi và biên cho mỗi endpoint — 'test có kỹ không'.
+      Ba thước đo cùng lúc cho bức tranh đầy đủ: rộng, sâu, và thật — chứ không chỉ nhìn coverage như các paper cũ."</div>
+  </section>
+
+  <!-- 16 RUNNING EXAMPLE -->
+  <section class="slide" data-title="Ví dụ thật · bessj">
+    <div class="secno">04</div>
+    <h2 class="title">Ví dụ chạy thật: endpoint <code class="in">bessj</code></h2>
+    <p class="sub">Đây là "cái bẫy" mà nghiên cứu soi ra — rất dễ kể khi bảo vệ.</p>
+    <div class="ex frag">
+      <div><div class="lab">Spec KHAI BÁO</div><code>GET /api/bessj/{n}/{x}
+responses: 200, 401,
+403, 404
+// KHÔNG có 400!</code></div>
+      <div><div class="lab">CODE thật làm</div><code>if (n &lt; 2 || n &gt; 1000)
+   return 400;
+// NcsRest.java:43</code></div>
+      <div><div class="lab">Bẫy</div><code>bessj/1/2.0 → 400
+nhưng spec không ghi 400
+→ ai chỉ đọc spec
+   sẽ KHÔNG biết bẫy này</code></div>
+    </div>
+    <p class="lead frag" style="margin-top:20px">→ Test giỏi phải <b class="hl">tự đoán "thử n=1"</b>. Pilot: AI bắt được bẫy này, một số test người bỏ sót. <span class="cite" data-ev="bessj">NcsRest.java:43</span></p>
+    <div class="hint frag">Nếu GV hỏi "Gap-M cụ thể là gì?" → kể đúng ví dụ này.</div>
+    <div class="snote"><b>🎤 Nói:</b> "Đây là ví dụ cụ thể nhất, rất dễ kể. Endpoint bessj: bản mô tả spec chỉ khai báo các mã 200, 401, 403, 404 — <b>không có 400</b>.
+      Nhưng code thật lại có dòng 'nếu n nhỏ hơn 2 thì trả 400'. Nghĩa là gọi bessj với n=1 sẽ ra lỗi 400 — một cái bẫy mà spec không hề ghi.
+      Ai chỉ đọc spec sẽ không biết. Test giỏi phải tự đoán 'thử n bằng 1'. Trong pilot, AI bắt được bẫy này còn một số test thủ công bỏ sót. Đây chính là GAP-M."</div>
+  </section>
+
+  <!-- 17 PILOT RESULTS -->
+  <section class="slide" data-title="Kết quả pilot">
+    <div class="secno">05</div>
+    <h2 class="title">Kết quả Pilot (Tuần 7)</h2>
+    <p class="sub">Tín hiệu khả thi — chưa phải kết quả cuối; bản chạy đầy đủ (scale, cùng model) sẽ xác nhận.</p>
+    <div class="kpis">
+      <div class="kpi win frag"><div class="n">100%</div><div class="l">RQ1 · coverage (35/35, p≈1.6e-9) <span class="cite" data-ev="cov">summary.json</span></div></div>
+      <div class="kpi win frag"><div class="n">217 vs 141</div><div class="l">RQ3 · edge-case AI vs Người (p≈6.2e-7) <span class="cite" data-ev="edge">summary.json</span></div></div>
+      <div class="kpi warn frag"><div class="n">0.135 vs 0.068</div><div class="l">RQ2 · Recall EvoMaster &gt; AI = Người <span class="cite" data-ev="recall">summary.json</span></div></div>
+    </div>
+    <div class="bars frag" style="margin-top:26px">
+      <div class="brow"><span>AI edge-case</span><div class="track"><div class="fill" style="--w:100%;background:var(--teal)"></div></div><b>217</b></div>
+      <div class="brow"><span>Người edge-case</span><div class="track"><div class="fill" style="--w:65%;background:var(--mut)"></div></div><b>141</b></div>
+    </div>
+    <div class="snote"><b>🎤 Nói:</b> "Kết quả pilot tuần 7. RQ1: AI chạm 100% endpoint, 35 trên 35, p rất nhỏ nên chắc chắn vượt mốc 90%.
+      RQ3: AI sinh 217 kịch bản lỗi/biên so với người 141, p khoảng 6 nhân 10 mũ trừ 7 — khác biệt thật, không phải may rủi.
+      RQ2: EvoMaster bắt lỗi tốt hơn, Recall 0.135 so với AI và người cùng 0.068. Lưu ý đây là tín hiệu khả thi, bản đầy đủ (scale, cùng model Claude) sẽ xác nhận."</div>
+  </section>
+
+  <!-- 17b VIẾT RA vs BẮT ĐƯỢC -->
+  <section class="slide" data-title="Viết ra vs Bắt được">
+    <div class="secno">05</div>
+    <h2 class="title">⚠️ "Viết ra" ≠ "Bắt được" — đừng nhầm!</h2>
+    <p class="sub">Câu hỏi gài hay gặp: "AI bắt 270 bug à?" → KHÔNG. Đây là 2 thứ khác nhau.</p>
+    <div class="cmp">
+      <div class="col"><div class="ch" style="background:var(--mut)">AI VIẾT RA (sản xuất)</div><div class="cb">
+        <p><b style="color:var(--ink);font-size:18px">295</b> test case</p>
+        <p><b style="color:var(--ink);font-size:18px">217</b> kịch bản edge-case (Người 141)</p>
+        <p class="mut">= số lượng TẠO RA — chưa phải bug.</p></div></div>
+      <div class="col"><div class="ch" style="background:var(--teal)">AI BẮT ĐƯỢC (ground truth)</div><div class="cb">
+        <p><b style="color:var(--ink);font-size:18px">9/133</b> lỗi gieo (mutation) = Người</p>
+        <p><b style="color:var(--ink);font-size:18px">31/31</b> hành vi lỗi HTTP (4xx/5xx)</p>
+        <p><b style="color:var(--ink);font-size:18px">32</b> response 5xx = crash thật.</p></div></div>
+    </div>
+    <p class="lead frag" style="margin-top:18px;font-size:19px">Vì sao chênh? Test check <b>status</b>; mutation đổi <b>giá trị</b> → status không đổi → test pass → không bắt. <span class="cite" data-ev="pvd">produced-vs-detected.json</span></p>
+    <div class="card frag" style="border-left:4px solid var(--red);margin-top:12px"><p style="color:var(--ink);font-size:16px"><b class="hl-r">ĐỪNG nói:</b> "AI bắt 270 bug" (đó là số test viết ra). &nbsp; <b class="hl-g">NÓI:</b> "AI sinh 217 kịch bản; bắt 9 lỗi gieo + kích 31 hành vi lỗi gồm crash 500."</p></div>
+    <div class="snote">🎤 Nói: "Một điểm cực dễ nhầm: số AI VIẾT RA khác số AI BẮT ĐƯỢC. AI viết 295 test, sinh 217 kịch bản edge-case — đó là sản xuất, chưa phải bug.
+      Còn BẮT ĐƯỢC: 9 trên 133 lỗi gieo (bằng người), và kích được 31 trên 31 hành vi lỗi HTTP gồm 1 crash 500. Chênh nhau vì test chủ yếu check status, mà mutation đổi giá trị tính toán nên status không đổi, test vẫn pass.
+      Tuyệt đối đừng nói 'AI bắt 270 bug' — đó là số test viết ra, GV sẽ bắt lỗi ngay."</div>
+  </section>
+
+  <!-- 18 BASELINE -->
+  <section class="slide" data-title="Baseline error-surface">
+    <div class="secno">05</div>
+    <h2 class="title">Baseline: "bản đồ lỗi" trích từ CODE</h2>
+    <p class="sub">Trước khi so ai hơn ai, phải biết <b>mỗi endpoint CÓ THỂ lỗi ở đâu</b> — đọc thẳng từ source.</p>
+    <div class="kpis">
+      <div class="kpi frag"><div class="n">35</div><div class="l">endpoint quét</div></div>
+      <div class="kpi frag"><div class="n">39</div><div class="l">điểm-lỗi trong code</div></div>
+      <div class="kpi warn frag"><div class="n">22</div><div class="l">endpoint có nguy cơ <b>crash 500</b></div></div>
+      <div class="kpi frag"><div class="n">5</div><div class="l">endpoint có guard 4xx rõ</div></div>
+    </div>
+    <p class="lead frag" style="margin-top:22px">Tool <code class="in">error_surface.py</code> → <code class="in">results/error-surface-baseline.json</code> (chạy lại được, không tay). <span class="cite" data-ev="baseline">baseline.json</span></p>
+    <div class="hint frag">Đây là baseline GV yêu cầu: trích API + trích code → liệt kê mọi khả năng lỗi per endpoint.</div>
+    <div class="snote"><b>🎤 Nói:</b> "Trước khi so ai hơn ai, tụi em xây một baseline: bản đồ lỗi trích thẳng từ code. Với mỗi endpoint, tool tự quét source để liệt kê chỗ nào có thể sinh lỗi 4xx hoặc 5xx.
+      Kết quả: 35 endpoint, 39 điểm-lỗi, trong đó 22 endpoint có nguy cơ crash 500, chỉ 5 endpoint có kiểm tra lỗi rõ ràng. Tất cả tự động bằng tool error_surface.py, xuất ra file JSON, chạy lại được. Đây đúng là baseline thầy/cô yêu cầu."</div>
+  </section>
+
+  <!-- 19 HOW TO READ -->
+  <section class="slide" data-title="Đọc kết quả sao">
+    <div class="secno">05</div>
+    <h2 class="title">Đọc kết quả thế nào? (trung thực)</h2>
+    <p class="sub">Không tô hồng — báo cả chỗ AI thua.</p>
+    <div class="grid g2">
+      <div class="card frag" style="border-left:4px solid var(--green)"><h3 style="color:var(--green)">AI thắng ở</h3>
+        <p style="color:var(--ink)">Phủ rộng (100% endpoint) + <b>nghĩ ra nhiều kịch bản lỗi/biên hơn người</b> (217 vs 141). AI "chăm" hơn.</p></div>
+      <div class="card frag" style="border-left:4px solid var(--amber)"><h3 style="color:var(--amber)">AI chưa thắng ở</h3>
+        <p style="color:var(--ink)">Bắt lỗi <b>tính toán sâu</b>: EvoMaster ghi lại giá trị đúng làm "đáp án" nên bắt giỏi hơn; AI/người chỉ check status.</p></div>
+    </div>
+    <p class="lead frag" style="margin-top:22px">Kết luận trung thực: AI <b class="hl">prolific hơn</b> (sinh nhiều &amp; rộng) nhưng <b class="hl-a">chưa fault-revealing hơn</b> — báo đúng, không đổi metric sau khi thấy số.</p>
+    <div class="snote"><b>🎤 Nói:</b> "Tụi em đọc kết quả trung thực, không tô hồng. AI thắng ở chỗ phủ rộng và nghĩ ra nhiều kịch bản lỗi hơn người — nó 'chăm' hơn.
+      Nhưng AI chưa thắng ở việc bắt lỗi tính toán sâu: EvoMaster ghi lại giá trị đúng làm đáp án nên bắt giỏi hơn, trong khi AI và người chỉ kiểm tra mã trạng thái.
+      Kết luận thẳng thắn: AI prolific hơn — sinh nhiều và rộng — nhưng chưa giỏi lộ lỗi hơn. Tụi em báo đúng như vậy, không chỉnh metric sau khi thấy số."</div>
+  </section>
+
+  <!-- 20 THREATS -->
+  <section class="slide" data-title="Threats">
+    <div class="secno">06</div>
+    <h2 class="title">Điểm yếu &amp; cách tụi em xử lý</h2>
+    <p class="sub">Tự nêu trước để bảo vệ chủ động.</p>
+    <div class="grid g2">
+      <div class="card frag"><h3 style="color:var(--amber)">Chỉ test 1 model (Claude)</h3><p>Pipeline model-agnostic; kết quả hiện giới hạn ở Claude Sonnet 4.6 — Gemini/GPT để ablation sau (GAP-T).</p></div>
+      <div class="card frag"><h3 style="color:var(--amber)">Chỉ 3 API nhỏ (n=3)</h3><p>Dùng McNemar gộp theo từng lỗi (N≈133) làm test chính; nêu rõ giới hạn "EMB/JVM-only".</p></div>
+      <div class="card frag"><h3 style="color:var(--amber)">Mutation ≠ lỗi thật 100%</h3><p>Dùng operator chuẩn PIT/Offutt (có trích dẫn); báo Recall + coverage + edge-case cùng nhau.</p></div>
+      <div class="card frag"><h3 style="color:var(--amber)">Pilot: AI &amp; người cùng 1 agent</h3><p>Blind protocol (test trước khi gieo lỗi); full run dùng người thật + 1 session Claude Sonnet 4.6 tách biệt.</p></div>
+    </div>
+    <div class="snote"><b>🎤 Nói:</b> "Tụi em chủ động nêu điểm yếu. Một, hiện chỉ test 1 model là Claude — pipeline đổi model được, Gemini/GPT để ablation sau.
+      Hai, chỉ 3 API nhỏ nên tụi em dùng kiểm định McNemar gộp theo từng lỗi với 133 mẫu làm test chính, và nêu rõ giới hạn chỉ trên EMB.
+      Ba, gieo lỗi không hoàn toàn giống lỗi thật — nên dùng operator chuẩn có trích dẫn và báo nhiều thước đo cùng lúc.
+      Bốn, trong pilot AI và người cùng một agent — nên dùng blind protocol, bản đầy đủ tách người thật riêng."</div>
+  </section>
+
+  <!-- 21 Q&A PREP -->
+  <section class="slide" data-title="Câu hỏi GV hay hỏi">
+    <div class="secno">06</div>
+    <h2 class="title">Chuẩn bị câu hỏi GV hay hỏi</h2>
+    <p class="sub">Học thuộc 4 câu này là tự tin bảo vệ.</p>
+    <div style="margin-top:6px">
+      <div class="qa frag"><p class="q">Điểm mới so với paper cũ là gì?</p><p class="a">Lần đầu so AI vs người vs EvoMaster trên <b>lỗi gieo sẵn</b> → tính được Recall thật (3 cái cũ chưa làm).</p></div>
+      <div class="qa frag"><p class="q">Sao chỉ 3 API, có ít quá không?</p><p class="a">Đây là <b>pilot</b> chứng minh khả thi; thống kê chính là McNemar gộp 133 lỗi, không phải n=3. Full run mở rộng.</p></div>
+      <div class="qa frag"><p class="q">Sao chọn Claude mà không phải GPT?</p><p class="a">Team chọn Claude Sonnet 4.6: sẵn có + model mạnh non-GPT → thêm bằng chứng ngoài hệ GPT (đóng góp GAP-T). Pipeline model-agnostic nên đổi được.</p></div>
+      <div class="qa frag"><p class="q">AI thua EvoMaster ở RQ2 thì sao?</p><p class="a">Đó là <b>phát hiện trung thực</b>: AI prolific nhưng oracle yếu hơn → đề xuất AI + oracle giá-trị là hướng tương lai.</p></div>
+    </div>
+    <div class="snote"><b>🎤 Nói:</b> "Em chuẩn bị sẵn 4 câu thầy/cô hay hỏi. Điểm mới: lần đầu so ba bên trên lỗi gieo sẵn để tính Recall thật.
+      Sao chỉ 3 API: đây là pilot chứng minh khả thi, thống kê chính là McNemar gộp 133 lỗi chứ không phải n bằng 3.
+      Sao chọn Claude: model mạnh non-GPT, sẵn có, thêm bằng chứng ngoài hệ GPT (GAP-T); pipeline đổi model được.
+      AI thua EvoMaster ở RQ2: đó là phát hiện trung thực, và tụi em đề xuất kết hợp AI với oracle giá-trị làm hướng tương lai."</div>
+  </section>
+
+  <!-- 22 ROLES -->
+  <section class="slide" data-title="Phân công & tiến độ">
+    <div class="secno">06</div>
+    <h2 class="title">Phân công &amp; Tiến độ</h2>
+    <p class="sub">1 deliverable / người · LR ≠ MS · chia đều.</p>
+    <div class="grid g2" style="grid-template-columns:1.25fr .75fr">
+      <table class="frag">
+        <tr><th>Thành viên</th><th>Vai trò</th><th>Deliverable</th></tr>
+        <tr><td><b>Vo Le Trung Nguyen</b> <span class="mut">SE190220</span></td><td class="role">PL</td><td>điều phối · merge · nộp · liaison GV</td></tr>
+        <tr><td><b>Nguyen Thanh Dat</b> <span class="mut">SE190239</span></td><td class="role">DG</td><td>dataset + fault catalog + §3</td></tr>
+        <tr><td><b>Nguyen Tien Dung</b> <span class="mut">SE190034</span></td><td class="role">LR</td><td>harness + LLM/EvoMaster + pilot</td></tr>
+        <tr><td><b>Nguyen Hoang Huy</b> <span class="mut">SE190240</span></td><td class="role">MS</td><td>metric + thống kê + §6</td></tr>
+        <tr><td><b>Nguyen Le Thuan</b> <span class="mut">SE190305</span></td><td class="role">RW</td><td>§7 threats + format + slides</td></tr>
+      </table>
+      <div>
+        <div class="card frag" style="margin-bottom:11px"><h3>Tuần 5–6</h3><p>Hoàn thiện + nộp proposal · GV duyệt</p></div>
+        <div class="card frag" style="margin-bottom:11px;border-left:4px solid var(--green)"><h3 style="color:var(--green)">Tuần 7 — XONG</h3><p>Pilot: 133 mutant · 3 SUT · AI/Người/EvoMaster</p></div>
+        <div class="card frag"><h3>Tuần 8</h3><p>Full run (scale) Claude Sonnet 4.6 · chốt phân tích + báo cáo</p></div>
+      </div>
+    </div>
+    <div class="snote"><b>🎤 Nói:</b> "Phân công chia đều, mỗi người một deliverable. Nguyên là trưởng nhóm điều phối; Đạt lo dataset và fault catalog; em — Dũng — làm harness, chạy LLM và EvoMaster, dựng pilot; Huy lo metric và thống kê; Thuận viết threats, format và slide.
+      Tiến độ: tuần 5-6 nộp proposal, tuần 7 đã xong pilot, tuần 8 chạy bản đầy đủ (scale) với Claude Sonnet 4.6."</div>
+  </section>
+
+  <!-- 23 CONCLUSION -->
+  <section class="slide dark" data-title="Kết luận">
+    <p class="kicker">Kết luận</p>
+    <h1>Đóng góp &amp; Bước tiếp</h1>
+    <div class="grid g3" style="margin-top:8px">
+      <div class="card frag" style="background:#1c1c2b;border-color:#2a2a3a"><h3 style="color:#5eead4">Mới</h3><p style="color:#cdd">Lần đầu so <b style="color:#fff">AI vs Người vs EvoMaster</b> trên benchmark lỗi gieo sẵn → Recall thật.</p></div>
+      <div class="card frag" style="background:#1c1c2b;border-color:#2a2a3a"><h3 style="color:#5eead4">Khả thi</h3><p style="color:#cdd">Pilot: coverage <b style="color:#fff">100%</b>, edge-case <b style="color:#fff">217&gt;141</b>, baseline 35 endpoint từ code.</p></div>
+      <div class="card frag" style="background:#1c1c2b;border-color:#2a2a3a"><h3 style="color:#5eead4">Tiếp</h3><p style="color:#cdd">Full run (scale) <b style="color:#fff">Claude Sonnet 4.6</b> theo protocol đã duyệt → chốt kết luận.</p></div>
+    </div>
+    <p class="lead frag" style="margin-top:auto;color:#cdd;font-size:24px">Cảm ơn thầy/cô — nhóm em sẵn sàng nhận câu hỏi. 🙏</p>
+    <div class="snote"><b>🎤 Chốt:</b> "Tóm lại ba đóng góp: một, lần đầu so ba bên trên lỗi gieo sẵn để có Recall thật; hai, pilot cho thấy khả thi với coverage 100% và edge-case 217 so 141; ba, bước tiếp là chạy đầy đủ (scale) với Claude Sonnet 4.6.
+      Em xin hết phần trình bày, cảm ơn thầy/cô, nhóm em sẵn sàng nhận câu hỏi."</div>
+  </section>
+
+  <!-- 24 GLOSSARY · research -->
+  <section class="slide" data-title="Giải ngố · Research">
+    <div class="secno">📖</div>
+    <h2 class="title">Giải ngố — thuật ngữ Research</h2>
+    <p class="sub">Slide tra cứu: khi GV hỏi "cái này là gì?" thì mở ra đọc.</p>
+    <div class="gl">
+      <div><span class="term">REST API</span> — cách phần mềm gọi nhau qua HTTP (GET/POST…).</div>
+      <div><span class="term">OpenAPI spec</span> — bản mô tả API (endpoint, input, output) = "hợp đồng".</div>
+      <div><span class="term">LLM</span> — mô hình ngôn ngữ lớn (AI như GPT/Claude) đọc &amp; viết text.</div>
+      <div><span class="term">SLR</span> — đọc tài liệu có hệ thống để tìm khoảng trống.</div>
+      <div><span class="term">GAP</span> — khoảng trống nghiên cứu (cái quan trọng chưa ai làm).</div>
+      <div><span class="term">RQ</span> — câu hỏi nghiên cứu (cái ta đi trả lời).</div>
+      <div><span class="term">H0 / H1</span> — giả thuyết "không khác biệt" / "điều muốn chứng minh".</div>
+      <div><span class="term">p-value</span> — xác suất kết quả do may rủi; &lt; 0.05 = đáng tin.</div>
+      <div><span class="term">Baseline</span> — mốc/đối thủ để so (Người, EvoMaster).</div>
+      <div><span class="term">SOTA</span> — state-of-the-art = tốt nhất hiện có.</div>
+    </div>
+    <div class="snote">🎤 Đây là slide tra cứu — không cần đọc hết khi present; dùng khi bị hỏi định nghĩa.</div>
+  </section>
+
+  <!-- 25 GLOSSARY · experiment -->
+  <section class="slide" data-title="Giải ngố · Experiment">
+    <div class="secno">🔬</div>
+    <h2 class="title">Giải ngố — thuật ngữ Experiment</h2>
+    <p class="sub">Các từ kỹ thuật trong phần chạy thực nghiệm.</p>
+    <div class="gl">
+      <div><span class="term">Black-box</span> — test chỉ nhìn input/output, KHÔNG nhìn code.</div>
+      <div><span class="term">EP / BVA</span> — chia lớp tương đương / thử giá trị biên (test tay).</div>
+      <div><span class="term">Mutation / mutant</span> — cố ý sửa code tạo "bug giả" để thử test.</div>
+      <div><span class="term">Kill (giết mutant)</span> — test pass trên code gốc nhưng fail trên mutant.</div>
+      <div><span class="term">Recall</span> — % lỗi gieo mà test bắt được.</div>
+      <div><span class="term">Coverage</span> — % endpoint được test chạm tới.</div>
+      <div><span class="term">Edge-case</span> — kịch bản biên/lỗi (4xx/5xx, giá trị cực trị).</div>
+      <div><span class="term">Oracle</span> — "đáp án" test dùng để biết đúng/sai (status / giá trị).</div>
+      <div><span class="term">EvoMaster</span> — tool tự sinh test bằng thuật toán tiến hoá.</div>
+      <div><span class="term">Wilcoxon / McNemar</span> — kiểm định thống kê phi tham số (so cặp).</div>
+    </div>
+    <div class="snote">🎤 Slide tra cứu cho phần experiment — mở khi GV hỏi "mutation là gì", "Recall là gì"…</div>
+  </section>
+
+</div>
+
+<div id="chrome"><span class="ftitle"></span><span id="counter"></span>
+  <span class="ctrls">
+    <button id="c-prev">‹</button><button id="c-next">›</button>
+    <button id="c-grid">grid O</button><button id="c-notes">notes S</button>
+    <button id="c-theme">theme T</button><button id="c-help">? help</button>
+  </span></div>
+<aside id="notes"><h4>🎤 Lời thoại (đọc là nói được)</h4><div class="ntxt"></div></aside>
+<div id="overview"></div>
+<div id="help"><div class="box"><h4 style="font-family:var(--disp);margin:0 0 12px">Điều khiển</h4><ul style="list-style:none;padding:0;margin:0">
+  <li><kbd>→</kbd> <kbd>Space</kbd> tiếp / mở từng ý · <kbd>←</kbd> lùi</li>
+  <li><kbd>S</kbd> bật <b>lời thoại</b> (script để present) · <kbd>O</kbd> overview</li>
+  <li>📎 trên slide = <b>bằng chứng</b> → bấm để mở nội dung file thật + tô vàng dòng</li>
+  <li><kbd>↑</kbd><kbd>↓</kbd> nhảy slide · <kbd>số</kbd>+<kbd>Enter</kbd> tới slide</li>
+  <li><kbd>T</kbd> sáng/tối · <kbd>F</kbd> toàn màn hình · click phải=tiếp, trái=lùi</li>
+</ul></div></div>
+
+<script>
+(() => {
+  const stage=document.getElementById('stage'), slides=[...document.querySelectorAll('.slide')];
+  const progress=document.getElementById('progress'), counter=document.getElementById('counter');
+  const ftitle=document.querySelector('#chrome .ftitle'), notes=document.getElementById('notes');
+  const notesTxt=notes.querySelector('.ntxt'), overview=document.getElementById('overview'), help=document.getElementById('help');
+  let cur=0, frag=0;
+  function fit(){const s=Math.min(window.innerWidth/1280,(window.innerHeight-30)/720);
+    slides.forEach(sl=>{sl.style.transform=`translate(-50%,-50%) scale(${s})`;});}
+  window.addEventListener('resize',fit);
+  const fragsOf=i=>[...slides[i].querySelectorAll('.frag')];
+  function applyFrags(){fragsOf(cur).forEach((f,k)=>f.classList.toggle('in',k<frag));}
+  function render(enter=true){
+    slides.forEach((sl,i)=>{sl.classList.toggle('active',i===cur);
+      if(i===cur&&enter){sl.classList.remove('enter');void sl.offsetWidth;sl.classList.add('enter');}});
+    applyFrags();
+    progress.style.width=(cur/(slides.length-1))*100+'%';
+    counter.textContent=String(cur+1).padStart(2,'0')+' / '+slides.length;
+    ftitle.textContent=slides[cur].dataset.title||slides[cur].querySelector('.title,h1')?.textContent||'';
+    const sn=slides[cur].querySelector('.snote');
+    notesTxt.innerHTML=sn?sn.innerHTML:'<p class="mut">— (chưa có note)</p>';
+    location.hash='slide-'+(cur+1); if(overview.classList.contains('show'))markOverview();
+  }
+  function next(){const fs=fragsOf(cur); if(frag<fs.length){frag++;applyFrags();return;} if(cur<slides.length-1){cur++;frag=0;render();}}
+  function prev(){if(frag>0){frag--;applyFrags();return;} if(cur>0){cur--;frag=fragsOf(cur).length;render();applyFrags();}}
+  function go(i){cur=Math.max(0,Math.min(slides.length-1,i));frag=0;render();}
+  function buildOverview(){let h='';slides.forEach((sl,i)=>{const t=sl.dataset.title||('Slide '+(i+1));
+    h+=`<div class="ov" data-i="${i}" tabindex="0"><div class="ovn">${String(i+1).padStart(2,'0')}</div><div class="ovt">${t}</div></div>`;});
+    overview.innerHTML=h;overview.querySelectorAll('.ov').forEach(o=>{const j=()=>{toggleOverview(false);go(+o.dataset.i);};
+      o.addEventListener('click',j);o.addEventListener('keydown',e=>{if(e.key==='Enter')j();});});}
+  function markOverview(){overview.querySelectorAll('.ov').forEach(o=>o.classList.toggle('current',+o.dataset.i===cur));}
+  function toggleOverview(f){const show=f??!overview.classList.contains('show');overview.classList.toggle('show',show);if(show)markOverview();}
+  const toggleNotes=()=>notes.classList.toggle('show');
+  const toggleHelp=f=>help.classList.toggle('show',f);
+  function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';
+    document.documentElement.setAttribute('data-theme',d?'light':'dark');try{localStorage.setItem('def-theme',d?'light':'dark');}catch(e){}}
+  function fullscreen(){document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.();}
+  let jb='';
+  window.addEventListener('keydown',e=>{
+    if(help.classList.contains('show')&&e.key!=='?'&&e.key!=='Escape')toggleHelp(false);
+    switch(e.key){
+      case 'ArrowRight':case ' ':case 'PageDown':e.preventDefault();next();break;
+      case 'ArrowLeft':case 'PageUp':e.preventDefault();prev();break;
+      case 'ArrowDown':e.preventDefault();go(cur+1);break;
+      case 'ArrowUp':e.preventDefault();go(cur-1);break;
+      case 'Home':go(0);break;case 'End':go(slides.length-1);break;
+      case 's':case 'S':toggleNotes();break;case 'o':case 'O':toggleOverview();break;
+      case 't':case 'T':toggleTheme();break;case 'f':case 'F':fullscreen();break;
+      case '?':toggleHelp();break;
+      case 'Escape':overview.classList.contains('show')?toggleOverview(false):toggleHelp(false);break;
+      default: if(/[0-9]/.test(e.key))jb+=e.key; else if(e.key==='Enter'&&jb){go(+jb-1);jb='';}
+    }});
+  stage.addEventListener('click',e=>{if(e.target.closest('a,button,.ov,table,code,.cite'))return;(e.clientX<window.innerWidth*0.28)?prev():next();});
+  let tx=0;stage.addEventListener('touchstart',e=>tx=e.changedTouches[0].clientX,{passive:true});
+  stage.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)(dx<0?next():prev());},{passive:true});
+  document.getElementById('c-prev').onclick=prev;document.getElementById('c-next').onclick=next;
+  document.getElementById('c-notes').onclick=toggleNotes;document.getElementById('c-grid').onclick=()=>toggleOverview();
+  document.getElementById('c-theme').onclick=toggleTheme;document.getElementById('c-help').onclick=()=>toggleHelp();
+  try{const th=localStorage.getItem('def-theme');if(th)document.documentElement.setAttribute('data-theme',th);}catch(e){}
+  buildOverview();fit();
+  const m=location.hash.match(/slide-(\d+)/);cur=m?Math.min(slides.length-1,Math.max(0,+m[1]-1)):0;render(false);
+  window.addEventListener('hashchange',()=>{const mm=location.hash.match(/slide-(\d+)/);if(!mm)return;const t=Math.min(slides.length-1,Math.max(0,+mm[1]-1));if(t!==cur)go(t);});
+})();
+</script>
+
+<!-- EVIDENCE MODAL: click 📎 -> show real file excerpt with highlighted line + source -->
+<div id="evidence"><div class="ev">
+  <div class="evhead"><span class="t"></span><span class="x" id="ev-x">Esc ✕</span></div>
+  <div class="evpath"></div><div class="evcode"></div><div class="evsrc"></div>
+</div></div>
+<script>
+(()=>{
+  const EVID={
+   cov:{title:'RQ1 — Coverage 100%',file:'experiment/results/stats/summary.json',
+     body:'"RQ1_endpoint_coverage": {\n  "n_operations": 35,\n  "ops_covered": 35,\n  "coverage_overall_pct": 100.0,\n  "wilcoxon_W": 630.0,\n  "p_value_one_sided": 1.6485e-09,\n  "reject_H0_(coverage>90%)": true\n}',
+     hi:[4,6,7], src:'Pilot tự đo: AI chạm <b>35/35</b> endpoint; p≈1.6e-9 ⇒ vượt mốc 90% (bác bỏ H0).'},
+   edge:{title:'RQ3 — Edge-case: AI vs Người',file:'experiment/results/stats/summary.json',
+     body:'"RQ3_edge_cases_llm_vs_manual": {\n  "llm_total_edge": 217,\n  "manual_total_edge": 141,\n  "llm_median_per_op": 5.0,\n  "manual_median_per_op": 4.0,\n  "p_value_one_sided": 6.2009e-07,\n  "pairs_llm_more": 30,\n  "pairs_manual_more": 1,\n  "pairs_tie": 4\n}',
+     hi:[2,3,6,7], src:'AI <b>217</b> vs Người <b>141</b>; AI nhiều hơn ở 30/35 endpoint; p≈6.2e-7 (khác biệt thật, không may rủi).'},
+   recall:{title:'RQ2 — Recall (bắt lỗi gieo)',file:'experiment/results/stats/summary.json',
+     body:'"overall_recall": {\n  "llm": 0.0677,\n  "manual": 0.0677,\n  "evomaster": 0.1353\n},\n"n_mutants_total": 133,\n"mcnemar": { "llm_vs_evomaster": {\n   "p_value": 0.0636, "reject_H0": false }}',
+     hi:[4], src:'EvoMaster <b>0.135</b> &gt; AI = Người <b>0.068</b> trên 133 mutant; chênh lệch chưa đủ ý nghĩa (p≈0.064) — báo trung thực.'},
+   bessj:{title:'Bẫy bessj — code thật trả 400',file:'EMB/…/org/restncs/NcsRest.java : 43',
+     body:'public ResponseEntity<Dto> bessj(\n    @PathVariable("n") Integer n,\n    @PathVariable("x") Double x ){\n  if(n < 2 || n > 1000){\n    return ResponseEntity.status(400).build();\n  }\n  ...',
+     hi:[4,5], src:'Code thật trả <b>400</b> khi n&lt;2, nhưng spec KHÔNG khai báo 400 ⇒ "bẫy" edge-case mà GAP-M đo.'},
+   baseline:{title:'Error-surface baseline (từ code)',file:'experiment/results/error-surface-baseline.json',
+     body:'"summary": {\n  "total_endpoints": 35,\n  "total_error_points": 39,\n  "endpoints_with_explicit_4xx_guard": 5,\n  "endpoints_with_potential_5xx_crash": 22\n}',
+     hi:[4,5], src:'Tool <b>error_surface.py</b> quét source: chỉ 5/35 endpoint có kiểm tra lỗi rõ; 22/35 có nguy cơ crash 500.'},
+   pvd:{title:'Viết ra vs Bắt được',file:'experiment/results/produced-vs-detected.json',
+     body:'"produced": {              // AI TẠO RA\n  "test_cases":  { "llm": 295 },\n  "edge_case_scenarios": { "llm": 217, "manual": 141 }\n},\n"detected": {              // AI BẮT ĐƯỢC\n  "mutation_faults_killed":  { "llm": 9, "total": 133 },\n  "http_error_behaviours_triggered": { "llm": 31, "answer_key": 31 },\n  "server_crash_5xx_responses": { "llm": 32 }\n}',
+     hi:[2,3,6,7,8], src:'AI VIẾT 295 test / 217 kịch bản — nhưng BẮT 9 lỗi gieo + 31 hành vi lỗi. Hai con số khác hẳn nhau.'},
+   emb:{title:'EMB — 35 endpoint (tài liệu gốc)',file:'EMB/statistics/table_emb.md',
+     body:'|Type|Name             |#LOCs|#Files|#Endpoints|\n|REST|rest-ncs         |605  |9     |6 |\n|REST|rest-scs         |862  |13    |11|\n|REST|features-service  |2275 |39    |18|\n                                     6 + 11 + 18 = 35',
+     hi:[2,3,4], src:'Số endpoint trích thẳng tài liệu gốc EMB — <b>khớp đúng</b>, không tự bịa.'},
+   blind:{title:'Blind — AI không nhìn code nguồn',file:'experiment/llm/transcripts/ncs.md',
+     body:'| Blindness evidence | tool_uses = 0 — the sub-agent\n  issued NO tool calls, so it did NOT read the SUT\n  source, the web, or any file. Its only input was\n  the spec text.  →  blind to source + blind to faults |',
+     hi:[1], src:'Log của AI: <b>0 lần gọi tool</b> ⇒ chỉ thấy spec, không hề đọc code ⇒ thí nghiệm công bằng.'},
+   gapc:{title:'GAP-C — chỉ 1 study so với người',file:'team-synthesis/proposal.md  §2.3',
+     body:'GAP-C: exactly ONE study compares a tool vs *manual*\ntests — EvoMaster (#16), a non-LLM tool that scored\nBELOW manual (41% vs 82%). No paper puts LLM vs\nmanual vs EvoMaster on the same APIs.',
+     hi:[3], src:'Arcuri 2019 (paper #16): tool tự động <b>thua người</b> 41% vs 82%; chưa ai so 3 bên cùng lúc.'},
+  };
+  const modal=document.getElementById('evidence'), T=modal.querySelector('.t'),
+    P=modal.querySelector('.evpath'), C=modal.querySelector('.evcode'), S=modal.querySelector('.evsrc');
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  function open(id){const e=EVID[id];if(!e)return;
+    T.textContent=e.title; P.textContent='📄 '+e.file;
+    C.innerHTML=e.body.split('\n').map((l,i)=>`<span class="ln${e.hi&&e.hi.includes(i+1)?' evhi':''}">${esc(l)||' '}</span>`).join('');
+    S.innerHTML='<b>Nguồn:</b> '+e.src; modal.classList.add('show');}
+  function close(){modal.classList.remove('show');}
+  document.addEventListener('click',e=>{const c=e.target.closest('.cite');
+    if(c){e.preventDefault();open(c.dataset.ev);return;}
+    if(e.target===modal||e.target.closest('#ev-x'))close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show')){e.stopPropagation();close();}},true);
+})();
+</script>
+</body>
+</html>
