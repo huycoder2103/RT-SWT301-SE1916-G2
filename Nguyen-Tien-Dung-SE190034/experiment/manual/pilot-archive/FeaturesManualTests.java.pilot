@@ -1,0 +1,649 @@
+package manual;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import io.restassured.RestAssured;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+
+public class FeaturesManualTests {
+
+    @BeforeAll
+    static void setup() {
+        RestAssured.baseURI = System.getProperty("baseURI", "http://localhost:8080");
+        RestAssured.urlEncodingEnabled = true;
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+    }
+
+    // getAllProducts
+
+    // SCENARIO op=getAllProducts type=positive expect=200
+    @Test
+    void getAllProducts_P_returnsArray() {
+        given()
+            .when().get("/products")
+            .then().statusCode(200)
+            .body("$", instanceOf(java.util.List.class));
+    }
+
+    // addProduct / getProductByName / deleteProductByName  (lifecycle)
+
+    // SCENARIO op=addProduct type=positive expect=2xx
+    @Test
+    void addProduct_P_createNewProduct() {
+        given()
+            .when().post("/products/TestProduct_AddP")
+            .then().statusCode(anyOf(is(200), is(201), is(204)));
+    }
+
+    // SCENARIO op=getProductByName type=positive expect=200
+    @Test
+    void getProductByName_P_existingProduct() {
+        given().when().post("/products/TestProduct_GetP").then();
+
+        given()
+            .when().get("/products/TestProduct_GetP")
+            .then().statusCode(200)
+            .body("name", equalTo("TestProduct_GetP"));
+    }
+
+    // SCENARIO op=getProductByName type=negative expect=error
+    @Test
+    void getProductByName_N_nonExistentProduct() {
+        given()
+            .when().get("/products/NoSuchProduct_xyzzy_99999")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=getProductByName type=boundary expect=200
+    @Test
+    void getProductByName_B_singleCharName() {
+        given().when().post("/products/X").then();
+
+        given()
+            .when().get("/products/X")
+            .then().statusCode(anyOf(is(200), is(400), is(404)));
+    }
+
+    // SCENARIO op=getProductByName type=boundary expect=200-or-error
+    @Test
+    void getProductByName_B_longProductName() {
+        String longName = "A".repeat(255);
+        given().when().post("/products/" + longName).then();
+
+        given()
+            .when().get("/products/" + longName)
+            .then().statusCode(anyOf(is(200), is(400), is(404), is(414), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteProductByName type=positive expect=2xx
+    @Test
+    void deleteProductByName_P_existingProduct() {
+        given().when().post("/products/TestProduct_DelP").then();
+
+        given()
+            .when().delete("/products/TestProduct_DelP")
+            .then().statusCode(anyOf(is(200), is(204)));
+    }
+
+    // SCENARIO op=deleteProductByName type=negative expect=error
+    @Test
+    void deleteProductByName_N_nonExistentProduct() {
+        given()
+            .when().delete("/products/NoSuchProduct_del_xyzzy_99999")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=getProductByName type=errorcode expect=error
+    @Test
+    void getProductByName_E_readAfterDelete() {
+        given().when().post("/products/TestProduct_RAD").then();
+        given().when().delete("/products/TestProduct_RAD").then();
+
+        given()
+            .when().get("/products/TestProduct_RAD")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // getFeaturesForProduct
+
+    // SCENARIO op=getFeaturesForProduct type=positive expect=200
+    @Test
+    void getFeaturesForProduct_P_existingProduct() {
+        given().when().post("/products/TestProduct_FeatList").then();
+
+        given()
+            .when().get("/products/TestProduct_FeatList/features")
+            .then().statusCode(200)
+            .body("$", instanceOf(java.util.List.class));
+    }
+
+    // SCENARIO op=getFeaturesForProduct type=negative expect=error
+    @Test
+    void getFeaturesForProduct_N_nonExistentProduct() {
+        given()
+            .when().get("/products/NoSuchProduct_feats_xyzzy/features")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // addFeatureToProduct / updateFeatureOfProduct / deleteFeatureOfProduct (lifecycle)
+
+    // SCENARIO op=addFeatureToProduct type=positive expect=2xx
+    @Test
+    void addFeatureToProduct_P_withDescription() {
+        given().when().post("/products/TestProduct_FeatAdd").then();
+
+        given()
+            .formParam("description", "A test feature description")
+            .when().post("/products/TestProduct_FeatAdd/features/FeatureAlpha")
+            .then().statusCode(anyOf(is(200), is(201), is(204)));
+    }
+
+    // SCENARIO op=addFeatureToProduct type=positive expect=2xx
+    @Test
+    void addFeatureToProduct_P_withoutDescription() {
+        given().when().post("/products/TestProduct_FeatAddNoDesc").then();
+
+        given()
+            .when().post("/products/TestProduct_FeatAddNoDesc/features/FeatureNoDesc")
+            .then().statusCode(anyOf(is(200), is(201), is(204)));
+    }
+
+    // SCENARIO op=addFeatureToProduct type=negative expect=error
+    @Test
+    void addFeatureToProduct_N_nonExistentProduct() {
+        given()
+            .formParam("description", "desc")
+            .when().post("/products/NoSuchProduct_xyzzy_feat/features/SomeFeature")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=addFeatureToProduct type=boundary expect=2xx-or-error
+    @Test
+    void addFeatureToProduct_B_emptyDescription() {
+        given().when().post("/products/TestProduct_FeatEmptyDesc").then();
+
+        given()
+            .formParam("description", "")
+            .when().post("/products/TestProduct_FeatEmptyDesc/features/FeatureEmptyDesc")
+            .then().statusCode(anyOf(is(200), is(201), is(204), is(400), is(422)));
+    }
+
+    // SCENARIO op=addFeatureToProduct type=boundary expect=2xx-or-error
+    @Test
+    void addFeatureToProduct_B_longFeatureName() {
+        given().when().post("/products/TestProduct_FeatLongName").then();
+
+        String longFeat = "F".repeat(200);
+        given()
+            .formParam("description", "long name test")
+            .when().post("/products/TestProduct_FeatLongName/features/" + longFeat)
+            .then().statusCode(anyOf(is(200), is(201), is(204), is(400), is(414), is(422), is(500)));
+    }
+
+    // SCENARIO op=updateFeatureOfProduct type=positive expect=200
+    @Test
+    void updateFeatureOfProduct_P_existingFeature() {
+        given().when().post("/products/TestProduct_FeatUpd").then();
+        given().formParam("description", "original").when()
+            .post("/products/TestProduct_FeatUpd/features/FeatureBeta").then();
+
+        given()
+            .formParam("description", "updated description")
+            .when().put("/products/TestProduct_FeatUpd/features/FeatureBeta")
+            .then().statusCode(200);
+    }
+
+    // SCENARIO op=updateFeatureOfProduct type=negative expect=error
+    @Test
+    void updateFeatureOfProduct_N_nonExistentFeature() {
+        given().when().post("/products/TestProduct_FeatUpdNeg").then();
+
+        given()
+            .formParam("description", "does not exist")
+            .when().put("/products/TestProduct_FeatUpdNeg/features/GhostFeature_xyzzy")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=updateFeatureOfProduct type=negative expect=error
+    @Test
+    void updateFeatureOfProduct_N_nonExistentProduct() {
+        given()
+            .formParam("description", "irrelevant")
+            .when().put("/products/NoSuchProduct_upd_xyzzy/features/AnyFeature")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteFeatureOfProduct type=positive expect=2xx
+    @Test
+    void deleteFeatureOfProduct_P_existingFeature() {
+        given().when().post("/products/TestProduct_FeatDel").then();
+        given().when().post("/products/TestProduct_FeatDel/features/FeatureGamma").then();
+
+        given()
+            .when().delete("/products/TestProduct_FeatDel/features/FeatureGamma")
+            .then().statusCode(anyOf(is(200), is(204)));
+    }
+
+    // SCENARIO op=deleteFeatureOfProduct type=negative expect=error
+    @Test
+    void deleteFeatureOfProduct_N_nonExistentFeature() {
+        given().when().post("/products/TestProduct_FeatDelNeg").then();
+
+        given()
+            .when().delete("/products/TestProduct_FeatDelNeg/features/NoSuchFeature_xyzzy")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=updateFeatureOfProduct type=errorcode expect=error
+    @Test
+    void updateFeatureOfProduct_E_afterDelete() {
+        given().when().post("/products/TestProduct_FeatRAD").then();
+        given().when().post("/products/TestProduct_FeatRAD/features/FeatureDelta").then();
+        given().when().delete("/products/TestProduct_FeatRAD/features/FeatureDelta").then();
+
+        given()
+            .formParam("description", "update after delete")
+            .when().put("/products/TestProduct_FeatRAD/features/FeatureDelta")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // getConfigurationsForProduct
+
+    // SCENARIO op=getConfigurationsForProduct type=positive expect=200
+    @Test
+    void getConfigurationsForProduct_P_existingProduct() {
+        given().when().post("/products/TestProduct_ConfList").then();
+
+        given()
+            .when().get("/products/TestProduct_ConfList/configurations")
+            .then().statusCode(200)
+            .body("$", instanceOf(java.util.List.class));
+    }
+
+    // SCENARIO op=getConfigurationsForProduct type=negative expect=error
+    @Test
+    void getConfigurationsForProduct_N_nonExistentProduct() {
+        given()
+            .when().get("/products/NoSuchProduct_conflist_xyzzy/configurations")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // addConfiguration / getConfigurationWithNameForProduct / deleteConfiguration (lifecycle)
+
+    // SCENARIO op=addConfiguration type=positive expect=2xx
+    @Test
+    void addConfiguration_P_newConfiguration() {
+        given().when().post("/products/TestProduct_ConfAdd").then();
+
+        given()
+            .when().post("/products/TestProduct_ConfAdd/configurations/ConfAlpha")
+            .then().statusCode(anyOf(is(200), is(201), is(204)));
+    }
+
+    // SCENARIO op=addConfiguration type=negative expect=error
+    @Test
+    void addConfiguration_N_nonExistentProduct() {
+        given()
+            .when().post("/products/NoSuchProduct_confadd_xyzzy/configurations/ConfX")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=getConfigurationWithNameForProduct type=positive expect=200
+    @Test
+    void getConfigurationWithNameForProduct_P_existingConf() {
+        given().when().post("/products/TestProduct_ConfGet").then();
+        given().when().post("/products/TestProduct_ConfGet/configurations/ConfBeta").then();
+
+        given()
+            .when().get("/products/TestProduct_ConfGet/configurations/ConfBeta")
+            .then().statusCode(200)
+            .body("name", equalTo("ConfBeta"));
+    }
+
+    // SCENARIO op=getConfigurationWithNameForProduct type=negative expect=error
+    @Test
+    void getConfigurationWithNameForProduct_N_nonExistentConf() {
+        given().when().post("/products/TestProduct_ConfGetNeg").then();
+
+        given()
+            .when().get("/products/TestProduct_ConfGetNeg/configurations/NoSuchConf_xyzzy")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=getConfigurationWithNameForProduct type=negative expect=error
+    @Test
+    void getConfigurationWithNameForProduct_N_nonExistentProduct() {
+        given()
+            .when().get("/products/NoSuchProduct_confget_xyzzy/configurations/AnyConf")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteConfiguration type=positive expect=2xx
+    @Test
+    void deleteConfiguration_P_existingConf() {
+        given().when().post("/products/TestProduct_ConfDel").then();
+        given().when().post("/products/TestProduct_ConfDel/configurations/ConfGamma").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConfDel/configurations/ConfGamma")
+            .then().statusCode(anyOf(is(200), is(204)));
+    }
+
+    // SCENARIO op=deleteConfiguration type=negative expect=error
+    @Test
+    void deleteConfiguration_N_nonExistentConf() {
+        given().when().post("/products/TestProduct_ConfDelNeg").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConfDelNeg/configurations/NoSuchConf_xyzzy")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=getConfigurationWithNameForProduct type=errorcode expect=error
+    @Test
+    void getConfigurationWithNameForProduct_E_readAfterDelete() {
+        given().when().post("/products/TestProduct_ConfRAD").then();
+        given().when().post("/products/TestProduct_ConfRAD/configurations/ConfDelta").then();
+        given().when().delete("/products/TestProduct_ConfRAD/configurations/ConfDelta").then();
+
+        given()
+            .when().get("/products/TestProduct_ConfRAD/configurations/ConfDelta")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // getConfigurationActivedFeatures
+
+    // SCENARIO op=getConfigurationActivedFeatures type=positive expect=200
+    @Test
+    void getConfigurationActivedFeatures_P_existingConf() {
+        given().when().post("/products/TestProduct_ActivFeat").then();
+        given().when().post("/products/TestProduct_ActivFeat/configurations/ConfActiv").then();
+
+        given()
+            .when().get("/products/TestProduct_ActivFeat/configurations/ConfActiv/features")
+            .then().statusCode(200)
+            .body("$", instanceOf(java.util.List.class));
+    }
+
+    // SCENARIO op=getConfigurationActivedFeatures type=negative expect=error
+    @Test
+    void getConfigurationActivedFeatures_N_nonExistentConf() {
+        given().when().post("/products/TestProduct_ActivFeatNeg").then();
+
+        given()
+            .when().get("/products/TestProduct_ActivFeatNeg/configurations/NoSuchConf_xyzzy/features")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=getConfigurationActivedFeatures type=negative expect=error
+    @Test
+    void getConfigurationActivedFeatures_N_nonExistentProduct() {
+        given()
+            .when().get("/products/NoSuchProduct_activ_xyzzy/configurations/AnyConf/features")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // addFeatureToConfiguration / deleteFeature (lifecycle)
+
+    // SCENARIO op=addFeatureToConfiguration type=positive expect=2xx
+    @Test
+    void addFeatureToConfiguration_P_addExistingFeature() {
+        given().when().post("/products/TestProduct_ConfFeatAdd").then();
+        given().when().post("/products/TestProduct_ConfFeatAdd/features/FeatureEpsilon").then();
+        given().when().post("/products/TestProduct_ConfFeatAdd/configurations/ConfEpsilon").then();
+
+        given()
+            .when().post("/products/TestProduct_ConfFeatAdd/configurations/ConfEpsilon/features/FeatureEpsilon")
+            .then().statusCode(anyOf(is(200), is(201), is(204)));
+    }
+
+    // SCENARIO op=addFeatureToConfiguration type=negative expect=error
+    @Test
+    void addFeatureToConfiguration_N_nonExistentFeature() {
+        given().when().post("/products/TestProduct_ConfFeatAddNeg").then();
+        given().when().post("/products/TestProduct_ConfFeatAddNeg/configurations/ConfZeta").then();
+
+        given()
+            .when().post("/products/TestProduct_ConfFeatAddNeg/configurations/ConfZeta/features/NoSuchFeature_xyzzy")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=addFeatureToConfiguration type=negative expect=error
+    @Test
+    void addFeatureToConfiguration_N_nonExistentConf() {
+        given().when().post("/products/TestProduct_ConfFeatAddNegConf").then();
+        given().when().post("/products/TestProduct_ConfFeatAddNegConf/features/FeatureEta").then();
+
+        given()
+            .when().post("/products/TestProduct_ConfFeatAddNegConf/configurations/NoSuchConf_xyzzy/features/FeatureEta")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteFeature type=positive expect=2xx
+    @Test
+    void deleteFeature_P_activatedFeature() {
+        given().when().post("/products/TestProduct_ConfFeatDel").then();
+        given().when().post("/products/TestProduct_ConfFeatDel/features/FeatureTheta").then();
+        given().when().post("/products/TestProduct_ConfFeatDel/configurations/ConfTheta").then();
+        given().when().post("/products/TestProduct_ConfFeatDel/configurations/ConfTheta/features/FeatureTheta").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConfFeatDel/configurations/ConfTheta/features/FeatureTheta")
+            .then().statusCode(anyOf(is(200), is(204)));
+    }
+
+    // SCENARIO op=deleteFeature type=negative expect=error
+    @Test
+    void deleteFeature_N_nonActivatedFeature() {
+        given().when().post("/products/TestProduct_ConfFeatDelNeg").then();
+        given().when().post("/products/TestProduct_ConfFeatDelNeg/configurations/ConfIota").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConfFeatDelNeg/configurations/ConfIota/features/NoSuchFeature_xyzzy")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteFeature type=errorcode expect=error
+    @Test
+    void deleteFeature_E_doubleRemove() {
+        given().when().post("/products/TestProduct_ConfFeatDD").then();
+        given().when().post("/products/TestProduct_ConfFeatDD/features/FeatureKappa").then();
+        given().when().post("/products/TestProduct_ConfFeatDD/configurations/ConfKappa").then();
+        given().when().post("/products/TestProduct_ConfFeatDD/configurations/ConfKappa/features/FeatureKappa").then();
+        given().when().delete("/products/TestProduct_ConfFeatDD/configurations/ConfKappa/features/FeatureKappa").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConfFeatDD/configurations/ConfKappa/features/FeatureKappa")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // addRequiresConstraintToProduct
+
+    // SCENARIO op=addRequiresConstraintToProduct type=positive expect=2xx
+    @Test
+    void addRequiresConstraintToProduct_P_validFeatures() {
+        given().when().post("/products/TestProduct_ReqConst").then();
+        given().when().post("/products/TestProduct_ReqConst/features/FeatureSrc").then();
+        given().when().post("/products/TestProduct_ReqConst/features/FeatureReq").then();
+
+        given()
+            .formParam("sourceFeature", "FeatureSrc")
+            .formParam("requiredFeature", "FeatureReq")
+            .when().post("/products/TestProduct_ReqConst/constraints/requires")
+            .then().statusCode(anyOf(is(200), is(201), is(204)));
+    }
+
+    // SCENARIO op=addRequiresConstraintToProduct type=negative expect=error
+    @Test
+    void addRequiresConstraintToProduct_N_nonExistentSourceFeature() {
+        given().when().post("/products/TestProduct_ReqConstNeg").then();
+        given().when().post("/products/TestProduct_ReqConstNeg/features/FeatureReqOnly").then();
+
+        given()
+            .formParam("sourceFeature", "NoSuchFeature_xyzzy")
+            .formParam("requiredFeature", "FeatureReqOnly")
+            .when().post("/products/TestProduct_ReqConstNeg/constraints/requires")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=addRequiresConstraintToProduct type=negative expect=error
+    @Test
+    void addRequiresConstraintToProduct_N_missingBothFields() {
+        given().when().post("/products/TestProduct_ReqConstMissing").then();
+
+        given()
+            .when().post("/products/TestProduct_ReqConstMissing/constraints/requires")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=addRequiresConstraintToProduct type=errorcode expect=error
+    @Test
+    void addRequiresConstraintToProduct_E_selfConstraint() {
+        given().when().post("/products/TestProduct_ReqSelf").then();
+        given().when().post("/products/TestProduct_ReqSelf/features/FeatureSelf").then();
+
+        given()
+            .formParam("sourceFeature", "FeatureSelf")
+            .formParam("requiredFeature", "FeatureSelf")
+            .when().post("/products/TestProduct_ReqSelf/constraints/requires")
+            .then().statusCode(anyOf(is(200), is(201), is(204), is(400), is(422)));
+    }
+
+    // addExcludesConstraintToProduct
+
+    // SCENARIO op=addExcludesConstraintToProduct type=positive expect=2xx
+    @Test
+    void addExcludesConstraintToProduct_P_validFeatures() {
+        given().when().post("/products/TestProduct_ExclConst").then();
+        given().when().post("/products/TestProduct_ExclConst/features/FeatureExSrc").then();
+        given().when().post("/products/TestProduct_ExclConst/features/FeatureExExcl").then();
+
+        given()
+            .formParam("sourceFeature", "FeatureExSrc")
+            .formParam("excludedFeature", "FeatureExExcl")
+            .when().post("/products/TestProduct_ExclConst/constraints/excludes")
+            .then().statusCode(anyOf(is(200), is(201), is(204)));
+    }
+
+    // SCENARIO op=addExcludesConstraintToProduct type=negative expect=error
+    @Test
+    void addExcludesConstraintToProduct_N_nonExistentProduct() {
+        given()
+            .formParam("sourceFeature", "FeatureA")
+            .formParam("excludedFeature", "FeatureB")
+            .when().post("/products/NoSuchProduct_excl_xyzzy/constraints/excludes")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=addExcludesConstraintToProduct type=negative expect=error
+    @Test
+    void addExcludesConstraintToProduct_N_missingBothFields() {
+        given().when().post("/products/TestProduct_ExclConstMissing").then();
+
+        given()
+            .when().post("/products/TestProduct_ExclConstMissing/constraints/excludes")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=addExcludesConstraintToProduct type=errorcode expect=error
+    @Test
+    void addExcludesConstraintToProduct_E_selfExclusion() {
+        given().when().post("/products/TestProduct_ExclSelf").then();
+        given().when().post("/products/TestProduct_ExclSelf/features/FeatureSelfExcl").then();
+
+        given()
+            .formParam("sourceFeature", "FeatureSelfExcl")
+            .formParam("excludedFeature", "FeatureSelfExcl")
+            .when().post("/products/TestProduct_ExclSelf/constraints/excludes")
+            .then().statusCode(anyOf(is(200), is(201), is(204), is(400), is(422)));
+    }
+
+    // deleteConstraint
+
+    // SCENARIO op=deleteConstraint type=positive expect=2xx
+    @Test
+    void deleteConstraint_P_existingConstraint() {
+        given().when().post("/products/TestProduct_ConstDel").then();
+        given().when().post("/products/TestProduct_ConstDel/features/FeatureCDA").then();
+        given().when().post("/products/TestProduct_ConstDel/features/FeatureCDB").then();
+        given()
+            .formParam("sourceFeature", "FeatureCDA")
+            .formParam("requiredFeature", "FeatureCDB")
+            .when().post("/products/TestProduct_ConstDel/constraints/requires").then();
+
+        io.restassured.response.Response resp = given()
+            .when().get("/products/TestProduct_ConstDel")
+            .then().statusCode(200).extract().response();
+
+        long constraintId = resp.jsonPath().getLong("constraints[0].id");
+
+        given()
+            .when().delete("/products/TestProduct_ConstDel/constraints/" + constraintId)
+            .then().statusCode(anyOf(is(200), is(204)));
+    }
+
+    // SCENARIO op=deleteConstraint type=negative expect=error
+    @Test
+    void deleteConstraint_N_nonExistentId() {
+        given().when().post("/products/TestProduct_ConstDelNeg").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConstDelNeg/constraints/999999999")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteConstraint type=boundary expect=error
+    @Test
+    void deleteConstraint_B_zeroId() {
+        given().when().post("/products/TestProduct_ConstDelZero").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConstDelZero/constraints/0")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteConstraint type=boundary expect=error
+    @Test
+    void deleteConstraint_B_negativeId() {
+        given().when().post("/products/TestProduct_ConstDelNegId").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConstDelNegId/constraints/-1")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteConstraint type=errorcode expect=error
+    @Test
+    void deleteConstraint_E_nonIntegerId() {
+        given().when().post("/products/TestProduct_ConstDelStr").then();
+
+        given()
+            .when().delete("/products/TestProduct_ConstDelStr/constraints/notanumber")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=deleteConstraint type=errorcode expect=error
+    @Test
+    void deleteConstraint_E_doubleDelete() {
+        given().when().post("/products/TestProduct_ConstDD").then();
+        given().when().post("/products/TestProduct_ConstDD/features/FeatureDDA").then();
+        given().when().post("/products/TestProduct_ConstDD/features/FeatureDDB").then();
+        given()
+            .formParam("sourceFeature", "FeatureDDA")
+            .formParam("requiredFeature", "FeatureDDB")
+            .when().post("/products/TestProduct_ConstDD/constraints/requires").then();
+
+        io.restassured.response.Response resp = given()
+            .when().get("/products/TestProduct_ConstDD")
+            .then().statusCode(200).extract().response();
+
+        long constraintId = resp.jsonPath().getLong("constraints[0].id");
+
+        given().when().delete("/products/TestProduct_ConstDD/constraints/" + constraintId).then();
+
+        given()
+            .when().delete("/products/TestProduct_ConstDD/constraints/" + constraintId)
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+}

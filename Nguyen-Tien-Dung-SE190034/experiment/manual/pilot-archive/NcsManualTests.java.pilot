@@ -1,0 +1,526 @@
+package manual;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import io.restassured.RestAssured;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+
+public class NcsManualTests {
+
+    @BeforeAll
+    static void setup() {
+        RestAssured.baseURI = System.getProperty("baseURI", "http://localhost:8080");
+        RestAssured.urlEncodingEnabled = true;
+    }
+
+    // /api/bessj/{n}/{x}  — Bessel function J_n(x)
+
+    // SCENARIO op=bessjUsingGET type=positive expect=200
+    @Test
+    void bessjUsingGET_P_typicalPositiveNX() {
+        given()
+            .when().get("/api/bessj/2/1.5")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=bessjUsingGET type=positive expect=200
+    @Test
+    void bessjUsingGET_P_nEquals1XPositive() {
+        given()
+            .when().get("/api/bessj/1/3.0")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=bessjUsingGET type=boundary expect=200
+    @Test
+    void bessjUsingGET_B_nZero() {
+        given()
+            .when().get("/api/bessj/0/1.0")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=bessjUsingGET type=boundary expect=200
+    @Test
+    void bessjUsingGET_B_xZero() {
+        given()
+            .when().get("/api/bessj/2/0.0")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=bessjUsingGET type=boundary expect=200
+    @Test
+    void bessjUsingGET_B_nNegative() {
+        given()
+            .when().get("/api/bessj/-1/1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=bessjUsingGET type=boundary expect=200
+    @Test
+    void bessjUsingGET_B_xNegative() {
+        given()
+            .when().get("/api/bessj/2/-1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=bessjUsingGET type=negative expect=error-class
+    @Test
+    void bessjUsingGET_N_nIsString() {
+        given()
+            .when().get("/api/bessj/abc/1.0")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=bessjUsingGET type=negative expect=error-class
+    @Test
+    void bessjUsingGET_N_xIsString() {
+        given()
+            .when().get("/api/bessj/2/xyz")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=bessjUsingGET type=errorcode expect=error-class
+    @Test
+    void bessjUsingGET_E_missingXSegment() {
+        given()
+            .when().get("/api/bessj/2")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=bessjUsingGET type=errorcode expect=error-class
+    @Test
+    void bessjUsingGET_E_emptyNSegment() {
+        given()
+            .when().get("/api/bessj//1.0")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // /api/expint/{n}/{x}  — Exponential integral E_n(x)
+
+    // SCENARIO op=expintUsingGET type=positive expect=200
+    @Test
+    void expintUsingGET_P_typicalPositiveNX() {
+        given()
+            .when().get("/api/expint/2/1.0")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=expintUsingGET type=positive expect=200
+    @Test
+    void expintUsingGET_P_n1XSmallPositive() {
+        given()
+            .when().get("/api/expint/1/0.5")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=expintUsingGET type=boundary expect=200
+    @Test
+    void expintUsingGET_B_nZero() {
+        given()
+            .when().get("/api/expint/0/1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=expintUsingGET type=boundary expect=200
+    @Test
+    void expintUsingGET_B_xNearZeroPositive() {
+        given()
+            .when().get("/api/expint/1/0.0001")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=expintUsingGET type=boundary expect=error-class
+    @Test
+    void expintUsingGET_B_xZero() {
+        given()
+            .when().get("/api/expint/1/0.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=expintUsingGET type=boundary expect=error-class
+    @Test
+    void expintUsingGET_B_xNegative() {
+        given()
+            .when().get("/api/expint/2/-1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=expintUsingGET type=negative expect=error-class
+    @Test
+    void expintUsingGET_N_nIsFloat() {
+        given()
+            .when().get("/api/expint/1.5/1.0")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=expintUsingGET type=negative expect=error-class
+    @Test
+    void expintUsingGET_N_xIsString() {
+        given()
+            .when().get("/api/expint/2/notanumber")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=expintUsingGET type=errorcode expect=error-class
+    @Test
+    void expintUsingGET_E_missingBothSegments() {
+        given()
+            .when().get("/api/expint")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // /api/fisher/{m}/{n}/{x}  — Fisher distribution
+
+    // SCENARIO op=fisherUsingGET type=positive expect=200
+    @Test
+    void fisherUsingGET_P_typicalMNX() {
+        given()
+            .when().get("/api/fisher/5/10/2.5")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=fisherUsingGET type=positive expect=200
+    @Test
+    void fisherUsingGET_P_mEquals1nEquals1() {
+        given()
+            .when().get("/api/fisher/1/1/1.0")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=fisherUsingGET type=boundary expect=200
+    @Test
+    void fisherUsingGET_B_xZero() {
+        given()
+            .when().get("/api/fisher/3/4/0.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=fisherUsingGET type=boundary expect=error-class
+    @Test
+    void fisherUsingGET_B_mZero() {
+        given()
+            .when().get("/api/fisher/0/4/1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=fisherUsingGET type=boundary expect=error-class
+    @Test
+    void fisherUsingGET_B_nZero() {
+        given()
+            .when().get("/api/fisher/3/0/1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=fisherUsingGET type=boundary expect=error-class
+    @Test
+    void fisherUsingGET_B_xNegative() {
+        given()
+            .when().get("/api/fisher/3/4/-1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=fisherUsingGET type=negative expect=error-class
+    @Test
+    void fisherUsingGET_N_mIsString() {
+        given()
+            .when().get("/api/fisher/foo/4/1.0")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=fisherUsingGET type=negative expect=error-class
+    @Test
+    void fisherUsingGET_N_missingOneSegment() {
+        given()
+            .when().get("/api/fisher/3/4")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=fisherUsingGET type=errorcode expect=error-class
+    @Test
+    void fisherUsingGET_E_xIsString() {
+        given()
+            .when().get("/api/fisher/3/4/notnum")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // /api/gammq/{a}/{x}  — Incomplete gamma function Q(a,x)
+
+    // SCENARIO op=gammqUsingGET type=positive expect=200
+    @Test
+    void gammqUsingGET_P_typicalAX() {
+        given()
+            .when().get("/api/gammq/2.0/1.0")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=gammqUsingGET type=positive expect=200
+    @Test
+    void gammqUsingGET_P_aEquals0Point5() {
+        given()
+            .when().get("/api/gammq/0.5/2.0")
+            .then().statusCode(200)
+            .body("resultAsDouble", notNullValue());
+    }
+
+    // SCENARIO op=gammqUsingGET type=boundary expect=200
+    @Test
+    void gammqUsingGET_B_xZero() {
+        given()
+            .when().get("/api/gammq/2.0/0.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=gammqUsingGET type=boundary expect=error-class
+    @Test
+    void gammqUsingGET_B_aZero() {
+        given()
+            .when().get("/api/gammq/0.0/1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=gammqUsingGET type=boundary expect=error-class
+    @Test
+    void gammqUsingGET_B_aNegative() {
+        given()
+            .when().get("/api/gammq/-1.0/1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=gammqUsingGET type=boundary expect=error-class
+    @Test
+    void gammqUsingGET_B_xNegative() {
+        given()
+            .when().get("/api/gammq/2.0/-1.0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=gammqUsingGET type=negative expect=error-class
+    @Test
+    void gammqUsingGET_N_aIsString() {
+        given()
+            .when().get("/api/gammq/abc/1.0")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=gammqUsingGET type=negative expect=error-class
+    @Test
+    void gammqUsingGET_N_missingXSegment() {
+        given()
+            .when().get("/api/gammq/2.0")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=gammqUsingGET type=errorcode expect=error-class
+    @Test
+    void gammqUsingGET_E_bothSegmentsMissing() {
+        given()
+            .when().get("/api/gammq")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // /api/remainder/{a}/{b}  — Integer remainder a % b
+
+    // SCENARIO op=remainderUsingGET type=positive expect=200
+    @Test
+    void remainderUsingGET_P_typicalPositiveAB() {
+        given()
+            .when().get("/api/remainder/10/3")
+            .then().statusCode(200)
+            .body("resultAsInt", notNullValue());
+    }
+
+    // SCENARIO op=remainderUsingGET type=positive expect=200
+    @Test
+    void remainderUsingGET_P_aLessThanB() {
+        given()
+            .when().get("/api/remainder/3/10")
+            .then().statusCode(200)
+            .body("resultAsInt", is(3));
+    }
+
+    // SCENARIO op=remainderUsingGET type=positive expect=200
+    @Test
+    void remainderUsingGET_P_aEqualsB() {
+        given()
+            .when().get("/api/remainder/7/7")
+            .then().statusCode(200)
+            .body("resultAsInt", is(0));
+    }
+
+    // SCENARIO op=remainderUsingGET type=boundary expect=200
+    @Test
+    void remainderUsingGET_B_aZero() {
+        given()
+            .when().get("/api/remainder/0/5")
+            .then().statusCode(200)
+            .body("resultAsInt", is(0));
+    }
+
+    // SCENARIO op=remainderUsingGET type=boundary expect=error-class
+    @Test
+    void remainderUsingGET_B_bZero() {
+        given()
+            .when().get("/api/remainder/10/0")
+            .then().statusCode(anyOf(is(200), is(400), is(422), is(500)));
+    }
+
+    // SCENARIO op=remainderUsingGET type=boundary expect=200
+    @Test
+    void remainderUsingGET_B_negativeA() {
+        given()
+            .when().get("/api/remainder/-7/3")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=remainderUsingGET type=boundary expect=200
+    @Test
+    void remainderUsingGET_B_negativeB() {
+        given()
+            .when().get("/api/remainder/7/-3")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=remainderUsingGET type=negative expect=error-class
+    @Test
+    void remainderUsingGET_N_aIsFloat() {
+        given()
+            .when().get("/api/remainder/3.5/2")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=remainderUsingGET type=negative expect=error-class
+    @Test
+    void remainderUsingGET_N_aIsString() {
+        given()
+            .when().get("/api/remainder/abc/3")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=remainderUsingGET type=errorcode expect=error-class
+    @Test
+    void remainderUsingGET_E_missingBSegment() {
+        given()
+            .when().get("/api/remainder/10")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=remainderUsingGET type=errorcode expect=error-class
+    @Test
+    void remainderUsingGET_E_bIsString() {
+        given()
+            .when().get("/api/remainder/10/xyz")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // /api/triangle/{a}/{b}/{c}  — Triangle type check
+
+    // SCENARIO op=checkTriangleUsingGET type=positive expect=200
+    @Test
+    void checkTriangleUsingGET_P_equilateral() {
+        given()
+            .when().get("/api/triangle/5/5/5")
+            .then().statusCode(200)
+            .body("resultAsInt", notNullValue());
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=positive expect=200
+    @Test
+    void checkTriangleUsingGET_P_isosceles() {
+        given()
+            .when().get("/api/triangle/5/5/8")
+            .then().statusCode(200)
+            .body("resultAsInt", notNullValue());
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=positive expect=200
+    @Test
+    void checkTriangleUsingGET_P_scalene() {
+        given()
+            .when().get("/api/triangle/3/4/5")
+            .then().statusCode(200)
+            .body("resultAsInt", notNullValue());
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=negative expect=200
+    @Test
+    void checkTriangleUsingGET_N_invalidTriangleInequality() {
+        given()
+            .when().get("/api/triangle/1/2/10")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=boundary expect=error-class
+    @Test
+    void checkTriangleUsingGET_B_aZero() {
+        given()
+            .when().get("/api/triangle/0/4/5")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=boundary expect=error-class
+    @Test
+    void checkTriangleUsingGET_B_oneSideNegative() {
+        given()
+            .when().get("/api/triangle/-1/4/5")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=boundary expect=200
+    @Test
+    void checkTriangleUsingGET_B_degenerateTriangle() {
+        given()
+            .when().get("/api/triangle/1/2/3")
+            .then().statusCode(anyOf(is(200), is(400), is(422)));
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=boundary expect=200
+    @Test
+    void checkTriangleUsingGET_B_allSidesOne() {
+        given()
+            .when().get("/api/triangle/1/1/1")
+            .then().statusCode(200)
+            .body("resultAsInt", notNullValue());
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=negative expect=error-class
+    @Test
+    void checkTriangleUsingGET_N_aIsFloat() {
+        given()
+            .when().get("/api/triangle/3.5/4/5")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=negative expect=error-class
+    @Test
+    void checkTriangleUsingGET_N_aIsString() {
+        given()
+            .when().get("/api/triangle/abc/4/5")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=errorcode expect=error-class
+    @Test
+    void checkTriangleUsingGET_E_missingCSegment() {
+        given()
+            .when().get("/api/triangle/3/4")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+
+    // SCENARIO op=checkTriangleUsingGET type=errorcode expect=error-class
+    @Test
+    void checkTriangleUsingGET_E_allSegmentsMissing() {
+        given()
+            .when().get("/api/triangle")
+            .then().statusCode(anyOf(is(400), is(404), is(422), is(500)));
+    }
+}

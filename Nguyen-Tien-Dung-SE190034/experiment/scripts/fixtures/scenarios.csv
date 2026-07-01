@@ -1,0 +1,10 @@
+sut,op,arm,type,count
+sut1,op1,llm,positive,1
+sut1,op1,llm,negative,2
+sut1,op1,manual,negative,1
+sut1,op2,llm,boundary,1
+sut1,op2,manual,boundary,1
+sut2,op3,llm,positive,1
+sut2,op3,llm,negative,1
+sut2,op3,manual,negative,0
+sut2,op4,manual,boundary,1

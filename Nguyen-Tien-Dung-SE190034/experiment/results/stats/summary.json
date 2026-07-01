@@ -22,7 +22,8 @@
     },
     "wilcoxon_W": 630.0,
     "p_value_one_sided": 1.6485266344986434e-09,
-    "reject_H0_(coverage>90%)": true
+    "reject_H0_(coverage>90%)": true,
+    "rank_biserial": 1.0
   },
   "RQ3_edge_cases_llm_vs_manual": {
     "n_operations": 35,
@@ -35,7 +36,8 @@
     "reject_H0_(llm>manual)": true,
     "pairs_llm_more": 30,
     "pairs_manual_more": 1,
-    "pairs_tie": 4
+    "pairs_tie": 4,
+    "rank_biserial": 0.9879032258064516
   },
   "RQ2_fault_detection": {
     "per_sut_recall": {
@@ -63,21 +65,50 @@
     "n_mutants_total": 133,
     "friedman_chi2": 0.0,
     "friedman_p": 1.0,
+    "pairwise_wilcoxon_holm": {
+      "llm_vs_manual": {
+        "p_raw": 1.0,
+        "p_holm_adjusted": 1.0,
+        "reject_H0": false
+      },
+      "llm_vs_evomaster": {
+        "p_raw": 1.0,
+        "p_holm_adjusted": 1.0,
+        "reject_H0": false
+      }
+    },
+    "pairwise_wilcoxon_identical_vectors": [
+      "llm_vs_manual"
+    ],
+    "pairwise_wilcoxon_note": "per-SUT recall vectors are identical for the pair(s) listed -- p=1.0 by construction, not computed via scipy (see notes.md oracle-weakness finding).",
+    "cliffs_delta": {
+      "llm_vs_manual": 0.0,
+      "llm_vs_evomaster": -0.06766917293233082
+    },
     "mcnemar": {
       "llm_vs_manual": {
         "llm_only(b)": 0,
         "manual_only(c)": 0,
         "statistic": 0.0,
         "p_value": 1.0,
-        "reject_H0": false
+        "reject_H0": false,
+        "achieved_power_approx": 0.049999999999999954,
+        "power_note": "approximate: two-independent-proportion power (statsmodels NormalIndPower) on the same recall proportions McNemar tests; not an exact McNemar power formula (statsmodels has none built in) -- disclosed approximation."
       },
       "llm_vs_evomaster": {
         "llm_only(b)": 5,
         "evomaster_only(c)": 14,
         "statistic": 5.0,
         "p_value": 0.063568115234375,
-        "reject_H0": false
+        "reject_H0": false,
+        "achieved_power_approx": 0.4572015966394917,
+        "power_note": "approximate: two-independent-proportion power (statsmodels NormalIndPower) on the same recall proportions McNemar tests; not an exact McNemar power formula (statsmodels has none built in) -- disclosed approximation."
       }
     }
+  },
+  "multiplicity": {
+    "alpha_raw_per_RQ": 0.05,
+    "alpha_bonferroni_3family": 0.0167,
+    "note": "Per proposal.md \u00a74: Holm correction is applied WITHIN RQ2's post-hoc pairwise comparisons (see RQ2_fault_detection.pairwise_wilcoxon_holm); Bonferroni is applied ACROSS the 3 RQ families as a second, stricter reading (alpha_adj ~= 0.017). Both are reported; the per-RQ conclusions above use the raw alpha=0.05 threshold specified in proposal.md \u00a76.1, as pre-registered."
   }
 }

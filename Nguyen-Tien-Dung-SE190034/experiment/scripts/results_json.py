@@ -49,7 +49,7 @@ for r in rows(os.path.join(RAW, 'error_profile.csv')):
 # ---- bug-detection.json ----
 bug = {
   "title": "Bug-detection results — AI (LLM) vs Manual vs EvoMaster",
-  "description": "Bao nhiêu lỗi mỗi bộ test thực sự BẮT ĐƯỢC, đối chiếu ground truth. Pilot: LLM = Claude Sonnet 4.6 (full run: GPT-4o).",
+  "description": "Bao nhiêu lỗi mỗi bộ test thực sự BẮT ĐƯỢC, đối chiếu ground truth. LLM = Claude Sonnet 4.6 (pilot + full run).",
   "generated_by": "experiment/scripts/results_json.py",
   "mutation_faults": {
     "what": "Gieo lỗi bằng mutation; 'killed' = test pass trên bản gốc nhưng fail trên mutant. Recall = killed/total.",
