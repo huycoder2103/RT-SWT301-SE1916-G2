@@ -185,10 +185,10 @@ By endpoint type (CRUD / auth / error-handling) for the RQ1 miss-profile; by fau
 ### 8.1 Role assignment (1 deliverable each; **LR ≠ MS** enforced)
 | Member | Role | Deliverable |
 |--------|------|-------------|
-| Vo Le Trung Nguyen (SE190220) | **PL** — Project Lead | coordinate, merge, submit proposal, instructor liaison (does **not** run the experiment) |
+| **Nguyen Hoang Huy (SE190240)** | **PL** — Project Lead | coordinate, merge, submit proposal, instructor liaison (does **not** run the experiment) |
 | Nguyen Thanh Dat (SE190239) | **DG** — Data & Ground Truth | dataset + fault catalog + §3 Related Work |
 | **Nguyen Tien Dung (SE190034)** | **LR** — LLM Runner | experiment harness + LLM / EvoMaster runs + cost log (built the pilot) |
-| Nguyen Hoang Huy (SE190240) | **MS** — Metrics & Stats | metric implementation + statistical tests + §6 |
+| Vo Le Trung Nguyen (SE190220) | **MS** — Metrics & Stats | metric implementation + statistical tests + §6 |
 | Nguyen Le Thuan (SE190305) | **RW** — Report Writer | §7 threats + final formatting + defense slides |
 
 ### 8.2 Resource Inventory
