@@ -1,0 +1,43 @@
+{
+  "title": "Produced vs Detected — phân biệt 'VIẾT RA' với 'BẮT ĐƯỢC'",
+  "description": "Số test/kịch bản AI SINH RA khác hẳn số bug AI BẮT ĐƯỢC. Tránh nói nhầm khi báo cáo.",
+  "generated_by": "experiment/scripts/results_json.py",
+  "produced": {
+    "note_vi": "AI/Người/Tool TẠO RA — KHÔNG phải bug.",
+    "test_cases": {
+      "llm": 295,
+      "manual": 197,
+      "evomaster": 87
+    },
+    "edge_case_scenarios_llm_vs_manual": {
+      "llm": 217,
+      "manual": 141
+    }
+  },
+  "detected": {
+    "note_vi": "Thực sự BẮT ĐƯỢC, đối chiếu ground truth.",
+    "mutation_faults_killed": {
+      "llm": 9,
+      "manual": 9,
+      "evomaster": 18,
+      "total": 133
+    },
+    "http_error_behaviours_triggered": {
+      "llm": 31,
+      "manual": 22,
+      "evomaster": 18,
+      "answer_key": 31
+    },
+    "server_crash_5xx_responses": {
+      "llm": 32,
+      "manual": 20,
+      "evomaster": 18
+    }
+  },
+  "why_gap_vi": "Test AI/Người chủ yếu check status (200/400); mutation đổi GIÁ TRỊ tính toán → status không đổi → test vẫn pass → không bắt. EvoMaster ghi lại giá trị đúng làm oracle nên bắt nhiều lỗi giá-trị hơn.",
+  "correct_phrasing_vi": [
+    "ĐÚNG: 'AI SINH 217 kịch bản edge-case (Người 141)'.",
+    "ĐÚNG: 'AI BẮT 9/133 lỗi gieo (= Người); KÍCH 31/31 hành vi lỗi HTTP, gồm crash 500'.",
+    "SAI: 'AI bắt 270 bug' — đó là SỐ TEST VIẾT RA, không phải bug."
+  ]
+}

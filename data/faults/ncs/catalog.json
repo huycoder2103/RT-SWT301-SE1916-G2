@@ -1,0 +1,2107 @@
+{
+  "sut_jar": "rest-ncs-sut.jar",
+  "total_candidates": 300,
+  "kept": 70,
+  "mutants": [
+    {
+      "id": "m001",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 13,
+      "operator": "< -> <=",
+      "status": "compiled"
+    },
+    {
+      "id": "m002",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 18,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m003",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 20,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m004",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 21,
+      "operator": "/ -> *",
+      "status": "compiled"
+    },
+    {
+      "id": "m005",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 25,
+      "operator": "< -> <=",
+      "status": "compiled"
+    },
+    {
+      "id": "m006",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 26,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m007",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 26,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m008",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 26,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m009",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 33,
+      "operator": "/ -> *",
+      "status": "compiled"
+    },
+    {
+      "id": "m010",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 34,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m011",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 34,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m012",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 34,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m013",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 34,
+      "operator": "/ -> *",
+      "status": "compiled"
+    },
+    {
+      "id": "m014",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 39,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m015",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 40,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m016",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 40,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m017",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 40,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m018",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 44,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m019",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 51,
+      "operator": "!= -> ==",
+      "status": "compiled"
+    },
+    {
+      "id": "m020",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 54,
+      "operator": "!= -> ==",
+      "status": "compiled"
+    },
+    {
+      "id": "m021",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 56,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m022",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 60,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m023",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 60,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m024",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 63,
+      "operator": "< -> <=",
+      "status": "compiled"
+    },
+    {
+      "id": "m025",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 63,
+      "operator": "!= -> ==",
+      "status": "compiled"
+    },
+    {
+      "id": "m026",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 71,
+      "operator": "< -> <=",
+      "status": "compiled"
+    },
+    {
+      "id": "m027",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 72,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m028",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 73,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m029",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 73,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m030",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 73,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m031",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 73,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m032",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 74,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m033",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 74,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m034",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 74,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m035",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 74,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m036",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 74,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m037",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 74,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m038",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 75,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m039",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 75,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m040",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 75,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m041",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 75,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m042",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 76,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m043",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 76,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m044",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 76,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m045",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 76,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m046",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 76,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m047",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 76,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m048",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 77,
+      "operator": "/ -> *",
+      "status": "compiled"
+    },
+    {
+      "id": "m049",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 79,
+      "operator": "/ -> *",
+      "status": "compiled"
+    },
+    {
+      "id": "m050",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 80,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m051",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 81,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m052",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 82,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m053",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 82,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m054",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 82,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m055",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 82,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m056",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 83,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m057",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 83,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m058",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 83,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m059",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 83,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m060",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 84,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m061",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 84,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m062",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 85,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m063",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 85,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m064",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 85,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m065",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 85,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m066",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 86,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m067",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 86,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m068",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 87,
+      "operator": "/ -> *",
+      "status": "compiled"
+    },
+    {
+      "id": "m069",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 87,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m070",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 87,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m071",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 87,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m072",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 87,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m073",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 87,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m074",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 97,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m075",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 98,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m076",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 99,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m077",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 99,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m078",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 99,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m079",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 99,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m080",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 99,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m081",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 100,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m082",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 100,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m083",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 100,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m084",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 100,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m085",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 100,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m086",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 100,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m087",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 101,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m088",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 101,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m089",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 101,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m090",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 101,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m091",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 102,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m092",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 102,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m093",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 102,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m094",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 102,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m095",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 102,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m096",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 102,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m097",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 103,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m098",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 105,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m099",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 106,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m100",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 107,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m101",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 108,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m102",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 108,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m103",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 108,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m104",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 108,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m105",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 109,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m106",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 109,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m107",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 109,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m108",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 109,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m109",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 110,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m110",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 110,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m111",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 111,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m112",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 111,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m113",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 111,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m114",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 111,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m115",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 112,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m116",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 112,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m117",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 113,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m118",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 113,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m119",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 113,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m120",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 113,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m121",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 113,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m122",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 113,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m123",
+      "file": "src/main/java/org/restncs/imp/Bessj.java",
+      "line": 114,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m124",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 13,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m125",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 15,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m126",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 15,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m127",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 15,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m128",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 15,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m129",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 15,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m130",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 16,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m131",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 16,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m132",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 18,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m133",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 19,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m134",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 21,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m135",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 22,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m136",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 24,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m137",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 25,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m138",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 26,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m139",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 27,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m140",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 30,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m141",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 31,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m142",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 31,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m143",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 33,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m144",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 33,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m145",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 33,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m146",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 34,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m147",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 34,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m148",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 35,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m149",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 38,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m150",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 38,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m151",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 39,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m152",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 45,
+      "operator": "!= -> ==",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m153",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 45,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m154",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 45,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m155",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 48,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m156",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 49,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m157",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 51,
+      "operator": "!= -> ==",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m158",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 52,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m159",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 52,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m160",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 56,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m161",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 57,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m162",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 59,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m163",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 59,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m164",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 64,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m165",
+      "file": "src/main/java/org/restncs/imp/Expint.java",
+      "line": 64,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m166",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 10,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m167",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 10,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m168",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 10,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m169",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 10,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m170",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 11,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m171",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 11,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m172",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 11,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m173",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 11,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m174",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 12,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m175",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 12,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m176",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 13,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m177",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 13,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m178",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 15,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m179",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 16,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m180",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 19,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m181",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 19,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m182",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 20,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m183",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 20,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m184",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 22,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m185",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 23,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m186",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 23,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m187",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 23,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m188",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 25,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m189",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 27,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m190",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 27,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m191",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 28,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m192",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 30,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m193",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 31,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m194",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 34,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m195",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 34,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m196",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 36,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m197",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 37,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m198",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 37,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m199",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 38,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m200",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 38,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m201",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 38,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m202",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 38,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m203",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 39,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m204",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 39,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m205",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 39,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m206",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 42,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m207",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 42,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m208",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 43,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m209",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 43,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m210",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 44,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m211",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 44,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m212",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 44,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m213",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 44,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m214",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 44,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m215",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 44,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m216",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 44,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m217",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 47,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m218",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 48,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m219",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 49,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m220",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 50,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m221",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 50,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m222",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 51,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m223",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 52,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m224",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 52,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m225",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 52,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m226",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 53,
+      "operator": "* -> /",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m227",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 53,
+      "operator": "/ -> *",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m228",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 56,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m229",
+      "file": "src/main/java/org/restncs/imp/Fisher.java",
+      "line": 58,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m230",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 39,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m231",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 41,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m232",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 45,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m233",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 47,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m234",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 58,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m235",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 59,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m236",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 70,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m237",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 80,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m238",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 80,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m239",
+      "file": "src/main/java/org/restncs/imp/Gammq.java",
+      "line": 81,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m240",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 5,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m241",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 9,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m242",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 10,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m243",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 11,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m244",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 12,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m245",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 13,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m246",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 13,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m247",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 14,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m248",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 15,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m249",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 16,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m250",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 20,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m251",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 20,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m252",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 20,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m253",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 21,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m254",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 22,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m255",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 23,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m256",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 26,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m257",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 28,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m258",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 28,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m259",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 28,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m260",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 28,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m261",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 28,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m262",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 29,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m263",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 30,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m264",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 31,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m265",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 34,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m266",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 34,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m267",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 35,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m268",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 37,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m269",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 37,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m270",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 37,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m271",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 37,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m272",
+      "file": "src/main/java/org/restncs/imp/Remainder.java",
+      "line": 38,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m273",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 7,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m274",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 7,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m275",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 7,
+      "operator": "<= -> <",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m276",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 11,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m277",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 11,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m278",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 17,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m279",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 17,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m280",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 17,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m281",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 17,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m282",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 18,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m283",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 18,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m284",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 18,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m285",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 18,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m286",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 19,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m287",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 19,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m288",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 19,
+      "operator": "- -> +",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m289",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 19,
+      "operator": ">= -> >",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m290",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 23,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m291",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 23,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m292",
+      "file": "src/main/java/org/restncs/imp/TriangleClassification.java",
+      "line": 23,
+      "operator": "== -> !=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m293",
+      "file": "src/main/java/org/restncs/NcsRest.java",
+      "line": 43,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m294",
+      "file": "src/main/java/org/restncs/NcsRest.java",
+      "line": 43,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m295",
+      "file": "src/main/java/org/restncs/NcsRest.java",
+      "line": 84,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m296",
+      "file": "src/main/java/org/restncs/NcsRest.java",
+      "line": 84,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m297",
+      "file": "src/main/java/org/restncs/NcsRest.java",
+      "line": 127,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m298",
+      "file": "src/main/java/org/restncs/NcsRest.java",
+      "line": 127,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m299",
+      "file": "src/main/java/org/restncs/NcsRest.java",
+      "line": 127,
+      "operator": "> -> >=",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m300",
+      "file": "src/main/java/org/restncs/NcsRest.java",
+      "line": 127,
+      "operator": "< -> <=",
+      "status": "non-compiling-discarded"
+    }
+  ]
+}
