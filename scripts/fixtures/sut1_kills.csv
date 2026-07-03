@@ -1,0 +1,13 @@
+mutant_id,arm,killed,n_oracle,n_now_failing_oracle
+m1,llm,1,10,2
+m1,manual,0,8,0
+m1,evomaster,1,5,1
+m2,llm,0,10,0
+m2,manual,0,8,0
+m2,evomaster,0,5,0
+m3,llm,1,10,1
+m3,manual,1,8,1
+m3,evomaster,0,5,0
+m4,llm,0,10,0
+m4,manual,0,8,0
+m4,evomaster,1,5,1
