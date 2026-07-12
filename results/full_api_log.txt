@@ -1,0 +1,1 @@
+[dry-run, no timestamp] run_experiment.py --stage full --sut ncs (orchestrates run_mutation.py + parse_scenarios.py + analyze.py)
