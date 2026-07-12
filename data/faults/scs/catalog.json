@@ -1,0 +1,665 @@
+{
+  "sut_jar": "rest-scs-sut.jar",
+  "total_candidates": 94,
+  "kept": 59,
+  "mutants": [
+    {
+      "id": "m001",
+      "file": "src/main/java/org/restscs/imp/Calc.java",
+      "line": 46,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m002",
+      "file": "src/main/java/org/restscs/imp/Calc.java",
+      "line": 49,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m003",
+      "file": "src/main/java/org/restscs/imp/Calc.java",
+      "line": 52,
+      "operator": "* -> /",
+      "status": "compiled"
+    },
+    {
+      "id": "m004",
+      "file": "src/main/java/org/restscs/imp/Calc.java",
+      "line": 55,
+      "operator": "/ -> *",
+      "status": "compiled"
+    },
+    {
+      "id": "m005",
+      "file": "src/main/java/org/restscs/imp/Calc.java",
+      "line": 57,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m006",
+      "file": "src/main/java/org/restscs/imp/Cookie.java",
+      "line": 26,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m007",
+      "file": "src/main/java/org/restscs/imp/Cookie.java",
+      "line": 40,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m008",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 29,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m009",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 32,
+      "operator": "< -> <=",
+      "status": "compiled"
+    },
+    {
+      "id": "m010",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 35,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m011",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 38,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m012",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 41,
+      "operator": ">= -> >",
+      "status": "compiled"
+    },
+    {
+      "id": "m013",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 44,
+      "operator": "!= -> ==",
+      "status": "compiled"
+    },
+    {
+      "id": "m014",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 47,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m015",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 52,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m016",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 54,
+      "operator": "< -> <=",
+      "status": "compiled"
+    },
+    {
+      "id": "m017",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 57,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m018",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 57,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m019",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 60,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m020",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 60,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m021",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 60,
+      "operator": ">= -> >",
+      "status": "compiled"
+    },
+    {
+      "id": "m022",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 63,
+      "operator": "!= -> ==",
+      "status": "compiled"
+    },
+    {
+      "id": "m023",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 63,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m024",
+      "file": "src/main/java/org/restscs/imp/Costfuns.java",
+      "line": 67,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m025",
+      "file": "src/main/java/org/restscs/imp/DateParse.java",
+      "line": 73,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m026",
+      "file": "src/main/java/org/restscs/imp/FileSuffix.java",
+      "line": 30,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m027",
+      "file": "src/main/java/org/restscs/imp/FileSuffix.java",
+      "line": 31,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m028",
+      "file": "src/main/java/org/restscs/imp/FileSuffix.java",
+      "line": 64,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m029",
+      "file": "src/main/java/org/restscs/imp/NotyPevar.java",
+      "line": 28,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m030",
+      "file": "src/main/java/org/restscs/imp/NotyPevar.java",
+      "line": 28,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m031",
+      "file": "src/main/java/org/restscs/imp/NotyPevar.java",
+      "line": 32,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m032",
+      "file": "src/main/java/org/restscs/imp/NotyPevar.java",
+      "line": 35,
+      "operator": "< -> <=",
+      "status": "compiled"
+    },
+    {
+      "id": "m033",
+      "file": "src/main/java/org/restscs/imp/NotyPevar.java",
+      "line": 39,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m034",
+      "file": "src/main/java/org/restscs/imp/NotyPevar.java",
+      "line": 42,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m035",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 22,
+      "operator": ">= -> >",
+      "status": "compiled"
+    },
+    {
+      "id": "m036",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 22,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m037",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 23,
+      "operator": ">= -> >",
+      "status": "compiled"
+    },
+    {
+      "id": "m038",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 23,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m039",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 24,
+      "operator": ">= -> >",
+      "status": "compiled"
+    },
+    {
+      "id": "m040",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 24,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m041",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 25,
+      "operator": ">= -> >",
+      "status": "compiled"
+    },
+    {
+      "id": "m042",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 25,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m043",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 26,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m044",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 26,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m045",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 26,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m046",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 29,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m047",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 29,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m048",
+      "file": "src/main/java/org/restscs/imp/Ordered4.java",
+      "line": 29,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m049",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 23,
+      "operator": "< -> <=",
+      "status": "compiled"
+    },
+    {
+      "id": "m050",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 29,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m051",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 29,
+      "operator": ">= -> >",
+      "status": "compiled"
+    },
+    {
+      "id": "m052",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 51,
+      "operator": "> -> >=",
+      "status": "compiled"
+    },
+    {
+      "id": "m053",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 53,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m054",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 53,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m055",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 54,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m056",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 55,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m057",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 60,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m058",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 60,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m059",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 60,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m060",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 61,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m061",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 62,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m062",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 64,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m063",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 64,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m064",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 65,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m065",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 68,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m066",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 75,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m067",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 76,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m068",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 81,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m069",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 81,
+      "operator": "<= -> <",
+      "status": "compiled"
+    },
+    {
+      "id": "m070",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 81,
+      "operator": "- -> +",
+      "status": "compiled"
+    },
+    {
+      "id": "m071",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 82,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m072",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 83,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m073",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 85,
+      "operator": "== -> !=",
+      "status": "compiled"
+    },
+    {
+      "id": "m074",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 85,
+      "operator": "+ -> -",
+      "status": "compiled"
+    },
+    {
+      "id": "m075",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 86,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m076",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 89,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m077",
+      "file": "src/main/java/org/restscs/imp/Pat.java",
+      "line": 98,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m078",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 27,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m079",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 27,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m080",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 27,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m081",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 27,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m082",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 27,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m083",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 28,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m084",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 28,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m085",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 28,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m086",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 31,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m087",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 31,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m088",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 31,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m089",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 31,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m090",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 31,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m091",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 35,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m092",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 35,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m093",
+      "file": "src/main/java/org/restscs/imp/Regex.java",
+      "line": 35,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    },
+    {
+      "id": "m094",
+      "file": "src/main/java/org/restscs/imp/Title.java",
+      "line": 56,
+      "operator": "+ -> -",
+      "status": "non-compiling-discarded"
+    }
+  ]
+}
