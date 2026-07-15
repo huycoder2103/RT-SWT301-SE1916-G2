@@ -1,0 +1,38 @@
+\begin{abstract}
+Large Language Models (LLMs) can read an OpenAPI specification and synthesise REST API
+tests automatically, and a rapidly growing literature reports that they outperform
+search-based tools on live-API error counts. Across \textbf{59} surveyed papers
+(2018--2026) we find, however, that three questions remain unanswered: no study compares
+an LLM generator against \emph{both} a human-style manual suite \emph{and} a mature tool
+on the same APIs; none computes fault-detection \emph{Recall} against a known,
+pre-seeded-fault ground truth (fault counts are reported as raw 500-error tallies on live
+systems); and none reports a per-endpoint edge-case metric.
+
+We address all three with a controlled, blind comparison of three arms --- an LLM
+(Claude Sonnet 4.6), a manual EP/BVA suite, and EvoMaster 6.0.0 --- on three EvoMaster
+Benchmark (EMB) REST APIs comprising \RQIopsTotal{} operations, into which
+\RQIIn{} faults are seeded by mutation so that the denominator of Recall is known
+exactly. Our results are pointedly mixed, and the mixture is the contribution. The LLM
+reaches \RQIcoveragePct\% endpoint coverage
+($\RQIopsCovered/\RQIopsTotal$, $p=\RQIpvalue$) and produces
+\RQIIItotalLlm{} edge-case scenarios against manual's \RQIIItotalManual{}
+($p=\RQIIIpvalue$, rank-biserial $=\RQIIIrankBiserial$) --- it is decisively more
+\emph{prolific}. Yet on the ground truth it is not more \emph{effective}: LLM Recall is
+\RQIIrecallLlm{} versus EvoMaster's \RQIIrecallEvo{}, a gap that is not
+statistically significant (McNemar $p=\RQIImcnemarLEp$) but points the wrong way for
+the LLM.
+
+We trace this dissociation to a mechanism that the coverage-centric literature cannot
+observe: the LLM's spec-derived \emph{status-code} oracles accept any response in a
+plausible class, so they are structurally blind to computational faults that alter a
+returned value while preserving its HTTP status. EvoMaster's recorded-value regression
+oracles catch exactly those. Test volume and fault-finding power are therefore not merely
+distinct --- they are, in this setting, produced by different mechanisms. We argue that
+per-endpoint scenario counts, the metric the field is trending toward, actively mislead
+when reported without a ground-truth Recall alongside them.
+\end{abstract}
+
+\begin{IEEEkeywords}
+REST API testing, large language models, mutation testing, test oracles, EvoMaster,
+empirical software engineering
+\end{IEEEkeywords}

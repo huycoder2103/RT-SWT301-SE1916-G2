@@ -1,0 +1,100 @@
+\section{Threats to Validity}
+\label{sec:threats}
+
+\subsection{Construct validity}
+
+\textbf{The manual arm is not an independent human cohort, and this is the study's principal
+limitation.} Our proposal specified an independent human baseline for the full run. No human
+cohort was available, and in the run reported here the manual suite was authored by the same
+agent that produced the LLM suite, under different role instructions (EP/BVA design from the
+specification) and blind to the fault catalog. Blindness to faults was preserved; author
+independence was not. The consequence is visible and severe: the two arms kill identical
+mutant sets, with zero discordant pairs (Section~\ref{sec:results-degenerate}).
+
+We therefore do not claim any LLM-versus-manual fault-detection result. RQ3 --- a count of
+scenarios each suite \emph{writes} --- is less exposed to this confound than RQ2 but not
+immune to it, and should be read as ``LLM versus a specification-derived EP/BVA baseline''
+rather than ``LLM versus human testers.'' The RQ2 conclusion that survives is LLM versus
+EvoMaster, where no authorship relationship exists.
+
+The repair is specified and staged rather than done: an independently authored manual suite,
+ideally by human testers and at minimum by isolated agent sessions with no shared context,
+re-run against the same \RQIIn{} mutants. Our infrastructure supports this without any
+change to the analysis path. Section~\ref{sec:discussion} sets out why we nonetheless expect
+the identical-kill result to soften rather than disappear: independent authorship changes
+\emph{which} status-visible faults a suite catches, but any status-oracle suite remains
+structurally blind to value faults.
+
+\textbf{Oracle strength differs across arms by construction.} EvoMaster's recorded-value
+regression oracles are strictly stronger on value faults than the spec-derived status
+oracles of the LLM and manual arms. This is not a flaw we failed to control --- it is the
+independent variable that Section~\ref{sec:discussion} identifies as driving the result ---
+but it does mean RQ2 does not compare ``generation techniques'' with oracle strength held
+constant. A fairer isolation of generation quality would fix the oracle kind across arms and
+vary only the generator. We report kill-by-subject so the interaction is visible rather than
+hidden in a pooled average.
+
+\textbf{Mutation kills are a proxy for real faults.} We use standard PIT/Offutt operator
+families~\cite{pit,offutt} to keep the population conventional, but a seeded single-token
+mutation is not a field defect. Coverage is likewise a proxy for test quality. We report
+Recall, coverage, and edge-case counts jointly, and Section~\ref{sec:results-pvd} exists
+precisely because any one of them alone gives the wrong ranking.
+
+\subsection{Internal validity}
+
+\textbf{Equivalent mutants are not excluded.} We do not attempt to identify semantically
+equivalent mutants, which is undecidable in general. Some fraction of the \RQIIn{} mutants
+may be unkillable by \emph{any} black-box suite, which deflates all three arms' Recall
+uniformly. This weakens the absolute figures but not the comparison, since every arm faces
+the identical population.
+
+\textbf{LLM non-determinism.} Generation used temperature 0 and a fixed seed, and raw
+outputs are frozen in the repository, but LLM sampling is not bit-reproducible across
+provider-side model updates. The generated suites are committed, so the analysis is
+reproducible even if regeneration is not.
+
+\textbf{Mutation confined to controller and core-logic classes.} We seed where faults are
+observable through the HTTP contract. Faults in configuration, persistence, or serialisation
+layers are out of the population and out of our conclusions.
+
+\subsection{External validity}
+
+\textbf{Three JVM APIs, \RQIopsTotal{} operations.} Our subjects are small EMB services. The
+findings are ``EMB-only, JVM-only'' and should not be read as covering large production APIs,
+authenticated flows, or non-JVM stacks. The \texttt{user-management} service (MySQL-backed)
+was excluded on setup cost, which leaves authentication endpoints under-represented --- a
+real gap, since RQ1's miss profile cannot speak to the endpoint type most likely to be
+missed.
+
+\textbf{The \texttt{features-service} imbalance.} That subject contributes 4 mutants against
+70 and 59 for the others, because its controllers contain little arithmetic to mutate. All
+three arms tie there (\RQIIFeaturesLlm{} each), so it contributes almost nothing to the
+pooled comparison. We report it rather than dropping it, as dropping a subject after seeing
+its results would be HARKing-adjacent.
+
+\textbf{One LLM, one configuration.} Claude Sonnet 4.6 at temperature 0 with one frozen
+prompt. Our results do not generalise to the GPT family that dominates the literature
+(Section~\ref{sec:related}), to open-source models, or to agentic multi-turn strategies.
+Since we identify \emph{oracle kind} rather than model capability as the mechanism, we would
+expect the qualitative finding to hold for any spec-only generator --- but that is a
+prediction, not a result.
+
+\subsection{Conclusion validity}
+
+\textbf{The Friedman test is underpowered by design.} With $n=3$ subjects it cannot detect
+realistic effects ($\chi^2=\RQIIfriedmanChi$, $p=\RQIIfriedmanP$), which is why the proposal
+pre-designated the pooled per-fault McNemar test ($N=\RQIIn$) as the primary RQ2 analysis
+rather than promoting it after the omnibus test failed.
+
+\textbf{RQ2's null result is not evidence of equivalence.} Approximate achieved power for
+the LLM-versus-EvoMaster McNemar comparison is \RQIImcnemarLEpower{}, well below
+conventional adequacy. $p=\RQIImcnemarLEp$ means we cannot reject $H_0$; it does not mean
+the arms are equivalent, and we avoid that reading throughout. The power figure is itself an
+approximation --- statsmodels has no exact McNemar power routine, so we substitute a
+two-independent-proportion calculation on the same proportions, which is disclosed in
+\texttt{summary.json} alongside the value.
+
+\textbf{Multiplicity.} Three RQ families are tested. We apply Holm correction within RQ2's
+post-hoc comparisons and report a Bonferroni threshold across families
+($\alpha_{\text{adj}}\approx\alphaBonf$). RQ1 and RQ3 survive both; RQ2 rejects under
+neither, so no conclusion in this paper depends on the choice of correction.

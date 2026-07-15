@@ -1,0 +1,44 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We ran the comparison the REST-API-testing literature has not: an LLM generator, a manual
+EP/BVA suite, and EvoMaster, on the same three APIs, against a \emph{known} population of
+\RQIIn{} seeded faults rather than a tally of errors observed on a live system.
+
+The answer to ``can an LLM out-test a human baseline and a search-based tool'' is that the
+question hides an equivocation. On every metric the field currently reports, the LLM wins:
+\RQIcoveragePct\% endpoint coverage ($p=\RQIpvalue$), \RQIIItotalLlm{} edge-case scenarios
+against \RQIIItotalManual{} ($p=\RQIIIpvalue$, rank-biserial $\RQIIIrankBiserial$),
+\PDtestsLlm{} test cases to EvoMaster's \PDtestsEvo{}, and \PDerrTriggeredLlm{} of
+\PDerrKey{} documented HTTP error behaviours triggered. On the ground truth it loses: Recall
+\RQIIrecallLlm{} against EvoMaster's \RQIIrecallEvo{}, twice as many faults found by the
+older, simpler tool ($p=\RQIImcnemarLEp$, underpowered at \RQIImcnemarLEpower{}, so a gap we
+locate rather than establish).
+
+The explanation is not about model capability. A generator that reads a specification writes
+assertions about \emph{status codes}, and a fault that changes a computed value while leaving
+the status intact is invisible to every such assertion, no matter how many are written.
+EvoMaster's recorded-value regression oracles see exactly those faults. The evidence for this
+mechanism is that the arms' ordering tracks fault character rather than generator
+sophistication: EvoMaster leads on the arithmetic-heavy \texttt{rest-ncs}
+(\RQIINcsEvo{} against \RQIINcsLlm{}), the LLM leads on the validation-heavy
+\texttt{rest-scs} (\RQIIScsLlm{} against \RQIIScsEvo{}), and the LLM leads everywhere its
+status oracle is adequate.
+
+Three consequences follow. For practitioners, LLM generation is a breadth instrument that
+complements rather than replaces value-based oracles --- our LLM would have missed half the
+faults its intended replacement found. For the field, metrics that count what a suite
+\emph{produces} ranked our arms in exactly the reverse of what they \emph{detect}, which
+means the comparative claims currently in the literature are not measuring what their
+framing implies. For benchmark design, fault populations should be stratified by
+oracle-observability, because that single axis reorders the arms.
+
+Our principal limitation is that the manual arm was not independently authored, which makes
+the LLM-versus-manual fault comparison degenerate and uninterpretable
+(Section~\ref{sec:threats}); we report it and decline to draw a conclusion from it. The
+immediate future work is that repair --- an independently authored manual suite against the
+same \RQIIn{} mutants, which our pipeline runs without modification. Beyond it, the natural
+studies are an oracle-controlled comparison that fixes assertion kind and varies only the
+generator, a fault population stratified by oracle-observability, and the GAP-T ablation
+across model families. The pipeline, prompts, fault catalogs, and raw data are committed,
+and every number above regenerates from them by script.

@@ -1,0 +1,73 @@
+\section{Introduction}
+\label{sec:intro}
+
+REST APIs carry most of the traffic between modern software components, and testing them
+well remains expensive and largely manual. The arrival of LLMs that can read an OpenAPI
+specification and emit executable tests is therefore commercially significant, and the
+research response has been rapid: RESTGPT~\cite{restgpt} extracts input-constraint rules at
+97\% precision, AutoRestTest~\cite{autoresttest} reports 42 server errors against
+EvoMaster's 20, LlamaRestTest~\cite{llamaresttest} reports 204 faults against 130, and
+RESTifAI~\cite{restifai} reaches 95.5\% operation coverage.
+
+Read carefully, those numbers answer a narrower question than they appear to. Each is a
+count of \emph{what a suite found on a live system}, not a fraction of \emph{what was there
+to find}. Without a known fault population, ``42 versus 20'' cannot distinguish a suite that
+found 42 of 50 available faults from one that found 42 of 500. For a QA lead deciding
+whether to trust a generator, the missing denominator is the whole question.
+
+\subsection{Gaps}
+Our systematic review of \textbf{59} papers (2018--2026, five independent searches merged
+into \texttt{team-synthesis/evidence-table-merged.md}) isolates three persistent gaps.
+
+\textbf{GAP-C (Comparison).} Exactly one study compares a generator against a manual
+suite: EvoMaster~\cite{evomaster}, which found its tool \emph{below} manual (41\% vs 82\%
+statement coverage). That study predates LLMs. No paper places LLM, manual, and a mature
+tool on the same APIs, so the field's central practical claim --- that LLM tests rival
+human ones --- has never been tested directly.
+
+\textbf{GAP-D (Dataset / ground truth).} Fault detection is universally reported as raw
+500-error counts on live
+APIs~\cite{llamaresttest,autoresttest,logiagent,notimetorest,evomaster,morest}. With no
+shared pre-seeded-fault benchmark, ground-truth Recall is never computed.
+
+\textbf{GAP-M (Metric).} Evaluation is coverage-biased. Only KAT~\cite{kat} splits
+2xx/4xx and only RESTSpecIT~\cite{restspecit} reports 5xx; no work reports a per-endpoint
+edge-case metric or an endpoint-type miss profile.
+
+\subsection{This paper}
+We close GAP-C and GAP-D jointly by seeding faults with standard mutation operators into
+three EMB APIs, which fixes the denominator at \RQIIn{} known faults, and then running
+all three arms against every mutant. We address GAP-M with a per-endpoint edge-case count
+and a code-derived \emph{error-surface baseline} that enumerates, per endpoint, every
+source location able to emit a non-2xx response --- a tool-independent map of what
+\emph{can} fail, against which each arm's behaviour is read.
+
+The outcome splits cleanly, and against expectation. On the metrics the literature
+favours, the LLM wins comfortably: \RQIcoveragePct\% endpoint coverage and
+\RQIIItotalLlm{} edge-case scenarios against manual's \RQIIItotalManual{}
+($p=\RQIIIpvalue$). On the ground truth, it does not win at all: Recall
+\RQIIrecallLlm{} against EvoMaster's \RQIIrecallEvo{}. The LLM writes roughly
+\RQIIItotalLlm{} scenarios and detects fewer faults than a search-based tool from 2019.
+
+That dissociation is not noise, and it is not a scoring artefact. Section~\ref{sec:discussion}
+traces it to oracle \emph{kind}: the LLM's spec-derived status-code assertions accept any
+response within a plausible class and so cannot see a fault that changes a computed value
+while leaving the status untouched --- which is what most of our mutants do. EvoMaster's
+recorded-value regression oracles see precisely those. The mechanism explains why a suite
+can be simultaneously more thorough by every published metric and less effective at the
+job.
+
+\subsection{Contributions}
+\begin{enumerate}
+  \item \textbf{The first three-way comparison} of LLM, manual, and EvoMaster test
+        generation on identical APIs under a blind protocol (GAP-C).
+  \item \textbf{A pre-seeded-fault benchmark} of \RQIIn{} catalogued mutants over
+        \RQIopsTotal{} operations, enabling true fault-detection Recall rather than
+        live-API error counts (GAP-D).
+  \item \textbf{A per-endpoint edge-case metric plus a code-derived error-surface
+        baseline}, separating scenarios \emph{produced} from faults \emph{detected} (GAP-M).
+  \item \textbf{An oracle-kind explanation} of why the two diverge, with the practical
+        consequence that scenario-count metrics are misleading when reported alone.
+  \item \textbf{A fully reproducible pipeline}: every number in this paper is generated
+        from committed raw data by a script, not transcribed (Section~\ref{sec:method-repro}).
+\end{enumerate}
