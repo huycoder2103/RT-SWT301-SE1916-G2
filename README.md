@@ -20,7 +20,7 @@
 - [x] RBL-2: Phân tích GAP (Tuần 5)
 - [x] RBL-3: Proposal (Tuần 5-6) — ✅ GV duyệt v1.2
 - [x] RBL-4: Thực nghiệm (Tuần 7-8) — ✅ Full run executed 2026-07-17 (Task 8: independent Manual suite, 133-mutant ground truth reproduced exactly)
-- [ ] RBL-5: Báo cáo & Trình bày (Tuần 9-10) — Paper ✅ (`paper/`, auto-injected numbers); slides pending
+- [x] RBL-5: Báo cáo & Trình bày (Tuần 9-10) — Paper ✅ (`paper/`, auto-injected numbers) + Slides ✅ (`presentation/RBL5_final_defense.pptx`, số đọc từ `results/`)
 
 **Kết quả chính (RQ2, độc lập Manual):** EvoMaster recall 0.135 > LLM 0.060 > Manual 0.015. LLM thắng human-style baseline (McNemar p≈0.031, kill ⊇ manual) nhưng thua EvoMaster (p≈0.031); cả hai marginal (không qua Bonferroni). Cơ chế 2 tầng: oracle *kind* đặt trần, *volume* quyết định trong cùng kind. Chi tiết: [notes.md](notes.md) §F, [paper/](paper/).
 
