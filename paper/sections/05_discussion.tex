@@ -1,0 +1,117 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Why volume and effectiveness came apart}
+
+The headline of Section~\ref{sec:results} is a dissociation: the LLM produced
+$\PDvolumeRatioLlmEvo\times$ EvoMaster's test volume, covered every operation, generated
+\RQIIItotalLlm{} edge-case scenarios against manual's \RQIIItotalManual{}, and still killed
+half as many faults. Treating this as a paradox is a mistake. It follows directly from
+\emph{what kind of assertion each arm writes}.
+
+The LLM reads an OpenAPI specification. A specification documents \emph{status codes}: this
+path returns 200, that one 400 on bad input. Tests synthesised from it therefore assert on
+the status code and, at best, on the shape of the response body --- an oracle of the form
+``the response is in the plausible class for this request.'' Our manual EP/BVA suite, drawn
+from the same specification, writes the same kind of assertion. Both are
+\emph{specification-derived status oracles}.
+
+Now consider what our mutants do. A relational or arithmetic operator replacement inside a
+numerical routine --- \texttt{<} becoming \texttt{<=}, \texttt{/} becoming \texttt{*} ---
+changes a \emph{computed value}. The endpoint still accepts the request, still runs to
+completion, still returns 200. Only the number in the body is now wrong. A status oracle
+cannot see this. The test passes on the mutant exactly as it passed on the original, and
+the fault survives.
+
+EvoMaster writes a different kind of oracle. Its black-box mode records the actual response
+of the original system and emits assertions pinning those recorded values. That is a
+\emph{regression oracle}: it fails whenever any observed value changes, whether or not the
+status does. Against value-changing mutants this is precisely the right instrument.
+
+So the arms were never measuring the same thing. The LLM and manual arms answer ``does the
+API respond in the documented class?''; EvoMaster answers ``does the API still compute what
+it computed before?'' Our fault population consists almost entirely of value faults, so it
+interrogates the second question. EvoMaster's win is not evidence that search-based
+generation is smarter than an LLM --- it is evidence that a regression oracle beats a status
+oracle on value faults, which is close to a tautology once stated.
+
+Three observations support this account over alternatives.
+
+\textbf{The per-subject pattern matches the prediction.} If oracle kind drives the result,
+EvoMaster's advantage should concentrate where faults are most value-like. It does:
+EvoMaster leads decisively on \texttt{rest-ncs} (\RQIINcsEvo{} against \RQIINcsLlm{}), whose
+controllers are numerical routines where nearly every mutant shifts a computed value while
+preserving the status. On \texttt{rest-scs}, which has more string and validation logic and
+so more mutants that flip a response \emph{class}, the LLM leads (\RQIIScsLlm{} against
+\RQIIScsEvo{}). The ordering inverts with fault character, exactly as the mechanism
+predicts, and not with anything about the generators' sophistication.
+
+\textbf{The LLM wins where its oracle is adequate.} On the documented error surface --- where
+being wrong \emph{means} returning a different status --- the LLM leads every arm,
+triggering \PDerrTriggeredLlm{} of \PDerrKey{} error behaviours against manual's
+\PDerrTriggeredManual{} and EvoMaster's \PDerrTriggeredEvo{}, and eliciting a genuine 500
+crash. Where a status oracle suffices, the LLM's superior volume converts into superior
+detection. Where it does not, volume buys nothing.
+
+\textbf{Oracle kind sets a ceiling; volume allocates what is under it.} The pilot behind this
+study reported LLM and manual killing identical mutant sets, but its manual suite shared an
+author with the LLM suite, so that identity could not be interpreted. Re-authoring the manual
+suite independently (spec-only, isolated, blind) separates two effects that the tie had
+conflated. On \texttt{rest-ncs}, where every mutant is a value fault, the independent manual
+still scores \RQIINcsManual{} --- exactly like the LLM, and for the structural reason the
+mechanism predicts: no status-oracle suite, however authored, can see a wrong number behind a
+200. Oracle \emph{kind} caps both at zero there. But on \texttt{rest-scs}, where some mutants
+flip a response \emph{class} and are therefore status-visible, the suites separate sharply:
+the LLM kills \RQIIScsLlm{} to the independent manual's \RQIIScsManual{}, and the manual's
+kills are a strict subset of the LLM's. Within the status-oracle regime, the LLM's
+\PDtestsLlm{}-test volume reaches more of the catchable faults than the leaner
+\PDtestsManual{}-test human-style suite. So the two-level picture is: oracle kind fixes the
+\emph{ceiling} (status oracles cannot exceed EvoMaster on value faults), and within a kind,
+volume determines how much of the reachable fault set you actually catch. The pilot's tie was
+the two levels coinciding by an authorship artefact; separating the author reveals both.
+
+\subsection{Implications}
+
+\textbf{For practitioners.} An LLM generator is a strong \emph{breadth} instrument and a
+weak \emph{depth} one. It will reach every documented operation and probe the documented
+error surface harder than a human or a search tool. It will not notice that your pricing
+routine now returns the wrong total, because nothing in your specification says what the
+right total is. The actionable rule: use LLM generation for specification conformance and
+error-path breadth; do not let it displace regression oracles, property-based assertions, or
+example-based expected values on computational paths. The two are complements, and our data
+say the complement is not optional --- half the detected faults came from the arm the LLM
+would have replaced.
+
+\textbf{For the field.} Every metric in our study that the surveyed literature actually uses
+--- coverage, scenario counts, 500-error tallies --- ranked the LLM first. The ground truth
+ranked it second. That is not a quirk of our subjects; it is a structural consequence of
+scoring test suites on volume proxies. When AutoRestTest reports 42 server errors against
+EvoMaster's 20~\cite{autoresttest}, or LlamaRestTest 204 faults against 130~\cite{llamaresttest},
+those numbers are real but they measure \emph{how hard the documented error surface was
+hit}, not \emph{what fraction of faults was found}. Our results show the two can order
+arms oppositely on the same code. Per-endpoint scenario counts --- the metric GAP-M asks
+for and which we introduce --- are subject to the same caveat, and we would rather say so
+than let our own contribution be misread: RQ3 is a measure of what the LLM \emph{writes},
+and Section~\ref{sec:results-pvd} shows how little that predicted about what it
+\emph{caught}.
+
+\textbf{For benchmark design.} The field needs pre-seeded-fault benchmarks not because
+Recall is a nicer statistic, but because without a denominator these two orderings are
+indistinguishable. We would additionally argue that a benchmark should stratify its fault
+population by \emph{oracle-observability} --- status-visible versus value-only --- since our
+results show that single axis reordering the arms. A benchmark of only value faults makes
+regression-oracle tools look dominant; one of only status faults makes LLMs look dominant.
+Neither is a fact about the generators.
+
+\subsection{Why the low absolute Recall is informative}
+
+All three arms score low in absolute terms: the best, EvoMaster, kills \PDkilledEvo{} of
+\PDkilledTotal{} mutants (\RQIIrecallEvoPct\%). We report this rather than tuning it away,
+because it is a finding about black-box REST testing rather than a defect in our setup. Our
+mutants live in core logic reachable only through the HTTP contract, and many are
+\emph{equivalent-at-the-boundary}: the value they corrupt never surfaces in a response
+field, or surfaces only for inputs no arm generated. A white-box tool with code-coverage
+feedback would score higher. The honest reading is that black-box REST suites --- LLM,
+human, or search-based --- detect a small minority of seeded logic faults, and the
+interesting question is not which arm wins a low-scoring race but which fault classes all
+three systematically cannot see.

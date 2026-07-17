@@ -6,19 +6,19 @@
     "note_vi": "AI/Người/Tool TẠO RA — KHÔNG phải bug.",
     "test_cases": {
       "llm": 295,
-      "manual": 197,
+      "manual": 147,
       "evomaster": 87
     },
     "edge_case_scenarios_llm_vs_manual": {
       "llm": 217,
-      "manual": 141
+      "manual": 113
     }
   },
   "detected": {
     "note_vi": "Thực sự BẮT ĐƯỢC, đối chiếu ground truth.",
     "mutation_faults_killed": {
-      "llm": 9,
-      "manual": 9,
+      "llm": 8,
+      "manual": 2,
       "evomaster": 18,
       "total": 133
     },
@@ -30,7 +30,7 @@
     },
     "server_crash_5xx_responses": {
       "llm": 32,
-      "manual": 20,
+      "manual": 22,
       "evomaster": 18
     }
   },

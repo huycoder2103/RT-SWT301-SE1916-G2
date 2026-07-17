@@ -29,8 +29,8 @@
             "missed": "-"
           },
           "manual": {
-            "triggered": "500",
-            "missed": "-"
+            "triggered": "-",
+            "missed": "500"
           },
           "evomaster": {
             "triggered": "500",
@@ -97,8 +97,8 @@
             "missed": "-"
           },
           "manual": {
-            "triggered": "-",
-            "missed": "500"
+            "triggered": "500",
+            "missed": "-"
           },
           "evomaster": {
             "triggered": "500",
@@ -114,8 +114,8 @@
             "missed": "-"
           },
           "manual": {
-            "triggered": "500",
-            "missed": "-"
+            "triggered": "-",
+            "missed": "500"
           },
           "evomaster": {
             "triggered": "500",
@@ -199,8 +199,8 @@
             "missed": "-"
           },
           "manual": {
-            "triggered": "-",
-            "missed": "405;406"
+            "triggered": "405",
+            "missed": "406"
           },
           "evomaster": {
             "triggered": "-",
@@ -296,19 +296,19 @@
     },
     "ncs": {
       "UNKNOWN": {
-        "answer_key_codes": "400;404",
+        "answer_key_codes": "404",
         "by_arm": {
           "llm": {
             "triggered": "404",
-            "missed": "400"
+            "missed": "-"
           },
           "manual": {
-            "triggered": "400;404",
+            "triggered": "404",
             "missed": "-"
           },
           "evomaster": {
             "triggered": "-",
-            "missed": "400;404"
+            "missed": "404"
           }
         }
       },

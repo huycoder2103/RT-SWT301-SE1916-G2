@@ -19,35 +19,35 @@ EMB/WFD ships **no pre-computed numbers** (targets + JaCoCo/driver tooling only)
 
 | Metric | LLM (proposed) | Manual (baseline) | EvoMaster (baseline) |
 |--------|---------------:|------------------:|---------------------:|
-| **Test cases authored** | 295 | 197 | 87 |
-| Requests issued (live) | 410 | 278 | 97 |
-| HTTP 2xx | 313 | 216 | 69 |
-| **HTTP 4xx (client errors hit)** | 65 | 42 | 10 |
-| **HTTP 5xx (server crashes hit)** | 32 | 20 | 18 |
-| Edge-case scenarios (neg+bnd+err) | 217 | 141 | 0 |
-| Mutation fault-recall (overall) | 0.0677 | 0.0677 | 0.1353 |
+| **Test cases authored** | 295 | 147 | 87 |
+| Requests issued (live) | 410 | 144 | 95 |
+| HTTP 2xx | 309 | 73 | 67 |
+| **HTTP 4xx (client errors hit)** | 69 | 49 | 10 |
+| **HTTP 5xx (server crashes hit)** | 32 | 22 | 18 |
+| Edge-case scenarios (neg+bnd+err) | 217 | 113 | 0 |
+| Mutation fault-recall (overall) | 0.0602 | 0.015 | 0.1353 |
 | Error behaviours triggered / 31 | 31 | 22 | 18 |
 
 ## 3. Statistical verdicts (from results/stats/summary.json)
 
 - **RQ1 endpoint coverage:** LLM 100.0% over 35 operations (H0 coverage>90% rejected→PASS, p=1.6485266344986434e-09).
-- **RQ3 edge-case scenarios:** LLM 217 vs Manual 141 (median/op 5.0 vs 4.0), Wilcoxon p=6.20086477871289e-07; LLM>Manual on 30/35 operations.
-- **RQ2 fault-detection (mutation recall, 133 mutants):** EvoMaster 0.1353 > LLM 0.0677 = Manual 0.0677; Friedman p=1.0.
+- **RQ3 edge-case scenarios:** LLM 217 vs Manual 113 (median/op 5.0 vs 3.0), Wilcoxon p=1.4273996644915772e-07; LLM>Manual on 33/35 operations.
+- **RQ2 fault-detection (mutation recall, 133 mutants):** EvoMaster 0.1353 > LLM 0.0602 = Manual 0.015; Friedman p=0.36787944117144306.
 - **Outcome error-profile (documented behaviours, see REPORT-error-profile.md):** LLM 31/31, Manual 22/31, EvoMaster 18/31.
 
 ## 4. Per-SUT × arm breakdown — full table in `results/stats/master_summary.csv`
 
 | SUT | Arm | Endpoints | Tests | Req | 2xx | 4xx | 5xx | Cov% | Edge | Recall | ErrTrig |
 |-----|-----|----------:|------:|----:|----:|----:|----:|-----:|-----:|-------:|--------:|
-| ncs | llm | 6 | 86 | 81 | 43 | 38 | 0 | 100.0 | 69 | 0.0143 | 6/6 |
-| ncs | manual | 6 | 60 | 60 | 31 | 29 | 0 | 100.0 | 46 | 0.0143 | 6/6 |
+| ncs | llm | 6 | 86 | 81 | 39 | 42 | 0 | 100.0 | 69 | 0.0 | 6/6 |
+| ncs | manual | 6 | 51 | 51 | 24 | 27 | 0 | 100.0 | 44 | 0.0 | 6/6 |
 | ncs | evomaster | 6 | 30 | 30 | 20 | 10 | 0 |  | 0 | 0.1714 | 5/6 |
 | scs | llm | 11 | 109 | 109 | 90 | 19 | 0 | 100.0 | 68 | 0.1186 | 5/5 |
-| scs | manual | 11 | 82 | 82 | 70 | 12 | 0 | 100.0 | 59 | 0.1186 | 3/5 |
+| scs | manual | 11 | 54 | 52 | 32 | 20 | 0 | 100.0 | 43 | 0.0169 | 3/5 |
 | scs | evomaster | 11 | 27 | 27 | 27 | 0 | 0 |  | 0 | 0.0847 | 0/5 |
 | features | llm | 18 | 100 | 220 | 180 | 8 | 32 | 100.0 | 80 | 0.25 | 20/20 |
-| features | manual | 18 | 55 | 136 | 115 | 1 | 20 | 100.0 | 36 | 0.25 | 13/20 |
-| features | evomaster | 18 | 30 | 40 | 22 | 0 | 18 |  | 0 | 0.25 | 13/20 |
+| features | manual | 18 | 42 | 41 | 17 | 2 | 22 | 88.9 | 26 | 0.25 | 13/20 |
+| features | evomaster | 18 | 30 | 38 | 20 | 0 | 18 |  | 0 | 0.25 | 13/20 |
 
 ## 5. Regenerate
 ```bash

@@ -1,0 +1,65 @@
+% =====================================================================
+% RBL-5 -- SWT301 Research-Based Learning, Summer 2026
+% Group SE1916-G2
+%
+% Build:  pdflatex main -> bibtex main -> pdflatex main -> pdflatex main
+%   (or)  latexmk -pdf main.tex
+%
+% IMPORTANT -- numbers policy:
+%   No statistic is typed into this document. Every result is a macro
+%   defined in generated/numbers.tex, which scripts/gen_paper_macros.py
+%   binds to results/stats/summary.json (<- analyze.py <- results/raw/*).
+%   Refresh with:  python scripts/gen_paper_macros.py
+% =====================================================================
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+\graphicspath{{figures/}{../figures/}}
+
+% ---- auto-generated statistics (DO NOT EDIT numbers.tex by hand) ----
+\input{generated/numbers}
+
+\begin{document}
+
+\title{Can an LLM Out-Test a Human Baseline and a Search-Based Tool?\\
+A Ground-Truth Comparison of LLM, Manual, and EvoMaster\\
+REST API Test Generation on Pre-Seeded-Fault Benchmarks}
+
+\author{
+\IEEEauthorblockN{Nguyen Hoang Huy\IEEEauthorrefmark{1},
+Nguyen Tien Dung\IEEEauthorrefmark{2},
+Nguyen Thanh Dat\IEEEauthorrefmark{3},
+Nguyen Le Thuan\IEEEauthorrefmark{4},
+Vo Le Trung Nguyen\IEEEauthorrefmark{5}}
+\IEEEauthorblockA{\textit{FPT University} --- SWT301, Group SE1916-G2, Summer 2026\\
+\IEEEauthorrefmark{1}SE190240, Project Lead \quad
+\IEEEauthorrefmark{2}SE190034, LLM Runner \quad
+\IEEEauthorrefmark{3}SE190239, Data \& Ground Truth\\
+\IEEEauthorrefmark{4}SE190305, Metrics \& Stats \quad
+\IEEEauthorrefmark{5}SE190220, Report Writer\\
+Instructor: L.T.Q.\ Chi}
+}
+
+\maketitle
+
+\input{sections/00_abstract}
+\input{sections/01_intro}
+\input{sections/02_related}
+\input{sections/03_method}
+\input{sections/04_results}
+\input{sections/05_discussion}
+\input{sections/06_threats}
+\input{sections/07_conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

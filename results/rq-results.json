@@ -13,24 +13,24 @@
   "RQ2_fault_recall": {
     "question_vi": "AI bắt nhiều lỗi gieo hơn Người & EvoMaster không?",
     "overall_recall": {
-      "llm": 0.0677,
-      "manual": 0.0677,
+      "llm": 0.0602,
+      "manual": 0.015,
       "evomaster": 0.1353
     },
     "n_mutants": 133,
-    "mcnemar_llm_vs_evomaster_p": 0.063568115234375,
-    "verdict_vi": "EvoMaster 0.1353 > AI=0.0677 = Người; AI CHƯA vượt (McNemar p≈0.064) → H0 chưa bị bác. Báo trung thực."
+    "mcnemar_llm_vs_evomaster_p": 0.0308837890625,
+    "verdict_vi": "EvoMaster 0.1353 > AI=0.0602 = Người; AI CHƯA vượt (McNemar p≈0.031) → H0 chưa bị bác. Báo trung thực."
   },
   "RQ3_edge_cases": {
     "question_vi": "AI sinh nhiều kịch bản lỗi/biên per endpoint hơn Người không?",
     "llm_total": 217,
-    "manual_total": 141,
+    "manual_total": 113,
     "median_llm": 5.0,
-    "median_manual": 4.0,
-    "p_value": 6.20086477871289e-07,
-    "pairs_llm_more": 30,
+    "median_manual": 3.0,
+    "p_value": 1.4273996644915772e-07,
+    "pairs_llm_more": 33,
     "n_operations": 35,
     "reject_H0": true,
-    "verdict_vi": "AI 217 vs Người 141 (p≈6.2e-07); AI hơn ở 30/35 endpoint → H1 ĐÚNG."
+    "verdict_vi": "AI 217 vs Người 113 (p≈1.4e-07); AI hơn ở 33/35 endpoint → H1 ĐÚNG."
   }
 }
