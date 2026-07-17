@@ -45,17 +45,22 @@ source location able to emit a non-2xx response --- a tool-independent map of wh
 The outcome splits cleanly, and against expectation. On the metrics the literature
 favours, the LLM wins comfortably: \RQIcoveragePct\% endpoint coverage and
 \RQIIItotalLlm{} edge-case scenarios against manual's \RQIIItotalManual{}
-($p=\RQIIIpvalue$). On the ground truth, it does not win at all: Recall
-\RQIIrecallLlm{} against EvoMaster's \RQIIrecallEvo{}. The LLM writes roughly
-\RQIIItotalLlm{} scenarios and detects fewer faults than a search-based tool from 2019.
+($p=\RQIIIpvalue$). On the ground truth the ranking is EvoMaster \RQIIrecallEvo{} $>$ LLM
+\RQIIrecallLlm{} $>$ manual \RQIIrecallManual{}: the LLM beats an independently authored
+human-style suite but is beaten by a search-based tool from 2019, writing roughly
+\RQIIItotalLlm{} scenarios yet detecting fewer faults than the tool.
 
-That dissociation is not noise, and it is not a scoring artefact. Section~\ref{sec:discussion}
-traces it to oracle \emph{kind}: the LLM's spec-derived status-code assertions accept any
-response within a plausible class and so cannot see a fault that changes a computed value
-while leaving the status untouched --- which is what most of our mutants do. EvoMaster's
-recorded-value regression oracles see precisely those. The mechanism explains why a suite
-can be simultaneously more thorough by every published metric and less effective at the
-job.
+That dissociation is not noise, and it is not a scoring artefact.
+Section~\ref{sec:discussion} traces it to two composing mechanisms. Oracle \emph{kind} sets
+a ceiling: the LLM's and manual suite's spec-derived status-code assertions accept any
+response within a plausible class, so neither can see a fault that changes a computed value
+while leaving the status untouched --- which is what most of our mutants do, and why both
+score zero on the arithmetic-heavy subject while EvoMaster's recorded-value regression
+oracles catch twelve. Within that status-oracle regime, \emph{volume} decides the rest: where
+faults are status-visible the LLM's larger suite catches more of them than the leaner manual
+one. The composition explains why a suite can be simultaneously more thorough by every
+published metric, better than a human-style baseline, and still less effective than a mature
+tool.
 
 \subsection{Contributions}
 \begin{enumerate}
@@ -66,8 +71,9 @@ job.
         live-API error counts (GAP-D).
   \item \textbf{A per-endpoint edge-case metric plus a code-derived error-surface
         baseline}, separating scenarios \emph{produced} from faults \emph{detected} (GAP-M).
-  \item \textbf{An oracle-kind explanation} of why the two diverge, with the practical
-        consequence that scenario-count metrics are misleading when reported alone.
+  \item \textbf{A two-level mechanism} --- oracle \emph{kind} sets the ceiling, oracle
+        \emph{volume} allocates what is under it --- explaining why volume and effectiveness
+        diverge, with the practical consequence that scenario-count metrics mislead alone.
   \item \textbf{A fully reproducible pipeline}: every number in this paper is generated
         from committed raw data by a script, not transcribed (Section~\ref{sec:method-repro}).
 \end{enumerate}

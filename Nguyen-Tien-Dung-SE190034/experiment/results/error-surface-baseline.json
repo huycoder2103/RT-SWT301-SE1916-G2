@@ -9,8 +9,8 @@
   },
   "summary": {
     "total_endpoints": 35,
-    "total_error_points": 39,
-    "endpoints_with_explicit_4xx_guard": 5,
+    "total_error_points": 24,
+    "endpoints_with_explicit_4xx_guard": 0,
     "endpoints_with_potential_5xx_crash": 22
   },
   "suts": {
@@ -23,20 +23,6 @@
           "method": "GET",
           "path": "/api/bessj/{n}/{x}",
           "error_surface": [
-            {
-              "status": 400,
-              "provenance": "declared",
-              "file": "NcsRest.java",
-              "line": 44,
-              "detail": "return ResponseEntity.status(400).build();"
-            },
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "NcsRest.java",
-              "line": 35,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            },
             {
               "status": 500,
               "provenance": "potential",
@@ -53,20 +39,6 @@
           "error_surface": [
             {
               "status": 400,
-              "provenance": "declared",
-              "file": "NcsRest.java",
-              "line": 69,
-              "detail": "return ResponseEntity.status(400).build();"
-            },
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "NcsRest.java",
-              "line": 55,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            },
-            {
-              "status": 400,
               "provenance": "potential",
               "file": "imp/Expint.java",
               "line": 16,
@@ -79,27 +51,6 @@
           "method": "GET",
           "path": "/api/fisher/{m}/{n}/{x}",
           "error_surface": [
-            {
-              "status": 400,
-              "provenance": "declared",
-              "file": "NcsRest.java",
-              "line": 85,
-              "detail": "return ResponseEntity.status(400).build();"
-            },
-            {
-              "status": 400,
-              "provenance": "declared",
-              "file": "NcsRest.java",
-              "line": 93,
-              "detail": "return ResponseEntity.status(400).build();"
-            },
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "NcsRest.java",
-              "line": 74,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            },
             {
               "status": 500,
               "provenance": "potential",
@@ -116,20 +67,6 @@
           "error_surface": [
             {
               "status": 400,
-              "provenance": "declared",
-              "file": "NcsRest.java",
-              "line": 113,
-              "detail": "return ResponseEntity.status(400).build();"
-            },
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "NcsRest.java",
-              "line": 98,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            },
-            {
-              "status": 400,
               "provenance": "potential",
               "file": "imp/Gammq.java",
               "line": 80,
@@ -143,20 +80,6 @@
           "path": "/api/remainder/{a}/{b}",
           "error_surface": [
             {
-              "status": 400,
-              "provenance": "declared",
-              "file": "NcsRest.java",
-              "line": 128,
-              "detail": "return ResponseEntity.status(400).build();"
-            },
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "NcsRest.java",
-              "line": 118,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            },
-            {
               "status": 500,
               "provenance": "potential",
               "file": "imp/Remainder.java",
@@ -169,15 +92,7 @@
           "operationId": "checkTriangleUsingGET",
           "method": "GET",
           "path": "/api/triangle/{a}/{b}/{c}",
-          "error_surface": [
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "NcsRest.java",
-              "line": 15,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            }
-          ]
+          "error_surface": []
         }
       ]
     },
@@ -190,13 +105,6 @@
           "method": "GET",
           "path": "/api/calc/{op}/{arg1}/{arg2}",
           "error_surface": [
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "ScsRest.java",
-              "line": 14,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            },
             {
               "status": 500,
               "provenance": "potential",
@@ -224,15 +132,7 @@
           "operationId": "costfunsUsingGET",
           "method": "GET",
           "path": "/api/costfuns/{i}/{s}",
-          "error_surface": [
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "ScsRest.java",
-              "line": 42,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            }
-          ]
+          "error_surface": []
         },
         {
           "operationId": "dateParseUsingGET",
@@ -250,15 +150,7 @@
           "operationId": "notyPevarUsingGET",
           "method": "GET",
           "path": "/api/notypevar/{i}/{s}",
-          "error_surface": [
-            {
-              "status": 400,
-              "provenance": "framework",
-              "file": "ScsRest.java",
-              "line": 79,
-              "detail": "typed @PathVariable -> Spring auto-400 on type mismatch"
-            }
-          ]
+          "error_surface": []
         },
         {
           "operationId": "ordered4UsingGET",

@@ -28,16 +28,16 @@
   "RQ3_edge_cases_llm_vs_manual": {
     "n_operations": 35,
     "llm_total_edge": 217,
-    "manual_total_edge": 141,
+    "manual_total_edge": 113,
     "llm_median_per_op": 5.0,
-    "manual_median_per_op": 4.0,
-    "wilcoxon_W": 493.0,
-    "p_value_one_sided": 6.20086477871289e-07,
+    "manual_median_per_op": 3.0,
+    "wilcoxon_W": 626.0,
+    "p_value_one_sided": 1.4273996644915772e-07,
     "reject_H0_(llm>manual)": true,
-    "pairs_llm_more": 30,
-    "pairs_manual_more": 1,
-    "pairs_tie": 4,
-    "rank_biserial": 0.9879032258064516
+    "pairs_llm_more": 33,
+    "pairs_manual_more": 2,
+    "pairs_tie": 0,
+    "rank_biserial": 0.9873015873015873
   },
   "RQ2_fault_detection": {
     "per_sut_recall": {
@@ -47,24 +47,24 @@
         "evomaster": 0.25
       },
       "ncs": {
-        "llm": 0.0143,
-        "manual": 0.0143,
+        "llm": 0.0,
+        "manual": 0.0,
         "evomaster": 0.1714
       },
       "scs": {
         "llm": 0.1186,
-        "manual": 0.1186,
+        "manual": 0.0169,
         "evomaster": 0.0847
       }
     },
     "overall_recall": {
-      "llm": 0.0677,
-      "manual": 0.0677,
+      "llm": 0.0602,
+      "manual": 0.015,
       "evomaster": 0.1353
     },
     "n_mutants_total": 133,
-    "friedman_chi2": 0.0,
-    "friedman_p": 1.0,
+    "friedman_chi2": 1.9999999999999962,
+    "friedman_p": 0.36787944117144306,
     "pairwise_wilcoxon_holm": {
       "llm_vs_manual": {
         "p_raw": 1.0,
@@ -77,31 +77,27 @@
         "reject_H0": false
       }
     },
-    "pairwise_wilcoxon_identical_vectors": [
-      "llm_vs_manual"
-    ],
-    "pairwise_wilcoxon_note": "per-SUT recall vectors are identical for the pair(s) listed -- p=1.0 by construction, not computed via scipy (see notes.md oracle-weakness finding).",
     "cliffs_delta": {
-      "llm_vs_manual": 0.0,
-      "llm_vs_evomaster": -0.06766917293233082
+      "llm_vs_manual": 0.045112781954887216,
+      "llm_vs_evomaster": -0.07518796992481203
     },
     "mcnemar": {
       "llm_vs_manual": {
-        "llm_only(b)": 0,
+        "llm_only(b)": 6,
         "manual_only(c)": 0,
         "statistic": 0.0,
-        "p_value": 1.0,
-        "reject_H0": false,
-        "achieved_power_approx": 0.049999999999999954,
+        "p_value": 0.03125,
+        "reject_H0": true,
+        "achieved_power_approx": 0.5304083481446796,
         "power_note": "approximate: two-independent-proportion power (statsmodels NormalIndPower) on the same recall proportions McNemar tests; not an exact McNemar power formula (statsmodels has none built in) -- disclosed approximation."
       },
       "llm_vs_evomaster": {
-        "llm_only(b)": 5,
+        "llm_only(b)": 4,
         "evomaster_only(c)": 14,
-        "statistic": 5.0,
-        "p_value": 0.063568115234375,
-        "reject_H0": false,
-        "achieved_power_approx": 0.4572015966394917,
+        "statistic": 4.0,
+        "p_value": 0.0308837890625,
+        "reject_H0": true,
+        "achieved_power_approx": 0.5569275163462308,
         "power_note": "approximate: two-independent-proportion power (statsmodels NormalIndPower) on the same recall proportions McNemar tests; not an exact McNemar power formula (statsmodels has none built in) -- disclosed approximation."
       }
     }

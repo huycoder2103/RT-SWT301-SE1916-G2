@@ -3,7 +3,7 @@ features,UNKNOWN,404,llm,404,-
 features,UNKNOWN,404,manual,-,404
 features,UNKNOWN,404,evomaster,-,404
 features,addConfiguration,500,llm,500,-
-features,addConfiguration,500,manual,500,-
+features,addConfiguration,500,manual,-,500
 features,addConfiguration,500,evomaster,500,-
 features,addExcludesConstraintToProduct,500,llm,500,-
 features,addExcludesConstraintToProduct,500,manual,500,-
@@ -15,10 +15,10 @@ features,addFeatureToProduct,500,llm,500,-
 features,addFeatureToProduct,500,manual,500,-
 features,addFeatureToProduct,500,evomaster,500,-
 features,addRequiresConstraintToProduct,500,llm,500,-
-features,addRequiresConstraintToProduct,500,manual,-,500
+features,addRequiresConstraintToProduct,500,manual,500,-
 features,addRequiresConstraintToProduct,500,evomaster,500,-
 features,deleteConfiguration,500,llm,500,-
-features,deleteConfiguration,500,manual,500,-
+features,deleteConfiguration,500,manual,-,500
 features,deleteConfiguration,500,evomaster,500,-
 features,deleteConstraint,404,llm,404,-
 features,deleteConstraint,404,manual,404,-
@@ -33,7 +33,7 @@ features,deleteProductByName,500,llm,500,-
 features,deleteProductByName,500,manual,500,-
 features,deleteProductByName,500,evomaster,500,-
 features,getAllProducts,405;406,llm,405;406,-
-features,getAllProducts,405;406,manual,-,405;406
+features,getAllProducts,405;406,manual,405,406
 features,getAllProducts,405;406,evomaster,-,405;406
 features,getConfigurationActivedFeatures,405;500,llm,405;500,-
 features,getConfigurationActivedFeatures,405;500,manual,500,405
@@ -50,9 +50,9 @@ features,getProductByName,500,evomaster,500,-
 features,updateFeatureOfProduct,500,llm,500,-
 features,updateFeatureOfProduct,500,manual,500,-
 features,updateFeatureOfProduct,500,evomaster,500,-
-ncs,UNKNOWN,400;404,llm,404,400
-ncs,UNKNOWN,400;404,manual,400;404,-
-ncs,UNKNOWN,400;404,evomaster,-,400;404
+ncs,UNKNOWN,404,llm,404,-
+ncs,UNKNOWN,404,manual,404,-
+ncs,UNKNOWN,404,evomaster,-,404
 ncs,bessjUsingGET,400,llm,400,-
 ncs,bessjUsingGET,400,manual,400,-
 ncs,bessjUsingGET,400,evomaster,400,-

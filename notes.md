@@ -22,10 +22,14 @@ is also why `pilot_ground_truth.csv` and `full_ground_truth.csv` are byte-identi
 identity is by design and is **not** a copy-paste error; anyone reviewing the repo should
 read it as "pilot scope == full scope", per `RBL4-FULL-RUN-DESIGN.md` §4.
 
-**EMB upstream commit hash:** _still unknown — must be read on the experiment machine._
-The EMB clone is gitignored and is not on the current machine. Recover with:
-`git -C <path-to-EMB> log -1 --format=%H`. Until then `data/raw/README.md`'s provenance
-claim rests on the clone date (2026-06-13) alone.
+**EMB upstream commit hash:** `915859080da033fc36feae54bab3ad4a7b04e872` (EMResearch/EMB,
+dated 2026-05-20), resolved on 2026-07-17 by re-cloning EMB to run Task 8. Source verified
+identical to the mutation catalog: every committed mutant's (file, line, operator) matches
+this source, and the per-file candidate counts from `find_mutations` match the catalog
+exactly (e.g. `imp/Bessj.java` = 123 candidates in both). The team's clone date (2026-06-13)
+is after this commit, so — barring an unrecorded newer commit — this is the source the pilot
+used. Caveat: the team never recorded their own hash, so identity is established by
+source-equivalence, not by a recorded hash match.
 
 ---
 
@@ -76,7 +80,39 @@ Format: `YYYY-MM-DD — [who] — decision — rationale`
 
 ## F. Findings — audit ngày 2026-07-15
 
-### F1. Repo lệch pha: harness Manual ≠ Manual đã đo (BLOCKING)
+### F0. Task 8 ĐÃ CHẠY THẬT — 2026-07-17 (RESOLVED F1)
+
+Toolchain cài đủ trên máy audit (đúng bản pin): JDK 1.8.0_492, JDK 17.0.19, Maven 3.9.16.
+EMB re-clone (commit `915859…`, xem §A). Build 3 SUT jar trên JDK8 OK.
+
+**Mutant ground truth tái tạo chính xác 133** qua `scripts/build_catalog_mutants.py` (build đúng
+tập `status=compiled` của catalog committed, không re-discover): ncs 70/70, scs 59/59 "exact
+match", features 4/4. Xem F7 về lý do KHÔNG dùng `mutate.py` re-discover.
+
+**Kill matrix chạy với Manual suite MỚI (độc lập).** Reproducibility check:
+- EvoMaster: kill **đúng 12 mutant y hệt** trên ncs (m002,m004,…), 5 trên scs — khớp pilot 100%.
+- LLM (suite không đổi): scs 7/59 khớp pilot chính xác; ncs 1→0 (xem F8).
+
+**KẾT QUẢ CHÍNH — degeneracy VỠ:**
+
+| SUT | Pilot llm/man/evo | Task 8 llm/man/evo |
+|---|---|---|
+| ncs (70) | 1 / 1 / 12 | 0 / 0 / 12 |
+| scs (59) | 7 / 7 / 5 | **7 / 1** / 5 |
+| features (4) | 1 / 1 / 1 | 1 / 1 / 1 |
+| **overall recall** | .0677/.0677/.1353 | **.0602 / .0150 / .1353** |
+
+Pilot: llm=manual mọi SUT (degenerate, same-agent). Manual **độc lập**: scs manual rớt 7→1,
+và {m026} ⊂ 7 mutant của llm (b=6, c=0). **Same-agent authorship chính là nguyên nhân degeneracy.**
+Kết luận RQ2 mới: EvoMaster (.135) > LLM (.060) > Manual (.015); LLM-vs-Evo giờ significant
+(McNemar p≈.031, was .064); LLM > Manual significant. H1 (LLM giỏi nhất) vẫn bị bác.
+
+**Cơ chế 2 tầng** (rõ hơn pilot): (1) oracle KIND đặt trần — trên ncs (toàn value fault) mọi
+status-oracle suite = 0, EvoMaster regression-oracle = 12; (2) trong cùng status-oracle regime,
+VOLUME quyết định — scs llm 7 > manual 1 (manual ⊂ llm). LLM nhiều test hơn → bắt nhiều
+status-visible fault hơn manual độc lập gọn hơn.
+
+### F1. ~~Repo lệch pha: harness Manual ≠ Manual đã đo (BLOCKING)~~ — RESOLVED bởi F0
 
 - `harness/src/test/java/manual/*ManualTests.java` = suite **mới** (Task 7 đã chạy; khác `manual/pilot-archive/*.java.pilot` ~1000+ dòng/file).
 - `results/raw/*_kills.csv` = số từ suite **cũ** (pilot).
@@ -97,6 +133,33 @@ Hai nguyên nhân, cần tách bạch:
 ### F3. Recall tuyệt đối thấp ở cả 3 arm
 
 Cao nhất là EvoMaster 18/133 (13.5%). Đây là finding về black-box REST testing, không phải lỗi setup — nhiều mutant đổi giá trị không bao giờ nổi lên response field. Paper §5.3 (Discussion) đã lập luận chỗ này.
+
+### F7. rest-ncs catalog bị truncate — dùng build_catalog_mutants.py thay vì re-discover
+
+Khi định regenerate mutant bằng `mutate.py`, ncs ra 91+ mutant thay vì 70. Điều tra:
+committed ncs catalog compiled đúng **m001-m070 liền mạch** rồi discard sạch m071-m300, trong khi
+scs discard rải rác (m005,m007,m014,…). Máy sạch compile được m071+. Đây là **chữ ký của một
+mutation run bị đứt sau candidate 70** (build cache vỡ giữa chừng → source không restore →
+phần còn lại ghi nhầm "non-compiling"; các entry discarded m071+ còn ghi sai operator, vd m123
+ghi `<=` thay vì `<` — bằng chứng source bị để nguyên trạng mutated).
+
+Task 8 **không được đổi fault population** (proposal §5.2 freeze; đổi N sau khi thấy data là
+HARKing). Nên `build_catalog_mutants.py` build **đúng** tập compiled committed (map per-file:
+`find_mutations` cho candidate theo thứ tự, zip với catalog cùng file), assert (line,operator)
+khớp trên mọi mutant compiled. Ground truth giữ nguyên 133.
+
+**Việc cần làm sau:** nên xác minh với nhóm liệu ncs pilot có thật sự bị truncate không. Nếu đúng,
+số mutant ncs "thật" có thể >70 — nhưng đó là thí nghiệm khác, ngoài phạm vi Task 8. Để future work.
+
+### F8. ncs m001 — lệch 1 mutant do độ nhạy boundary (disclosed)
+
+Pilot llm/manual bắt m001 (Bessj L13 `if(n<2)`→`if(n<=2)`, throw tại n=2). Run mới bắt 0.
+Nguyên nhân: llm n_oracle ncs 79→78 — đúng 1 test LLM (bessj tại biên n=2) pass trên original
+của pilot nhưng fail trên original rebuild của tôi → bị loại khỏi oracle → không kill m001 được.
+Bessel function là code số học, giá trị tại biên nhạy. EvoMaster khớp 100% nên build đúng; đây là
+giới hạn tái lập của 1 test boundary, không phải lỗi. **Tác động:** llm recall 9→8/133; và nó làm
+McNemar LLM-vs-Evo lật từ p=.064 (pilot) sang .031 (significant) vì b: 5→4. Hướng (Evo>LLM) robust
+bất kể; ngưỡng .05 thì phụ thuộc 1 mutant — paper §threats disclose rõ.
 
 ### F4. Toolchain version drift
 

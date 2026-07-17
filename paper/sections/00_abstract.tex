@@ -9,27 +9,29 @@ pre-seeded-fault ground truth (fault counts are reported as raw 500-error tallie
 systems); and none reports a per-endpoint edge-case metric.
 
 We address all three with a controlled, blind comparison of three arms --- an LLM
-(Claude Sonnet 4.6), a manual EP/BVA suite, and EvoMaster 6.0.0 --- on three EvoMaster
-Benchmark (EMB) REST APIs comprising \RQIopsTotal{} operations, into which
-\RQIIn{} faults are seeded by mutation so that the denominator of Recall is known
-exactly. Our results are pointedly mixed, and the mixture is the contribution. The LLM
-reaches \RQIcoveragePct\% endpoint coverage
-($\RQIopsCovered/\RQIopsTotal$, $p=\RQIpvalue$) and produces
-\RQIIItotalLlm{} edge-case scenarios against manual's \RQIIItotalManual{}
+(Claude Sonnet 4.6), an independently authored manual EP/BVA suite, and EvoMaster 6.0.0 ---
+on three EvoMaster Benchmark (EMB) REST APIs comprising \RQIopsTotal{} operations, into which
+\RQIIn{} faults are seeded by mutation so that the denominator of Recall is known exactly.
+Our results are pointedly mixed, and the mixture is the contribution. The LLM reaches
+\RQIcoveragePct\% endpoint coverage ($\RQIopsCovered/\RQIopsTotal$, $p=\RQIpvalue$) and
+produces \RQIIItotalLlm{} edge-case scenarios against manual's \RQIIItotalManual{}
 ($p=\RQIIIpvalue$, rank-biserial $=\RQIIIrankBiserial$) --- it is decisively more
-\emph{prolific}. Yet on the ground truth it is not more \emph{effective}: LLM Recall is
-\RQIIrecallLlm{} versus EvoMaster's \RQIIrecallEvo{}, a gap that is not
-statistically significant (McNemar $p=\RQIImcnemarLEp$) but points the wrong way for
-the LLM.
+\emph{prolific}. On the ground truth the ordering is EvoMaster \RQIIrecallEvo{} $>$ LLM
+\RQIIrecallLlm{} $>$ manual \RQIIrecallManual{}: the LLM significantly out-detects the
+independent human-style suite (McNemar $p=\RQIImcnemarLMp$, its kills a strict superset) yet
+is itself out-detected by a search-based tool from 2019 ($p=\RQIImcnemarLEp$; both hold at
+$\alpha=\alphaRaw$ but not under Bonferroni, so we read them as directional).
 
-We trace this dissociation to a mechanism that the coverage-centric literature cannot
-observe: the LLM's spec-derived \emph{status-code} oracles accept any response in a
-plausible class, so they are structurally blind to computational faults that alter a
-returned value while preserving its HTTP status. EvoMaster's recorded-value regression
-oracles catch exactly those. Test volume and fault-finding power are therefore not merely
-distinct --- they are, in this setting, produced by different mechanisms. We argue that
-per-endpoint scenario counts, the metric the field is trending toward, actively mislead
-when reported without a ground-truth Recall alongside them.
+We trace the ordering to two composing mechanisms the coverage-centric literature cannot
+observe. First, oracle \emph{kind}: the LLM's and the manual suite's spec-derived
+status-code oracles accept any response in a plausible class, so they are structurally blind
+to computational faults that alter a returned value while preserving its HTTP status ---
+on the arithmetic-heavy subject both score zero while EvoMaster's recorded-value regression
+oracles catch twelve. Second, within the status-oracle regime, \emph{volume}: where faults
+are status-visible, the LLM's larger suite catches more of them than the leaner independent
+manual suite (its kills a strict subset). Test volume and fault-finding power are thus
+distinct, and per-endpoint scenario counts --- the metric the field is trending toward ---
+actively mislead when reported without a ground-truth Recall alongside them.
 \end{abstract}
 
 \begin{IEEEkeywords}

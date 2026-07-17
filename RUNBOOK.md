@@ -71,7 +71,15 @@ pdflatex main && bibtex main && pdflatex main && pdflatex main
 
 ### B0. Tại sao phải chạy
 
-Repo **đang lệch pha**:
+> **✅ ĐÃ CHẠY 2026-07-17.** Task 8 đã thực thi trên máy này với toolchain đúng bản pin
+> (JDK 1.8.0_492, JDK 17.0.19, Maven 3.9.16) + EMB re-clone (commit `915859…`). Mutant ground
+> truth 133 tái tạo chính xác qua `scripts/build_catalog_mutants.py`; kill matrix chạy với
+> Manual suite mới. `results/` giờ đã đồng bộ. Phần dưới giữ lại làm hướng dẫn tái lập.
+> Kết quả + các phát hiện (ncs catalog truncation, m001 boundary) ở [notes.md](notes.md) §F.
+> Để tái lập nhanh mutant đúng catalog: `build_catalog_mutants.py` (KHÔNG dùng `mutate.py`
+> re-discover — xem notes §F7).
+
+Trước Task 8, repo **lệch pha**:
 
 - `harness/src/test/java/manual/*ManualTests.java` = Manual suite **mới** (regenerate ở Task 7)
 - `results/raw/*_kills.csv` = số đo từ Manual suite **cũ** (bản pilot, giờ archive ở `manual/pilot-archive/*.java.pilot`)

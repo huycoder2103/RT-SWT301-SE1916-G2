@@ -78,7 +78,9 @@ def main():
     mc_lm = rq2["mcnemar"]["llm_vs_manual"]
     m["RQIImcnemarLMb"] = str(mc_lm["llm_only(b)"])
     m["RQIImcnemarLMc"] = str(mc_lm["manual_only(c)"])
+    m["RQIImcnemarLMstat"] = num(mc_lm["statistic"], 1)
     m["RQIImcnemarLMp"] = pval(mc_lm["p_value"])
+    m["RQIImcnemarLMreject"] = "rejected" if mc_lm["reject_H0"] else "not rejected"
     m["RQIImcnemarLMpower"] = num(mc_lm["achieved_power_approx"], 3)
 
     m["RQIIcliffLM"] = num(rq2["cliffs_delta"]["llm_vs_manual"], 3)

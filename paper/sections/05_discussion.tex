@@ -53,16 +53,22 @@ triggering \PDerrTriggeredLlm{} of \PDerrKey{} error behaviours against manual's
 crash. Where a status oracle suffices, the LLM's superior volume converts into superior
 detection. Where it does not, volume buys nothing.
 
-\textbf{The degenerate LLM-manual tie is the mechanism's signature.} Two arms with zero
-discordant pairs over \RQIIn{} faults is a startling result, and the same-author confound
-(Section~\ref{sec:results-degenerate}) is a genuine part of the explanation. But it cannot
-be the whole of it, because both suites are also \emph{structurally} blind to the same fault
-class: any two status-oracle suites, however independently authored, are constrained to miss
-every value fault. Independent authorship would move which \emph{status-visible} faults each
-catches; it would not let either see a wrong number behind a 200. We therefore expect an
-independently authored manual suite to remain close to the LLM on this fault population ---
-a prediction our design leaves testable rather than resolves, and we flag it as such rather
-than presenting the tie as a finding.
+\textbf{Oracle kind sets a ceiling; volume allocates what is under it.} The pilot behind this
+study reported LLM and manual killing identical mutant sets, but its manual suite shared an
+author with the LLM suite, so that identity could not be interpreted. Re-authoring the manual
+suite independently (spec-only, isolated, blind) separates two effects that the tie had
+conflated. On \texttt{rest-ncs}, where every mutant is a value fault, the independent manual
+still scores \RQIINcsManual{} --- exactly like the LLM, and for the structural reason the
+mechanism predicts: no status-oracle suite, however authored, can see a wrong number behind a
+200. Oracle \emph{kind} caps both at zero there. But on \texttt{rest-scs}, where some mutants
+flip a response \emph{class} and are therefore status-visible, the suites separate sharply:
+the LLM kills \RQIIScsLlm{} to the independent manual's \RQIIScsManual{}, and the manual's
+kills are a strict subset of the LLM's. Within the status-oracle regime, the LLM's
+\PDtestsLlm{}-test volume reaches more of the catchable faults than the leaner
+\PDtestsManual{}-test human-style suite. So the two-level picture is: oracle kind fixes the
+\emph{ceiling} (status oracles cannot exceed EvoMaster on value faults), and within a kind,
+volume determines how much of the reachable fault set you actually catch. The pilot's tie was
+the two levels coinciding by an authorship artefact; separating the author reveals both.
 
 \subsection{Implications}
 

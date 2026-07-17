@@ -3,27 +3,36 @@
 
 \subsection{Construct validity}
 
-\textbf{The manual arm is not an independent human cohort, and this is the study's principal
-limitation.} Our proposal specified an independent human baseline for the full run. No human
-cohort was available, and in the run reported here the manual suite was authored by the same
-agent that produced the LLM suite, under different role instructions (EP/BVA design from the
-specification) and blind to the fault catalog. Blindness to faults was preserved; author
-independence was not. The consequence is visible and severe: the two arms kill identical
-mutant sets, with zero discordant pairs (Section~\ref{sec:results-degenerate}).
+\textbf{The manual arm is independent-agent, not independent-human.} Our proposal specified
+an independent human baseline. No human cohort was available, so the manual suite was
+re-authored by a \emph{separate, isolated} model session with no shared context with the LLM
+suite --- spec-only input, blind to the LLM output and to the fault catalog. This resolves
+the pilot's same-author confound (there, one session wrote both suites, and they killed
+identical mutant sets); with the suites separated, the LLM-versus-manual comparison becomes
+live and the arms diverge ($b=\RQIImcnemarLMb$, $c=\RQIImcnemarLMc$;
+Section~\ref{sec:results-rq2}). What remains uncontrolled is the gap between an
+\emph{independent agent} and an \emph{independent human tester}: a human cohort might bring
+domain intuition an EP/BVA-from-spec agent lacks, and could plausibly close some of the LLM's
+lead. We therefore state the RQ2 manual result as ``LLM versus an independently authored,
+specification-derived EP/BVA suite,'' not ``LLM versus human testers,'' and flag the
+human-cohort replication as the highest-value next step. The RQ2 conclusion is unaffected by
+this caveat in \emph{direction}: the LLM's kills are a superset of the manual suite's, so no
+plausible relabelling of the baseline reverses the sign.
 
-We therefore do not claim any LLM-versus-manual fault-detection result. RQ3 --- a count of
-scenarios each suite \emph{writes} --- is less exposed to this confound than RQ2 but not
-immune to it, and should be read as ``LLM versus a specification-derived EP/BVA baseline''
-rather than ``LLM versus human testers.'' The RQ2 conclusion that survives is LLM versus
-EvoMaster, where no authorship relationship exists.
-
-The repair is specified and staged rather than done: an independently authored manual suite,
-ideally by human testers and at minimum by isolated agent sessions with no shared context,
-re-run against the same \RQIIn{} mutants. Our infrastructure supports this without any
-change to the analysis path. Section~\ref{sec:discussion} sets out why we nonetheless expect
-the identical-kill result to soften rather than disappear: independent authorship changes
-\emph{which} status-visible faults a suite catches, but any status-oracle suite remains
-structurally blind to value faults.
+\textbf{The LLM-versus-EvoMaster significance hinges on one boundary mutant.} We disclose
+this prominently. Our re-execution reproduces the pilot's EvoMaster kills exactly (identical
+12 mutants on \texttt{rest-ncs}) and the LLM's \texttt{rest-scs} kills exactly, but on
+\texttt{rest-ncs} the LLM's Recall falls from the pilot's 1/70 to \RQIINcsLlm{}: one LLM test
+exercising \texttt{bessj} at the boundary $n=2$ passed on the pilot's build of the original
+SUT but fails on our clean rebuild, so it is excluded as an invalid oracle and no longer
+kills that mutant. Bessel-function evaluation at the boundary is numerically sensitive, and
+this is a genuine reproduction limit rather than a pipeline error (the exact EvoMaster match
+rules out a build fault). Its effect is to shift the LLM-versus-EvoMaster discordant count
+from six to $\RQIImcnemarLEb$, which is what carries the McNemar $p$ across the
+$\alpha=\alphaRaw$ threshold --- from just above it in the pilot to $\RQIImcnemarLEp$ here.
+The \emph{direction} (EvoMaster $>$ LLM) is robust either way; the $\alpha=\alphaRaw$ verdict
+is not, and should be read as ``EvoMaster leads, at the edge of significance'' rather than as
+a firm rejection.
 
 \textbf{Oracle strength differs across arms by construction.} EvoMaster's recorded-value
 regression oracles are strictly stronger on value faults than the spec-derived status
@@ -86,15 +95,21 @@ realistic effects ($\chi^2=\RQIIfriedmanChi$, $p=\RQIIfriedmanP$), which is why 
 pre-designated the pooled per-fault McNemar test ($N=\RQIIn$) as the primary RQ2 analysis
 rather than promoting it after the omnibus test failed.
 
-\textbf{RQ2's null result is not evidence of equivalence.} Approximate achieved power for
-the LLM-versus-EvoMaster McNemar comparison is \RQIImcnemarLEpower{}, well below
-conventional adequacy. $p=\RQIImcnemarLEp$ means we cannot reject $H_0$; it does not mean
-the arms are equivalent, and we avoid that reading throughout. The power figure is itself an
-approximation --- statsmodels has no exact McNemar power routine, so we substitute a
-two-independent-proportion calculation on the same proportions, which is disclosed in
+\textbf{RQ2's pairwise tests are significant but fragile.} Both McNemar comparisons reject at
+$\alpha=\alphaRaw$ ($p=\RQIImcnemarLEp$ for LLM-versus-EvoMaster, $p=\RQIImcnemarLMp$ for
+LLM-versus-manual), but neither clears the Bonferroni threshold $\alphaBonf$, and approximate
+achieved power for the EvoMaster comparison is only \RQIImcnemarLEpower{} --- below
+conventional adequacy. We therefore rest the RQ2 conclusions on the \emph{direction and
+effect size} (EvoMaster's kills strictly dominate on value faults; the LLM's kills strictly
+contain the manual suite's) rather than on the $p$-values alone, and we do not upgrade
+``significant at $\alphaRaw$'' to ``firmly established.'' The power figure is itself an
+approximation: statsmodels has no exact McNemar power routine, so we substitute a
+two-independent-proportion calculation on the same proportions, disclosed in
 \texttt{summary.json} alongside the value.
 
 \textbf{Multiplicity.} Three RQ families are tested. We apply Holm correction within RQ2's
 post-hoc comparisons and report a Bonferroni threshold across families
-($\alpha_{\text{adj}}\approx\alphaBonf$). RQ1 and RQ3 survive both; RQ2 rejects under
-neither, so no conclusion in this paper depends on the choice of correction.
+($\alpha_{\text{adj}}\approx\alphaBonf$). RQ1 and RQ3 survive both comfortably
+($p=\RQIpvalue$ and $p=\RQIIIpvalue$); the RQ2 pairwise tests survive the raw threshold but
+not Bonferroni, which is why we read them as directional evidence rather than as decisive
+rejections.

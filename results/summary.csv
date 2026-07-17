@@ -1,4 +1,4 @@
 rq,metric,value,p_value,effect_size,n,reject_h0
 RQ1,llm_endpoint_coverage_pct,100.0,1.6485266344986434e-09,1.0,35,True
-RQ2,"fault_recall_llm_vs_evomaster (llm=0.0677,manual=0.0677,evomaster=0.1353)",0.0677,0.063568115234375,-0.06766917293233082,133,False
-RQ3,edge_cases_per_op_llm_vs_manual (median 5.0 vs 4.0; total 217 vs 141),5.0,6.20086477871289e-07,0.9879032258064516,35,True
+RQ2,"fault_recall_llm_vs_evomaster (llm=0.0602,manual=0.015,evomaster=0.1353)",0.0602,0.0308837890625,-0.07518796992481203,133,True
+RQ3,edge_cases_per_op_llm_vs_manual (median 5.0 vs 3.0; total 217 vs 113),5.0,1.4273996644915772e-07,0.9873015873015873,35,True

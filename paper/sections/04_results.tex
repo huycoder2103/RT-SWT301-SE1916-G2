@@ -18,33 +18,44 @@ endpoint type is missed. This is a real result but a weak one --- it says the LL
 that distinction bites.
 
 \subsection{RQ2 --- Fault detection against ground truth}
+\label{sec:results-rq2}
 
-This is the pre-registered primary comparison, and it does not go the LLM's way.
+This is the pre-registered primary comparison. It yields a clean three-way ordering, and the
+LLM lands in the middle of it.
 
-Against the \RQIIn{} seeded faults, overall Recall is \textbf{LLM \RQIIrecallLlm},
-\textbf{manual \RQIIrecallManual}, and \textbf{EvoMaster \RQIIrecallEvo} --- in absolute
-terms, \PDkilledLlm{}, \PDkilledManual{}, and \PDkilledEvo{} mutants killed out of
-\PDkilledTotal{}. EvoMaster detects twice as many faults as the LLM.
+Against the \RQIIn{} seeded faults, overall Recall is \textbf{EvoMaster \RQIIrecallEvo},
+\textbf{LLM \RQIIrecallLlm}, and \textbf{manual \RQIIrecallManual} --- in absolute terms,
+\PDkilledEvo{}, \PDkilledLlm{}, and \PDkilledManual{} mutants killed out of \PDkilledTotal{}.
+EvoMaster detects more than twice the LLM's faults; the LLM in turn detects four times the
+independent manual suite's.
 
-The Friedman test across the three arms over per-subject Recall gives
-$\chi^2=\RQIIfriedmanChi$, $p=\RQIIfriedmanP$, so the pre-registered omnibus test does not
-reject. With $n=3$ subjects this test is severely underpowered, which is why the proposal
-designated the pooled per-fault McNemar test as the primary RQ2 analysis.
+The Friedman omnibus test over per-subject Recall gives $\chi^2=\RQIIfriedmanChi$,
+$p=\RQIIfriedmanP$ and does not reject, but with $n=3$ subjects it is severely underpowered,
+which is why the proposal designated the pooled per-fault McNemar test ($N=\RQIIn$) as the
+primary RQ2 analysis. Both pairwise McNemar tests reject.
 
-That test compares the arms fault-by-fault over all \RQIIn{} mutants. For LLM versus
-EvoMaster the discordant pairs are $b=\RQIImcnemarLEb$ (killed by the LLM only) against
-$c=\RQIImcnemarLEc$ (killed by EvoMaster only): $\chi^2=\RQIImcnemarLEstat$,
-$p=\RQIImcnemarLEp$, Cliff's $\delta=\RQIIcliffLE$. $H_0$ is \textbf{\RQIImcnemarLEreject}.
-The LLM is not significantly \emph{worse} than EvoMaster, but the point estimate is
-unambiguously in EvoMaster's favour and the effect size is negative. Approximate achieved
-power is \RQIImcnemarLEpower{}, so this is an underpowered non-result rather than evidence
-of equivalence --- we can rule out neither a real gap nor its absence, and we say so rather
-than reading $p>\alpha$ as parity.
+\textbf{LLM versus EvoMaster.} The discordant pairs are $b=\RQIImcnemarLEb$ (killed by the
+LLM only) against $c=\RQIImcnemarLEc$ (EvoMaster only): $p=\RQIImcnemarLEp$, Cliff's
+$\delta=\RQIIcliffLE$, $H_0$ \textbf{\RQIImcnemarLEreject}. EvoMaster significantly
+out-detects the LLM. Approximate achieved power is \RQIImcnemarLEpower{}; we return in
+Section~\ref{sec:threats} to the fact that this comparison sits close to the $\alpha$
+threshold and is sensitive to a single boundary-mutant reproduction.
+
+\textbf{LLM versus manual.} This leg is the one the pilot could not interpret, because its
+manual suite shared an author with the LLM suite. The suite used here was re-authored
+independently (spec-only, isolated, blind to the LLM output and the fault catalog), and the
+comparison is now live: $b=\RQIImcnemarLMb$ mutants are killed by the LLM only,
+$c=\RQIImcnemarLMc$ by the manual suite only. The manual suite's kills are a \emph{strict
+subset} of the LLM's --- everything the human-style baseline finds, the LLM also finds, plus
+six more. $p=\RQIImcnemarLMp$, Cliff's $\delta=\RQIIcliffLM$, $H_0$
+\textbf{\RQIImcnemarLMreject}: the LLM significantly out-detects an independently authored
+EP/BVA suite.
 
 \begin{table}[t]
 \centering
-\caption{RQ2 --- fault-detection Recall per subject and overall. EvoMaster leads overall;
-LLM and manual are identical everywhere (Section~\ref{sec:results-degenerate}).}
+\caption{RQ2 --- fault-detection Recall per subject and overall, with the independently
+re-authored manual suite. Ordering: EvoMaster $>$ LLM $>$ manual overall, but it inverts by
+fault character (Section~\ref{sec:discussion}).}
 \label{tab:rq2}
 \small
 \begin{tabular}{@{}lrrr@{}}
@@ -60,30 +71,13 @@ LLM and manual are identical everywhere (Section~\ref{sec:results-degenerate}).}
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:rq2} shows the overall ordering is not uniform. EvoMaster's lead is carried
-entirely by \texttt{rest-ncs} (\RQIINcsEvo{} against \RQIINcsLlm{}), the most
-arithmetic-heavy subject; on \texttt{rest-scs} the LLM leads (\RQIIScsLlm{} against
-\RQIIScsEvo{}), and on \texttt{features-service} all three arms tie.
-Section~\ref{sec:discussion} argues this is exactly what the oracle-kind account predicts.
-
-\subsubsection{A degenerate comparison: LLM versus manual}
-\label{sec:results-degenerate}
-
-The LLM-versus-manual contrast must be reported, but it cannot be interpreted. The two arms
-kill \emph{identical} mutant sets on every subject: the McNemar table has
-$b=\RQIImcnemarLMb$ and $c=\RQIImcnemarLMc$ --- \emph{zero} discordant pairs --- giving
-$p=\RQIImcnemarLMp$ and Cliff's $\delta=\RQIIcliffLM$ by construction rather than by
-measurement. The Holm-adjusted pairwise Wilcoxon likewise returns $p=\RQIIholmLMp$ on
-identical per-subject vectors.
-
-We attribute this to the two suites sharing an oracle \emph{kind}
-(Section~\ref{sec:discussion}) and, critically, to a construct limitation we do not want to
-understate: in this run both suites were authored by the same agent under different role
-instructions. Two suites drawn from one author, asserting on the same spec-derived status
-codes, are not independent observers of the fault population. The RQ2 conclusion that
-survives is therefore \emph{LLM versus EvoMaster}; the LLM-versus-manual leg is reported for
-completeness and excluded from interpretation. Section~\ref{sec:threats} states what would
-be needed to repair it.
+Table~\ref{tab:rq2} shows the overall ordering is not uniform, and the non-uniformity is the
+key to Section~\ref{sec:discussion}. On \texttt{rest-ncs}, the arithmetic-heavy subject,
+\emph{both} status-oracle arms score \RQIINcsLlm{} while EvoMaster kills \RQIINcsEvo{} --- the
+LLM's volume buys it nothing here. On \texttt{rest-scs}, which carries more validation logic,
+the LLM leads every arm (\RQIIScsLlm{} against manual \RQIIScsManual{} and EvoMaster
+\RQIIScsEvo{}); on \texttt{features-service} all three tie. The arms' ranking tracks what
+kind of fault each subject contains, not which generator is cleverer.
 
 \subsection{RQ3 --- Edge-case scenarios per endpoint}
 
@@ -107,7 +101,8 @@ orderings disagree.
 \begin{table}[t]
 \centering
 \caption{What each arm \emph{produced} versus what it \emph{detected}. The volume ordering
-(LLM $>$ manual $>$ EvoMaster) inverts on the ground truth (EvoMaster $>$ LLM $=$ manual).}
+(LLM $>$ manual $>$ EvoMaster) is not the effectiveness ordering (EvoMaster $>$ LLM $>$
+manual): the arm that produces least detects most.}
 \label{tab:pvd}
 \small
 \begin{tabular}{@{}lrrr@{}}
@@ -137,10 +132,12 @@ everywhere: it is strong at reaching the \emph{documented} error surface and wea
 detecting \emph{value} faults.
 
 Had we reported only the metrics the surveyed literature uses --- coverage, scenario counts,
-500-error tallies --- every one of them would have ranked the LLM first, and the conclusion
-would have been that it beats both baselines. The ground truth reverses that. This is the
-practical case for GAP-D: without a denominator, the field's headline comparisons are
-measuring volume and reporting it as effectiveness.
+500-error tallies --- every one of them ranks the LLM first, over both baselines. The ground
+truth agrees about the manual baseline but overturns the verdict against EvoMaster: the tool
+that produced the \emph{fewest} tests (\PDtestsEvo{} to the LLM's \PDtestsLlm{}) detected the
+\emph{most} faults. This is the practical case for GAP-D: without a denominator, a
+volume-based metric would have crowned the LLM outright, when in fact a mature tool from 2019
+finds more than twice as many faults.
 
 \begin{figure}[t]
   \centering
