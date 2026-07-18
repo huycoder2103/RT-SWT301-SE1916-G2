@@ -105,7 +105,7 @@ rq.forEach((r, i) => {
 // ===== S5 — Protocol / Pipeline (light) =====
 s = p.addSlide(); s.background = { color: LIGHT };
 title(s, "Experiment Protocol");
-const steps = ["OpenAPI\nspec", "GPT-4o\nfew-shot", "REST-assured\ntests", "run vs original\n+ mutants", "coverage · Recall\n· edge-cases"];
+const steps = ["OpenAPI\nspec", "Claude 4.6\nfew-shot", "REST-assured\ntests", "run vs original\n+ mutants", "coverage · Recall\n· edge-cases"];
 steps.forEach((t, i) => {
   const x = 0.6 + i * 2.5;
   s.addShape(p.ShapeType.roundRect, { x, y: 1.9, w: 2.1, h: 1.3, rectRadius: 0.1, fill: { color: i === 1 ? TEAL : WHITE }, line: { color: i === 1 ? TEAL : LINE, width: 1.2 } });
@@ -114,7 +114,7 @@ steps.forEach((t, i) => {
 });
 const facts = [
   ["Dataset", "3 EMB APIs (rest-ncs, rest-scs, features-service) = 35 ops; mutation-seeded faults (ground truth)"],
-  ["LLM config", "gpt-4o-2024-08-06 · temp 0 · few-shot from spec · prompt logged verbatim (pilot: Claude proxy)"],
+  ["LLM config", "claude-sonnet-4-6 · temp 0 · few-shot from spec · prompt logged verbatim (pilot + full, same model)"],
   ["Baselines", "Manual (EP/BVA, blind) + EvoMaster 6.0.0 black-box (--maxTime 120s)"],
   ["Stats", "Wilcoxon / Friedman+McNemar / paired Wilcoxon · α=0.05 · Holm+Bonferroni · effect sizes"],
 ];
@@ -127,7 +127,7 @@ facts.forEach((f, i) => {
 // ===== S6 — Timeline & Roles (light) =====
 s = p.addSlide(); s.background = { color: LIGHT };
 title(s, "Timeline & Roles");
-const tl = [["Week 5–6", "Proposal + GV approval", BLUE], ["Week 7", "Pilot  done", MINT], ["Week 8", "Full run (GPT-4o)", TEAL]];
+const tl = [["Week 5–6", "Proposal + GV approval", BLUE], ["Week 7", "Pilot  done", MINT], ["Week 8", "Full run (Claude Sonnet 4.6)", TEAL]];
 tl.forEach((t, i) => {
   const x = 0.6 + i * 4.0;
   s.addShape(p.ShapeType.roundRect, { x, y: 1.7, w: 3.8, h: 1.1, rectRadius: 0.08, fill: { color: t[2] }, line: { type: "none" } });
@@ -155,7 +155,7 @@ roles.forEach((r, i) => {
 s = p.addSlide(); s.background = { color: LIGHT };
 title(s, "Threats to Validity — top 3");
 const th = [
-  ["Internal", "LLM & Manual both Claude-authored in pilot (author bias)", "Blind protocol (suites built before faults; spec-only sub-agent logs) + human cohort + GPT-4o for the full run"],
+  ["Internal", "LLM & Manual both Claude-authored in pilot (author bias)", "Blind protocol (suites built before faults; spec-only sub-agent logs) + independent Manual re-authoring (a separate Claude Sonnet 4.6 session) for the full run"],
   ["External", "3 small EMB APIs; n=3 limits Friedman power", "Per-fault McNemar pooled (N≈133) is the primary RQ2 test; EMB/JVM-only stated as a limit"],
   ["Construct", "Mutation kill ≠ real-fault detection; coverage ≠ quality", "Standard PIT/Offutt operators (cited); report Recall + coverage + edge-cases jointly"],
 ];
@@ -170,7 +170,7 @@ th.forEach((t, i) => {
 
 // ===== S8 — Pilot signal (dark) =====
 s = p.addSlide(); s.background = { color: NAVY };
-title(s, "Preliminary Pilot Signal (Week 7)", "Feasibility evidence — full run with GPT-4o will confirm", true);
+title(s, "Preliminary Pilot Signal (Week 7)", "Feasibility evidence — full run with Claude Sonnet 4.6 will confirm", true);
 const stat = [
   ["100%", "LLM endpoint coverage\n(RQ1 · 35/35 ops · p≈1.6e-9)", MINT],
   ["217 vs 141", "edge-case scenarios LLM vs Manual\n(RQ3 · median 5 vs 4 · p≈6.2e-7)", "CADCFC"],
@@ -182,8 +182,8 @@ stat.forEach((c, i) => {
   s.addText(c[0], { x: x + 0.15, y: 2.7, w: 3.55, h: 1.0, align: "center", fontFace: MONO, bold: true, fontSize: 34, color: c[2] });
   s.addText(c[1], { x: x + 0.25, y: 3.8, w: 3.35, h: 1.2, align: "center", fontFace: BF, fontSize: 13.5, color: "E6EEF5", valign: "top" });
 });
-s.addText("Pilot used Claude Sonnet 4.6 as an available-model proxy; approved full run uses gpt-4o-2024-08-06.",
+s.addText("Pilot and full run both use Claude Sonnet 4.6 (claude-sonnet-4-6) — no model swap.",
   { x: 0.6, y: 5.7, w: W - 1.2, h: 0.4, align: "center", fontFace: BF, italic: true, fontSize: 13, color: "9FB3C8" });
 
-p.writeFile({ fileName: "D:/SWT301_SU26_Group2/team-synthesis/slides_proposal_defense.pptx" })
+p.writeFile({ fileName: require("path").join(__dirname, "slides_proposal_defense.pptx") })
   .then(f => console.log("WROTE", f)).catch(e => { console.error(e); process.exit(1); });

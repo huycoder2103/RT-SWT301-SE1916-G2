@@ -1,8 +1,8 @@
 # Hypotheses — LLM-Driven Stateful REST API Testing
 
 ## RQ1: Về độ bao phủ (Operation Coverage)
-- **H0:** Việc sử dụng LLM (GPT-4o CoT) KHÔNG mang lại Operation Coverage cao hơn đáng kể so với REST-ler / ARAT-RL trên tập API benchmark.
-- **H1:** Việc sử dụng LLM (GPT-4o CoT) mang lại Operation Coverage CAO HƠN đáng kể so với REST-ler / ARAT-RL trên tập API benchmark.
+- **H0:** Việc sử dụng LLM (Claude Sonnet 4.6 CoT) KHÔNG mang lại Operation Coverage cao hơn đáng kể so với REST-ler / ARAT-RL trên tập API benchmark.
+- **H1:** Việc sử dụng LLM (Claude Sonnet 4.6 CoT) mang lại Operation Coverage CAO HƠN đáng kể so với REST-ler / ARAT-RL trên tập API benchmark.
 - **Statistical test dự kiến:** Wilcoxon signed-rank test (So sánh cặp theo từng API).
 
 ## RQ2: Về hiệu suất phát hiện lỗi (Fault Detection)

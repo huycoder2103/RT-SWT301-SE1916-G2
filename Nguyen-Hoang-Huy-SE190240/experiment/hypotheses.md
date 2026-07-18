@@ -1,5 +1,7 @@
 # Hypotheses — LLM for REST API Test Generation
 
+> **Ghi chú (cập nhật 2026-07-18):** Giả thuyết **cá nhân** của Huy cho hướng khám phá Gemini-vs-GPT-4o (RBL-1/2). Nhóm sau đó hội tụ về RQ của DUNG với **Claude Sonnet 4.6** — xem `team-synthesis/rq-final.md` §2. Giữ nguyên như bản gốc; Gemini/GPT-4o ở đây là đối tượng nghiên cứu của Huy, không phải model cuối của nhóm.
+
 ## RQ1: So sánh tỷ lệ phát hiện lỗi (Fault Detection Recall) giữa Gemini 1.5 Pro và GPT-4o
 **H0 (Giả thuyết không):** Phương pháp sinh test case bằng Gemini 1.5 Pro KHÔNG đạt tỷ lệ phát hiện lỗi (Fault Detection Recall) cao hơn hoặc bằng so với hệ thống baseline GPT-4o trên tập dữ liệu pre-seeded faults.
 **H1 (Giả thuyết đối):** Phương pháp sinh test case bằng Gemini 1.5 Pro ĐẠT tỷ lệ phát hiện lỗi (Fault Detection Recall) cao hơn đáng kể so với hệ thống baseline GPT-4o trên tập dữ liệu pre-seeded faults.

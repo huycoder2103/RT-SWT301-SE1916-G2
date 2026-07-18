@@ -11,13 +11,13 @@
 ## RQ1 — Endpoint Coverage with Endpoint-Type Miss Profile
 
 **Full RQ:**
-> "On locally deployed EvoMaster Benchmark (EMB) APIs instrumented with pre-seeded faults, do LLM-generated tests (GPT-4o) achieve endpoint coverage ≥ 90%, and which endpoint types (CRUD / authentication / error-handling) are most frequently missed?"
+> "On locally deployed EvoMaster Benchmark (EMB) APIs instrumented with pre-seeded faults, do LLM-generated tests (Claude Sonnet 4.6) achieve endpoint coverage ≥ 90%, and which endpoint types (CRUD / authentication / error-handling) are most frequently missed?"
 
 **H0 (Null hypothesis):**
-> The mean endpoint coverage of GPT-4o-generated tests on EMB APIs is **≤ 90%** (μ ≤ 0.90).
+> The mean endpoint coverage of Claude Sonnet 4.6-generated tests on EMB APIs is **≤ 90%** (μ ≤ 0.90).
 
 **H1 (Alternative hypothesis):**
-> The mean endpoint coverage of GPT-4o-generated tests on EMB APIs is **> 90%** (μ > 0.90).
+> The mean endpoint coverage of Claude Sonnet 4.6-generated tests on EMB APIs is **> 90%** (μ > 0.90).
 
 **Statistical test:** One-sample **Wilcoxon signed-rank test** vs threshold 0.90, one-tailed (upper), **α = 0.05**.  
 Effect size: rank-biserial correlation.
@@ -44,13 +44,13 @@ Effect size: rank-biserial correlation.
 ## RQ3 — Edge-Case Scenario Count per Endpoint (LLM vs Manual)
 
 **Full RQ:**
-> "Are GPT-4o-generated tests more effective than manually designed tests at producing test cases for error codes (4xx, 5xx) and boundary conditions, measured by edge-case scenario count per endpoint on EMB APIs?"
+> "Are Claude Sonnet 4.6-generated tests more effective than manually designed tests at producing test cases for error codes (4xx, 5xx) and boundary conditions, measured by edge-case scenario count per endpoint on EMB APIs?"
 
 **H0 (Null hypothesis):**
-> The median number of edge-case scenarios generated per endpoint by GPT-4o is **no greater than** the median number produced by manual test design (median_LLM ≤ median_Manual).
+> The median number of edge-case scenarios generated per endpoint by Claude Sonnet 4.6 is **no greater than** the median number produced by manual test design (median_LLM ≤ median_Manual).
 
 **H1 (Alternative hypothesis):**
-> The median number of edge-case scenarios generated per endpoint by GPT-4o is **greater than** the median number produced by manual test design (median_LLM > median_Manual).
+> The median number of edge-case scenarios generated per endpoint by Claude Sonnet 4.6 is **greater than** the median number produced by manual test design (median_LLM > median_Manual).
 
 **Statistical test:** Paired **Wilcoxon signed-rank test** across endpoints (each endpoint is a paired observation: LLM count vs Manual count), one-tailed (upper), **α = 0.05**.  
 Effect size: Cliff's δ (rank-biserial for paired data).

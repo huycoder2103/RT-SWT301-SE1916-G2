@@ -168,9 +168,14 @@ git checkout results/raw results/stats results/summary.csv
 
 ## D. Việc còn thiếu ngoài Task 8
 
-- `presentation/` rỗng (chỉ `.gitkeep`) — RBL-5 cần slides
-- `Nguyen-Thanh-Dat-SE190239`: thiếu `SLR/gap-analysis.md`, `experiment/design-rationale.md`, `hypotheses-draft.md`
-- `Vo-Le-Trung-Nguyen-SE190220`: thiếu `SLR/gap-analysis.md`, `experiment/design-rationale.md`, `hypotheses-draft.md`
+**Đã resolved (2026-07-18):**
+- ✅ `presentation/RBL5_final_defense.pptx` (12 slide, số đọc từ `results/`)
+- ✅ `team-synthesis/rq-final.md` + hypotheses + gen_slides.js + slide/file member: model → **Claude Sonnet 4.6** (giữ literature GPT)
+- ✅ `proposal.md` §8.1 role → **Thuan=MS, Nguyen=RW** (khớp thực tế)
+- ✅ GV approval → Approved v1.2 (PL xác nhận); xóa 2 bản trùng (`proposal .md`, `scripts/team-synthesis/`)
+
+**Còn lại (member deliverable gaps — không chặn):**
+- `Nguyen-Thanh-Dat-SE190239` / `Vo-Le-Trung-Nguyen-SE190220`: thiếu `SLR/gap-analysis.md`, `experiment/design-rationale.md`, `hypotheses-draft.md`
 - `quality-assessment.md` mới chỉ Dung có
-- `team-synthesis/rq-final.md` còn ghi LLM = GPT-4o (stale từ trước pivot sang Claude Sonnet 4.6)
-- `proposal.md` §8.1 ghi role MS/RW ngược với README và với công việc thực tế
+- `team-synthesis/slides_proposal_defense.pdf`: đã xóa bản stale (GPT-4o) — re-export từ `.pptx` sạch (cần PowerPoint/LibreOffice)
+- Huy's RQ cá nhân (`01_rq.md`, `hypotheses.md`): giữ nguyên nội dung Gemini-vs-GPT-4o (nghiên cứu cá nhân), thêm banner trỏ về Claude của nhóm

@@ -69,7 +69,7 @@ Everything under `specs/`, `harness/`, `llm/`, `manual/` (existing pilot copy), 
 
 - Manual baseline for the Full run is **independent-agent**, not independent-human (no human cohort available in this session).
 - `features-service` has only 4 seeded mutants vs. 70 (ncs) / 59 (scs) — a real, pre-existing imbalance from the Week-7 mutation run. **Not** fixed by adding data post-hoc (would be HARKing-adjacent); reported honestly as a generalization limit, consistent with `proposal.md` §7.
-- Gate E1 (GV approval) status is unconfirmed as of the last written record.
+- Gate E1 (GV approval) status is unconfirmed as of the last written record. _[Update 2026-07-18: GV approval since confirmed by PL — `proposal.md` status now reads "Approved by instructor (GV) — v1.2".]_
 - `test_api.py` tests SUT liveness, not an LLM HTTP endpoint, because the approved LLM invocation method is a Claude Code sub-agent, not a scriptable API client.
 
 ## 7. Verification before "done"

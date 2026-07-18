@@ -200,7 +200,7 @@ export const course = [
           { t: 'p', md: '**PICO** là khung 4 phần của một câu hỏi nghiên cứu — search string suy ra trực tiếp từ nó:' },
           { t: 'terms', items: [
             ['P — Population', 'REST/Web API có OpenAPI'],
-            ['I — Intervention', 'LLM / GPT sinh test'],
+            ['I — Intervention', 'LLM (Claude Sonnet 4.6) sinh test'],
             ['C — Comparison', 'thủ công + EvoMaster'],
             ['O — Outcome', 'coverage · executable · fault detection'],
           ] },
@@ -479,7 +479,7 @@ export const course = [
       {
         id: 'm5l4', title: 'Thiết kế thí nghiệm + đóng góp', mins: 4, slides: [48],
         teach: [
-          { t: 'p', md: 'Thiết kế = **một bàn cân, ba generator**: lấy 3 API từ EMB, gieo lỗi biết trước, rồi cho 3 bên sinh test: **LLM (GPT-4o) · Thủ công · EvoMaster**. Đo O1 (coverage) / O2 (lỗi bắt được) / O3 (edge-case), α=0.05.' },
+          { t: 'p', md: 'Thiết kế = **một bàn cân, ba generator**: lấy 3 API từ EMB, gieo lỗi biết trước, rồi cho 3 bên sinh test: **LLM (Claude Sonnet 4.6) · Thủ công · EvoMaster**. Đo O1 (coverage) / O2 (lỗi bắt được) / O3 (edge-case), α=0.05.' },
           { t: 'numbers', items: [{ v: '3', l: 'API EMB có lỗi gieo sẵn' }, { v: '3', l: 'generator: LLM / người / EvoMaster' }, { v: '3', l: 'outcome đo: O1/O2/O3' }] },
           { t: 'say', md: '*"Thiết kế đơn giản: ba API từ benchmark EMB, gieo lỗi biết trước, rồi cho ba bên cùng sinh test — LLM, người, và EvoMaster — trên cùng một bàn cân. Đo độ phủ, số lỗi bắt được, và số kịch bản edge-case. Đây là phép so ba chiều đầu tiên trên ground truth chung."*' },
           { t: 'slide', n: [48] },

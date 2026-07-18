@@ -1,7 +1,7 @@
 # Hypotheses Draft (Group) — LLM for REST API Test Generation
 
 **Team:** SWT301_SU26_Group2
-**Design:** 3 REST APIs from the EvoMaster Benchmark (EMB), deployed locally with **pre-seeded faulty versions** (known fault ground truth). Three generators compared: **LLM** (GPT-4o / GPT-4-Turbo from the OpenAPI spec), **Manual** test design, **EvoMaster**. Significance level **α = 0.05**. Thresholds are taken from the merged evidence (`evidence-table-merged.md`).
+**Design:** 3 REST APIs from the EvoMaster Benchmark (EMB), deployed locally with **pre-seeded faulty versions** (known fault ground truth). Three generators compared: **LLM** (Claude Sonnet 4.6 from the OpenAPI spec), **Manual** test design, **EvoMaster**. Significance level **α = 0.05**. Thresholds are taken from the merged evidence (`evidence-table-merged.md`).
 
 > The five members independently proposed Wilcoxon / Mann-Whitney / Binomial / Friedman tests; the group draft below reconciles them per RQ.
 

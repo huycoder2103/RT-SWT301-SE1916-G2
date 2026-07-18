@@ -2,7 +2,7 @@
 
 **Team:** SWT301_SU26_Group2 · **Topic code:** SE1916
 **Members:** Nguyen Tien Dung (SE190034), Nguyen Hoang Huy (SE190240), Nguyen Thanh Dat (SE190239), Nguyen Le Thuan (SE190305), Vo Le Trung Nguyen (SE190220)
-**Submitted:** 2026-06-13 · **Revised:** 2026-06-19 · **Version:** 1.2 · **Status:** Awaiting instructor (GV) approval
+**Submitted:** 2026-06-13 · **Revised:** 2026-06-19 · **Version:** 1.2 · **Status:** Approved by instructor (GV) — v1.2
 
 **Sources:** `team-synthesis/{gap-statement-final.md, rq-final.md, hypotheses-draft.md, evidence-table-merged.md}` (N = 59 papers) + each member's `experiment/*`. Week-7 pilot artifacts: `Nguyen-Tien-Dung-SE190034/experiment/`.
 
@@ -188,8 +188,8 @@ By endpoint type (CRUD / auth / error-handling) for the RQ1 miss-profile; by fau
 | **Nguyen Hoang Huy (SE190240)** | **PL** — Project Lead | coordinate, merge, submit proposal, instructor liaison (does **not** run the experiment) |
 | Nguyen Thanh Dat (SE190239) | **DG** — Data & Ground Truth | dataset + fault catalog + §3 Related Work |
 | **Nguyen Tien Dung (SE190034)** | **LR** — LLM Runner | experiment harness + LLM / EvoMaster runs + cost log (built the pilot) |
-| Vo Le Trung Nguyen (SE190220) | **MS** — Metrics & Stats | metric implementation + statistical tests + §6 |
-| Nguyen Le Thuan (SE190305) | **RW** — Report Writer | §7 threats + final formatting + defense slides |
+| Nguyen Le Thuan (SE190305) | **MS** — Metrics & Stats | metric implementation + statistical tests + §6 |
+| Vo Le Trung Nguyen (SE190220) | **RW** — Report Writer | §7 threats + final formatting + defense slides |
 
 ### 8.2 Resource Inventory
 | Resource | Status | Owner | Note |

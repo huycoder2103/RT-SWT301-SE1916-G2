@@ -203,7 +203,7 @@
         <thead><tr><th>Tiêu chí</th><th>Mức</th><th>Bằng chứng</th></tr></thead>
         <tbody>
           <tr><td>Dataset</td><td class="yes">✅</td><td>EMB public · đã clone + deploy 3 API</td></tr>
-          <tr><td>Tool/API</td><td class="yes">✅</td><td>Claude (pilot) / GPT-4o (kế hoạch) · không cần key trả phí cho pilot</td></tr>
+          <tr><td>Tool/API</td><td class="yes">✅</td><td>Claude Sonnet 4.6 (pilot + full) · không cần key trả phí</td></tr>
           <tr><td>Compute</td><td class="yes">✅</td><td>CPU local · JDK 8/17 + Maven</td></tr>
           <tr><td>Ground truth</td><td class="yes">✅</td><td>Không cần annotate — đếm từ tag máy-đọc</td></tr>
           <tr><td>Skills</td><td class="yes">✅</td><td>Đã code: harness RestAssured + parser + scipy</td></tr>
@@ -260,7 +260,7 @@
   <div class="body">
     <div class="cards c3" style="margin-bottom:4px">
       <div class="card"><div class="tag">Population</div><h3 style="font-size:15px">3 API EMB</h3><div class="muted" style="font-size:13px">rest-ncs (6) · rest-scs (11) · features-service (18) = <span class="num">35 ops</span></div></div>
-      <div class="card"><div class="tag">Intervention</div><h3 style="font-size:15px">LLM</h3><div class="muted" style="font-size:13px">Claude Sonnet 4.6 (pilot) → GPT-4o (full), few-shot từ spec, <span class="em">blind</span></div></div>
+      <div class="card"><div class="tag">Intervention</div><h3 style="font-size:15px">LLM</h3><div class="muted" style="font-size:13px">Claude Sonnet 4.6 (pilot + full), few-shot từ spec, <span class="em">blind</span></div></div>
       <div class="card"><div class="tag">Comparison</div><h3 style="font-size:15px">Manual + EvoMaster</h3><div class="muted" style="font-size:13px">Manual EP/BVA (blind) · EvoMaster 6.0.0 black-box</div></div>
     </div>
     <div class="flow frag">
@@ -321,7 +321,7 @@
       </div>
     </div>
   </div>
-  <div class="snote"><p>Đây là bằng chứng feasibility + tín hiệu sớm: metric chạy được và <b>phân biệt</b> LLM vs Manual có ý nghĩa thống kê. Lưu ý: đây là pilot (Claude proxy); full run dùng GPT-4o sẽ xác nhận — không HARKing.</p></div>
+  <div class="snote"><p>Đây là bằng chứng feasibility + tín hiệu sớm: metric chạy được và <b>phân biệt</b> LLM vs Manual có ý nghĩa thống kê. Lưu ý: đây là pilot (Claude Sonnet 4.6); Tuần 8 full run cùng model đã xác nhận (Manual độc lập) — không HARKing.</p></div>
 </section>
 
 <!-- ===================== 16 · THREATS ===================== -->
@@ -330,7 +330,7 @@
   <h1 class="title">Threats — và cách giảm thiểu cụ thể</h1>
   <div class="body">
     <div class="cards c2">
-      <div class="card gap frag"><div class="tag">Construct</div><h3 style="font-size:15px">LLM &amp; Manual cùng do Claude tạo (pilot)</h3><div style="font-size:13px">→ Blind protocol + sinh trước khi gieo lỗi + <span class="em">full run thêm cohort người thật</span> & GPT-4o.</div></div>
+      <div class="card gap frag"><div class="tag">Construct</div><h3 style="font-size:15px">LLM &amp; Manual cùng do Claude tạo (pilot)</h3><div style="font-size:13px">→ Blind protocol + sinh trước khi gieo lỗi. Tuần 8: <span class="em">Manual tái tạo độc lập</span> (degeneracy vỡ); model giữ Claude Sonnet 4.6; cohort người thật = future work.</div></div>
       <div class="card gap frag"><div class="tag">External</div><h3 style="font-size:15px">3 API EMB nhỏ · n=3</h3><div style="font-size:13px">→ Nêu rõ "EMB/JVM-only"; mở rộng thêm SUT; pilot per-endpoint N=35 đủ cho paired test.</div></div>
       <div class="card gap frag"><div class="tag">Internal</div><h3 style="font-size:15px">Assertion <code style="font-family:var(--mono);font-size:12px">anyOf</code> lỏng</h3><div style="font-size:13px">→ Báo cáo theo loại tag; siết assertion nơi spec rõ; log raw output (LLM nondeterminism).</div></div>
       <div class="card gap frag"><div class="tag">Conclusion</div><h3 style="font-size:15px">Mẫu nhỏ</h3><div style="font-size:13px">→ Non-parametric + <span class="em">effect size</span> (rank-biserial) + Holm/Bonferroni, không chỉ p-value.</div></div>
@@ -349,7 +349,7 @@
       <div class="card accent frag"><div class="tag">GAP-T</div><h3 style="font-size:15px">Ablation đa LLM</h3><div class="muted" style="font-size:13px">Gemini / DeepSeek / open-source LLaMA-3 cùng metric → ai mạnh edge-case?</div></div>
       <div class="card accent frag"><div class="tag">GAP-D</div><h3 style="font-size:15px">Ghép fault-detection</h3><div class="muted" style="font-size:13px">Pilot RQ2: EvoMaster value-oracle Recall <span class="num">0.135</span> &gt; LLM/Manual <span class="num">0.068</span> → nghiên cứu oracle.</div></div>
       <div class="card accent frag"><div class="tag">Scale</div><h3 style="font-size:15px">Thêm SUT + auth</h3><div class="muted" style="font-size:13px">user-management (MySQL) → bổ sung endpoint-type "authentication" cho type-miss.</div></div>
-      <div class="card accent frag"><div class="tag">Model</div><h3 style="font-size:15px">Full run GPT-4o</h3><div class="muted" style="font-size:13px">gpt-4o-2024-08-06 theo protocol đã chốt → xác nhận pilot (Tuần 8).</div></div>
+      <div class="card accent frag"><div class="tag">Model</div><h3 style="font-size:15px">Full run: Claude Sonnet 4.6</h3><div class="muted" style="font-size:13px">claude-sonnet-4-6 (cùng model pilot + full) → Tuần 8 đã chạy: Manual độc lập, degeneracy vỡ.</div></div>
       <div class="card accent frag"><div class="tag">Metric+</div><h3 style="font-size:15px">Taxonomy edge-case</h3><div class="muted" style="font-size:13px">Mở rộng: auth, rate-limit, payload-size, malformed body → đo sâu hơn 4xx/5xx.</div></div>
       <div class="card accent frag"><div class="tag">Tool</div><h3 style="font-size:15px">Đóng gói metric</h3><div class="muted" style="font-size:13px">Plugin đo edge-case/endpoint dùng lại cho mọi OpenAPI API.</div></div>
     </div>
@@ -362,7 +362,7 @@
   <div class="kicker">Kết luận</div>
   <div class="pnum">✓</div>
   <h1 class="title">GAP-M: thật · khả thi · đã chạy</h1>
-  <p class="lead"><strong>0/13</strong> paper đo metric per-endpoint (khoảng trống thật) · <strong>7/7</strong> tiêu chí feasibility ✅ · pilot: coverage <strong>100%</strong> (p≈1.6e-9), edge-case LLM <strong>217 vs 141</strong> (p≈6.2e-7). Mọi số trỏ về evidence + repo — full run GPT-4o (Tuần 8) sẽ chốt.</p>
+  <p class="lead"><strong>0/13</strong> paper đo metric per-endpoint (khoảng trống thật) · <strong>7/7</strong> tiêu chí feasibility ✅ · pilot: coverage <strong>100%</strong> (p≈1.6e-9), edge-case LLM <strong>217 vs 141</strong> (p≈6.2e-7). Mọi số trỏ về evidence + repo — full run Claude Sonnet 4.6 (Tuần 8) đã chốt: Manual độc lập, EvoMaster 0.135 &gt; LLM 0.060 &gt; Manual 0.015.</p>
   <div class="snote"><p>Chốt: "Em đã chỉ ra GAP-M là khoảng trống thật (phản chứng 0/13), chứng minh khả thi (7/7, đã chạy), và thiết kế + chạy pilot cho kết quả có ý nghĩa thống kê. Em xin nhận câu hỏi của hội đồng." Phím O để mở tổng quan khi Q&amp;A.</p></div>
 </section>
 

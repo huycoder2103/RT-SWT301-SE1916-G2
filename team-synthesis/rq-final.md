@@ -13,12 +13,12 @@ Each member explored a different angle of the same topic; the group RQ keeps the
 | Member | Individual RQ focus | What it contributes to the group RQ |
 |--------|--------------------|--------------------------------------|
 | **DUNG** | LLM vs **manual** vs **EvoMaster** on **pre-seeded faulty** EMB APIs (endpoint coverage, fault detection, edge cases) | The assigned-topic core — adopted as the group's main RQ + RQ1–RQ3 |
-| **HUY** | Which LLM family (GPT-4o vs Gemini); **edge-case coverage** via constraint violation | Sharpens RQ3 (4xx/5xx + boundary) and the choice of a strong GPT model as the representative LLM |
+| **HUY** | Which LLM family (GPT-4o vs Gemini); **edge-case coverage** via constraint violation | Sharpens RQ3 (4xx/5xx + boundary) and the choice of a strong closed-source model as the representative LLM (finalised as Claude Sonnet 4.6 — see convergence decision) |
 | **DAT** | LLM agent vs classic **fuzzers** (RESTler, ARAT-RL); **operation coverage**, 5xx faults, token efficiency | Confirms RQ1 should measure **operation/endpoint** coverage; widens the baseline landscape beyond EvoMaster |
 | **THUAN** | **Open-source** LLaMA-3 + RAG; **test validity rate ≥ 90%**; RESTestBench | Adds a validity/quality lens and reinforces the need for a standard dataset |
 | **NGUYEN** | **Open-source vs closed-source** LLMs; mutation/log coverage; "no shared benchmark" | Reinforces the dataset/ground-truth gap and the metric-breadth gap |
 
-**Convergence decision:** the group adopts the assigned-topic RQ (DUNG's), using **GPT-4o / GPT-4-Turbo** as the representative LLM — justified because the GPT family dominates the merged evidence (RESTGPT, KAT, APITestGenie, AutoRestTest, MioHint, …) and is the most-compared model, while Gemini / open-source Llama (HUY, THUAN, NGUYEN) remain candidate *variants* for later ablation rather than the primary intervention.
+**Convergence decision:** the group adopts the assigned-topic RQ (DUNG's), using **Claude Sonnet 4.6** (`claude-sonnet-4-6`) as the representative LLM. The proposal originally scoped a GPT-family model because the GPT family dominates the merged evidence (RESTGPT, KAT, APITestGenie, AutoRestTest, …) and is the most-compared line; the team then pivoted to Claude Sonnet 4.6 — the strong closed-source model actually available for both the pilot and the full run — so the Week-7 pilot carries over with no model swap. Choosing a non-GPT model additionally contributes evidence *outside* the GPT-dominated literature (a partial **GAP-T** contribution). See `proposal.md` §5.3. Gemini / open-source Llama (HUY, THUAN, NGUYEN) remain candidate *variants* for later ablation rather than the primary intervention.
 
 ---
 
@@ -41,7 +41,7 @@ Each member explored a different angle of the same topic; the group RQ keeps the
 ## 3. Full PICO (experiment)
 
 - **P (Population):** 3 REST API services from the **EvoMaster Benchmark (EMB)** that ship with an OpenAPI/Swagger spec, deployed locally, instrumented with **pre-seeded faulty versions** so the total fault count (ground truth) is known.
-- **I (Intervention):** an automated API-test-case generator built on an **LLM (GPT-4o / GPT-4-Turbo)** that reads the OpenAPI spec and produces positive / negative / error-code / boundary test cases. Output = a tool + GitHub repo.
+- **I (Intervention):** an automated API-test-case generator built on an **LLM (Claude Sonnet 4.6)** that reads the OpenAPI spec and produces positive / negative / error-code / boundary test cases. Output = a tool + GitHub repo.
 - **C (Comparison):** (1) **manual test design** (human-written tests); (2) **EvoMaster** (search-based automated generation — the most-reused baseline in the merged evidence).
 - **O (Outcome):**
   - **O1 — Endpoint coverage (%)**, target **≥ 90%**, with a per-endpoint-type miss breakdown (CRUD / auth / error-handling).
@@ -54,7 +54,7 @@ Each member explored a different angle of the same topic; the group RQ keeps the
 
 | Choice | Justified by merged evidence |
 |--------|------------------------------|
-| LLM = GPT-4o / GPT-4-Turbo | GPT family dominates (#5,#6,#7,#12 + many singletons); strongest, most-compared line |
+| LLM = Claude Sonnet 4.6 | Strong closed-source model available for the run; GPT dominates the literature (#5,#6,#7,#12) so a non-GPT model also adds evidence outside it (partial GAP-T). See `proposal.md` §5.3 |
 | Baseline = EvoMaster + manual | EvoMaster is the most-reused baseline (#4,#7,#11,#16 comparisons); EvoMaster (#16) is the **only** paper that compares a tool against *manual* tests — and found the tool **below** manual coverage, so a fresh LLM-vs-manual test is warranted |
 | Dataset = EMB + pre-seeded faults | EMB is the shared benchmark (#3,#4,#7,#11 etc.); **no** merged paper uses pre-seeded faults with ground-truth Recall |
 | Metric = endpoint coverage ≥90% | operation/endpoint coverage can already exceed 90% (RESTifAI #10: 128/134 ≈ 95.5%) while *code* coverage caps ~52–72% — so RQ1's open question is the **miss-profile by endpoint type**, never reported |

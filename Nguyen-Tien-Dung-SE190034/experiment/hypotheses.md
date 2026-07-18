@@ -1,7 +1,7 @@
 # Hypotheses — LLM for REST API Test Generation (SE1916)
 
 **Member:** Nguyen Tien Dung — SE190034
-**Design:** On 3 REST APIs from the EvoMaster Benchmark (EMB), deployed locally with **pre-seeded faulty versions** (known fault ground truth). Three generators are compared: **LLM** (GPT-4o / GPT-4-Turbo from the OpenAPI spec), **Manual** test design, and **EvoMaster**. Significance level **α = 0.05** throughout.
+**Design:** On 3 REST APIs from the EvoMaster Benchmark (EMB), deployed locally with **pre-seeded faulty versions** (known fault ground truth). Three generators are compared: **LLM** (Claude Sonnet 4.6 from the OpenAPI spec), **Manual** test design, and **EvoMaster**. Significance level **α = 0.05** throughout.
 
 > Each RQ maps to one H0/H1 pair. H0 is the negation of what we expect; H1 is the expected result.
 

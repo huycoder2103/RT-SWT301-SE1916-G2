@@ -176,13 +176,14 @@ bất kể; ngưỡng .05 thì phụ thuộc 1 mutant — paper §threats disclo
 | `full_analysis.ipynb` Restart & Run All | ✅ zero errors |
 | `check_paper.py` | ✅ PASS — 0 macro undefined, 0 số hardcode |
 
-### F6. Mâu thuẫn tài liệu cần PL xử lý
+### F6. Mâu thuẫn tài liệu — ✅ ĐÃ RESOLVED (2026-07-18)
 
-| Chỗ | Mâu thuẫn |
-|---|---|
-| Role MS/RW | `proposal.md` §8.1: Trung Nguyen=MS, Thuan=RW. `README.md` + commit thực tế (`ThuanNg05: complete phases of Metrics & Stats`, `add RW report for SE190220`) + header `write_summary_csv.py`: **ngược lại**. Paper hiện theo README/thực tế. |
-| LLM | `rq-final.md` §2 vẫn ghi GPT-4o/GPT-4-Turbo — stale từ trước "research pivot" (commit `33f524e`). `proposal.md` v1.2 + `env/tools.md` + README: Claude Sonnet 4.6. |
-| GV approval | `proposal.md` header: "Awaiting approval". `README.md`: "✅ GV duyệt v1.2". |
+| Chỗ | Mâu thuẫn ban đầu | Cách xử lý |
+|---|---|---|
+| Role MS/RW | `proposal.md` §8.1 ghi Nguyen=MS, Thuan=RW; README + commit thực tế + REPORT.md (Nguyen tự ký "Author (RW)") + header script: **ngược lại** | Sửa `proposal.md` §8.1 → **Thuan=MS, Nguyen=RW** (khớp thực tế + chữ ký của chính thành viên) |
+| LLM model | `rq-final.md` + `hypotheses-draft.md` + nhiều slide/file member ghi model của nhóm = GPT-4o (stale trước pivot) | Sửa hết → **Claude Sonnet 4.6** ở mọi chỗ mô tả model **của nhóm/experiment** (proposal, rq-final, hypotheses, slides Dung, course.js, Huy design-rationale). **Giữ literature GPT** (RESTGPT/KAT/APITestGenie… trong evidence-table, paper_text, SLR CSV). Huy's RQ cá nhân (Gemini-vs-GPT-4o) giữ nguyên + thêm banner ngữ cảnh (đổi sẽ bịa nghiên cứu Huy không làm). |
+| GV approval | `proposal.md`: "Awaiting"; README: "✅ duyệt" | PL xác nhận **GV đã duyệt v1.2** → sửa `proposal.md` header → "Approved by instructor (GV) — v1.2" (khớp README) |
+| File trùng lặp | `team-synthesis/proposal .md` (dấu cách, role đúng nhưng trùng) + `scripts/team-synthesis/` (bản sao lạc, unreferenced) gây phân kỳ | **Xóa cả hai** (git-recoverable); giữ `team-synthesis/proposal.md` làm canonical |
 
 ---
 
