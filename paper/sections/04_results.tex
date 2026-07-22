@@ -1,61 +1,63 @@
 \section{Results}
 \label{sec:results}
 
-\subsection{RQ1 --- Endpoint coverage}
+\subsection{RQ1: Endpoint Coverage}
 
-The LLM suite exercises \RQIopsCovered{} of \RQIopsTotal{} operations:
-\textbf{\RQIcoveragePct\%} coverage, uniform across all three subjects
-(\texttt{rest-ncs} $\RQINcsCovered/\RQINcsTotal$, \texttt{rest-scs}
-$\RQIScsCovered/\RQIScsTotal$, \texttt{features-service}
-$\RQIFeaturesCovered/\RQIFeaturesTotal$). The one-sample Wilcoxon signed-rank test against
-the 90\% threshold gives $W=\RQIwilcoxonW$, $p=\RQIpvalue$, rank-biserial
-$=\RQIrankBiserial$. $H_0$ is \textbf{\RQIreject} at $\alpha=\alphaRaw$, and also under the
-stricter Bonferroni threshold $\alphaBonf$.
+The LLM suite exercises \RQIopsCovered{} of \RQIopsTotal{} operations, giving
+\textbf{\RQIcoveragePct\%} coverage, uniform across all three subjects (\texttt{rest-ncs}
+$\RQINcsCovered/\RQINcsTotal$, \texttt{rest-scs} $\RQIScsCovered/\RQIScsTotal$,
+\texttt{features-service} $\RQIFeaturesCovered/\RQIFeaturesTotal$). The one-sample Wilcoxon
+signed-rank test against the 90\% threshold gives $W=\RQIwilcoxonW$, $p=\RQIpvalue$,
+rank-biserial $=\RQIrankBiserial$. $H_0$ is \textbf{\RQIreject} at $\alpha=\alphaRaw$, and
+also under the stricter Bonferroni threshold $\alphaBonf$.
 
-The pre-registered miss profile by endpoint type is empty: with every operation covered, no
-endpoint type is missed. This is a real result but a weak one --- it says the LLM can
-\emph{reach} every documented operation, not that it tests any of them well. RQ2 is where
-that distinction bites.
+The pre-registered miss profile by endpoint type is empty, since with every operation covered
+no endpoint type is missed. This is a real result but a weak one, in that it establishes only
+that the LLM can reach every documented operation and says nothing about whether it tests any
+of them well.
 
-\subsection{RQ2 --- Fault detection against ground truth}
+\subsection{RQ2: Fault Detection against Ground Truth}
 \label{sec:results-rq2}
 
-This is the pre-registered primary comparison. It yields a clean three-way ordering, and the
-LLM lands in the middle of it.
+RQ2 is the pre-registered primary comparison, and it produces a three-way ordering in which
+the LLM sits in the middle.
 
 Against the \RQIIn{} seeded faults, overall Recall is \textbf{EvoMaster \RQIIrecallEvo},
-\textbf{LLM \RQIIrecallLlm}, and \textbf{manual \RQIIrecallManual} --- in absolute terms,
-\PDkilledEvo{}, \PDkilledLlm{}, and \PDkilledManual{} mutants killed out of \PDkilledTotal{}.
-EvoMaster detects more than twice the LLM's faults; the LLM in turn detects four times the
-independent manual suite's.
+\textbf{LLM \RQIIrecallLlm} and \textbf{manual \RQIIrecallManual}, which in absolute terms is
+\PDkilledEvo{}, \PDkilledLlm{} and \PDkilledManual{} mutants killed out of \PDkilledTotal{}.
+EvoMaster detects more than twice the LLM's faults, and the LLM in turn detects four times the
+independent manual suite's. Our pre-registered $H_1$, that the LLM would lead both baselines,
+therefore fails.
 
 The Friedman omnibus test over per-subject Recall gives $\chi^2=\RQIIfriedmanChi$,
-$p=\RQIIfriedmanP$ and does not reject, but with $n=3$ subjects it is severely underpowered,
-which is why the proposal designated the pooled per-fault McNemar test ($N=\RQIIn$) as the
-primary RQ2 analysis. Both pairwise McNemar tests reject.
+$p=\RQIIfriedmanP$ and does not reject. The pre-registered post-hoc pairwise Wilcoxon tests do
+not reject either: with only three per-subject Recall values per arm, both comparisons give
+$p_{\text{Holm}}=\RQIIholmLEp$ for LLM-versus-EvoMaster and $\RQIIholmLMp$ for
+LLM-versus-manual. We report these because they were pre-registered, but at $n=3$ subjects
+this family of tests is severely underpowered, which is why the proposal designated the pooled
+per-fault McNemar test ($N=\RQIIn$) as the primary RQ2 analysis. Both McNemar tests reject.
 
-\textbf{LLM versus EvoMaster.} The discordant pairs are $b=\RQIImcnemarLEb$ (killed by the
-LLM only) against $c=\RQIImcnemarLEc$ (EvoMaster only): $p=\RQIImcnemarLEp$, Cliff's
+\textbf{LLM versus EvoMaster.} The discordant pairs are $b=\RQIImcnemarLEb$ (killed by the LLM
+only) against $c=\RQIImcnemarLEc$ (EvoMaster only), giving $p=\RQIImcnemarLEp$, Cliff's
 $\delta=\RQIIcliffLE$, $H_0$ \textbf{\RQIImcnemarLEreject}. EvoMaster significantly
-out-detects the LLM. Approximate achieved power is \RQIImcnemarLEpower{}; we return in
+out-detects the LLM. Approximate achieved power is \RQIImcnemarLEpower{}. We return in
 Section~\ref{sec:threats} to the fact that this comparison sits close to the $\alpha$
 threshold and is sensitive to a single boundary-mutant reproduction.
 
-\textbf{LLM versus manual.} This leg is the one the pilot could not interpret, because its
-manual suite shared an author with the LLM suite. The suite used here was re-authored
-independently (spec-only, isolated, blind to the LLM output and the fault catalog), and the
-comparison is now live: $b=\RQIImcnemarLMb$ mutants are killed by the LLM only,
-$c=\RQIImcnemarLMc$ by the manual suite only. The manual suite's kills are a \emph{strict
-subset} of the LLM's --- everything the human-style baseline finds, the LLM also finds, plus
-six more. $p=\RQIImcnemarLMp$, Cliff's $\delta=\RQIIcliffLM$, $H_0$
-\textbf{\RQIImcnemarLMreject}: the LLM significantly out-detects an independently authored
-EP/BVA suite.
+\textbf{LLM versus manual.} This is the leg the pilot could not interpret, because its manual
+suite shared an author with the LLM suite. The suite used here was re-authored independently
+(spec-only, isolated, blind to the LLM output and to the fault catalog), so the comparison is
+now informative. We find $b=\RQIImcnemarLMb$ mutants killed by the LLM only and
+$c=\RQIImcnemarLMc$ by the manual suite only. The manual suite's kills are a strict subset of
+the LLM's: everything the human-style baseline finds, the LLM also finds, plus six more. With
+$p=\RQIImcnemarLMp$, Cliff's $\delta=\RQIIcliffLM$ and $H_0$ \textbf{\RQIImcnemarLMreject},
+the LLM significantly out-detects an independently authored EP/BVA suite.
 
-\begin{table}[t]
+\begin{table}[tb]
 \centering
-\caption{RQ2 --- fault-detection Recall per subject and overall, with the independently
-re-authored manual suite. Ordering: EvoMaster $>$ LLM $>$ manual overall, but it inverts by
-fault character (Section~\ref{sec:discussion}).}
+\caption{RQ2: fault-detection Recall per subject and overall, with the independently
+re-authored manual suite. The overall ordering is EvoMaster $>$ LLM $>$ manual, but it inverts
+by fault character (Section~\ref{sec:discussion}).}
 \label{tab:rq2}
 \small
 \begin{tabular}{@{}lrrr@{}}
@@ -71,38 +73,38 @@ fault character (Section~\ref{sec:discussion}).}
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:rq2} shows the overall ordering is not uniform, and the non-uniformity is the
-key to Section~\ref{sec:discussion}. On \texttt{rest-ncs}, the arithmetic-heavy subject,
-\emph{both} status-oracle arms score \RQIINcsLlm{} while EvoMaster kills \RQIINcsEvo{} --- the
-LLM's volume buys it nothing here. On \texttt{rest-scs}, which carries more validation logic,
-the LLM leads every arm (\RQIIScsLlm{} against manual \RQIIScsManual{} and EvoMaster
-\RQIIScsEvo{}); on \texttt{features-service} all three tie. The arms' ranking tracks what
-kind of fault each subject contains, not which generator is cleverer.
+Table~\ref{tab:rq2} shows that the overall ordering is not uniform, and that non-uniformity is
+what Section~\ref{sec:discussion} builds on. On \texttt{rest-ncs}, the arithmetic-heavy
+subject, both status-oracle arms score \RQIINcsLlm{} while EvoMaster kills \RQIINcsEvo{}, so
+the LLM's extra volume gains it nothing there. On \texttt{rest-scs}, which carries more
+validation logic, the LLM leads every arm (\RQIIScsLlm{} against manual \RQIIScsManual{} and
+EvoMaster \RQIIScsEvo{}). On \texttt{features-service} all three tie. The ranking follows the
+fault character of each subject.
 
-\subsection{RQ3 --- Edge-case scenarios per endpoint}
+\subsection{RQ3: Edge-Case Scenarios per Endpoint}
 
-The LLM produces \textbf{\RQIIItotalLlm{}} edge-case scenarios against manual's
+The LLM produces \textbf{\RQIIItotalLlm{}} edge-case scenarios against the manual suite's
 \textbf{\RQIIItotalManual{}} across \RQIIIn{} operations (median \RQIIImedianLlm{} versus
 \RQIIImedianManual{} per operation). The paired one-tailed Wilcoxon signed-rank test gives
 $W=\RQIIIwilcoxonW$, $p=\RQIIIpvalue$, rank-biserial $=\RQIIIrankBiserial$. $H_0$ is
-\textbf{\RQIIIreject}, and survives the Bonferroni threshold $\alphaBonf$.
+\textbf{\RQIIIreject}, and the result survives the Bonferroni threshold $\alphaBonf$.
 
-The effect is consistent rather than driven by outliers: the LLM produces more scenarios on
-\RQIIIpairsLlm{} of \RQIIIn{} operations, manual leads on \RQIIIpairsManual{}, and
-\RQIIIpairsTie{} tie. This is the largest effect in the study. It is also, as
-Section~\ref{sec:results-pvd} shows, the least consequential.
+No outlier drives the effect: the LLM produces more scenarios on \RQIIIpairsLlm{} of
+\RQIIIn{} operations, manual leads on \RQIIIpairsManual{}, and \RQIIIpairsTie{} tie. This is
+the largest effect in the study, and as Section~\ref{sec:results-pvd} shows, also the least
+consequential.
 
-\subsection{Produced versus detected}
+\subsection{Produced versus Detected}
 \label{sec:results-pvd}
 
-Table~\ref{tab:pvd} places the volume and effectiveness metrics side by side, and the two
+Table~\ref{tab:pvd} places the volume and effectiveness metrics side by side. The two
 orderings disagree.
 
-\begin{table}[t]
+\begin{table}[tb]
 \centering
-\caption{What each arm \emph{produced} versus what it \emph{detected}. The volume ordering
-(LLM $>$ manual $>$ EvoMaster) is not the effectiveness ordering (EvoMaster $>$ LLM $>$
-manual): the arm that produces least detects most.}
+\caption{What each arm produced versus what it detected. The volume ordering (LLM $>$ manual
+$>$ EvoMaster) is not the effectiveness ordering (EvoMaster $>$ LLM $>$ manual): the arm that
+produces least detects most.}
 \label{tab:pvd}
 \small
 \begin{tabular}{@{}lrrr@{}}
@@ -111,7 +113,7 @@ manual): the arm that produces least detects most.}
 \midrule
 \multicolumn{4}{@{}l}{\emph{Produced}} \\
 Test cases                        & \textbf{\PDtestsLlm}     & \PDtestsManual        & \PDtestsEvo \\
-Edge-case scenarios               & \textbf{\RQIIItotalLlm}  & \RQIIItotalManual     & --- \\
+Edge-case scenarios               & \textbf{\RQIIItotalLlm}  & \RQIIItotalManual     & n/a \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{Detected (against ground truth)}} \\
 Mutants killed / \PDkilledTotal   & \PDkilledLlm             & \PDkilledManual       & \textbf{\PDkilledEvo} \\
@@ -121,38 +123,41 @@ HTTP error behaviours / \PDerrKey & \textbf{\PDerrTriggeredLlm} & \PDerrTriggere
 \end{tabular}
 \end{table}
 
-The LLM writes \PDtestsLlm{} test cases to EvoMaster's \PDtestsEvo{} ---
-$\PDvolumeRatioLlmEvo\times$ the volume --- and kills half as many mutants
-(EvoMaster detects $\PDkillRatioEvoLlm\times$ the LLM's faults). It does lead on the
-error-surface dimension,
-triggering \PDerrTriggeredLlm{} of the \PDerrKey{} documented HTTP error behaviours against
-manual's \PDerrTriggeredManual{} and EvoMaster's \PDerrTriggeredEvo{}, and eliciting
-\PDcrashLlm{} 5xx responses including a genuine server crash. So the LLM is not weak
-everywhere: it is strong at reaching the \emph{documented} error surface and weak at
-detecting \emph{value} faults.
+The LLM writes \PDtestsLlm{} test cases to EvoMaster's \PDtestsEvo{}, which is
+$\PDvolumeRatioLlmEvo\times$ the volume, while EvoMaster detects $\PDkillRatioEvoLlm\times$
+the LLM's faults. The LLM does elicit the widest range of error behaviours, reaching
+\PDerrTriggeredLlm{} of the \PDerrKey{} behaviours in the pooled key against manual's
+\PDerrTriggeredManual{} and EvoMaster's \PDerrTriggeredEvo{}, and producing \PDcrashLlm{} 5xx
+responses including a genuine server crash. Because that key is the union of the three arms
+(Section~\ref{sec:method}), this shows the LLM's observed behaviours contain the other arms'
+and not that it covered the error surface. What the LLM cannot do is detect faults that change
+a value the specification never constrains.
 
-Had we reported only the metrics the surveyed literature uses --- coverage, scenario counts,
-500-error tallies --- every one of them ranks the LLM first, over both baselines. The ground
-truth agrees about the manual baseline but overturns the verdict against EvoMaster: the tool
-that produced the \emph{fewest} tests (\PDtestsEvo{} to the LLM's \PDtestsLlm{}) detected the
-\emph{most} faults. This is the practical case for GAP-D: without a denominator, a
-volume-based metric would have crowned the LLM outright, when in fact a mature tool from 2019
-finds more than twice as many faults.
+Had we reported only the volume metrics the surveyed literature uses, the LLM would have
+ranked first on each of them. It leads EvoMaster on test-case count (\PDtestsLlm{} to
+\PDtestsEvo{}) and on 5xx responses elicited (\PDcrashLlm{} to \PDcrashEvo{}), and it leads
+the manual suite on coverage and scenario count. The ground truth agrees about the manual
+baseline but overturns the verdict against EvoMaster: the tool that produced the fewest tests
+detected the most faults. Two caveats belong with this comparison. Endpoint coverage and
+edge-case scenario counts are defined for the LLM and manual arms only, since EvoMaster
+emits no scenario annotations and we did not instrument it for per-operation coverage, so
+neither metric ranks all three arms. The comparison against EvoMaster therefore rests on test
+volume and 5xx tallies, which is precisely the kind of proxy this paper argues against.
 
-\begin{figure}[t]
+\begin{figure}[tb]
   \centering
-  \includegraphics[width=\columnwidth]{fig1_distribution.png}
-  \caption{RQ2 --- distribution of fault-detection Recall across the three arms over
-  \RQIIn{} seeded faults. EvoMaster's advantage is concentrated on the arithmetic-heavy
+  \includegraphics[width=0.78\textwidth]{fig1_distribution.png}
+  \caption{RQ2: distribution of fault-detection Recall across the three arms over \RQIIn{}
+  seeded faults. EvoMaster's advantage is concentrated on the arithmetic-heavy
   \texttt{rest-ncs} subject.}
   \label{fig:rq2}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[tb]
   \centering
-  \includegraphics[width=\columnwidth]{fig2_comparison.png}
-  \caption{RQ3 --- per-endpoint edge-case scenario counts, LLM versus manual across
-  \RQIIIn{} operations. The LLM leads on \RQIIIpairsLlm{} operations, manual on
+  \includegraphics[width=0.78\textwidth]{fig2_comparison.png}
+  \caption{RQ3: per-endpoint edge-case scenario counts, LLM versus manual across \RQIIIn{}
+  operations. The LLM leads on \RQIIIpairsLlm{} operations and manual on
   \RQIIIpairsManual{}.}
   \label{fig:rq3}
 \end{figure}

@@ -1,19 +1,17 @@
 \section{Method}
 \label{sec:method}
 
-The research questions, metrics, thresholds, and statistical tests below were fixed in a
-proposal submitted in Week~5 and frozen at instructor approval, before any full-run data
-were seen. Nothing in this section was chosen after looking at the results
-(no HARKing); Section~\ref{sec:results} reports the pre-registered tests whether or not
-they favour our hypotheses, and in the case of RQ2 they do not.
+The research questions, metrics, thresholds and statistical tests below were fixed in a
+proposal frozen at instructor approval in Week~5, before any full-run data were seen. RQ2's
+result contradicts the hypothesis we stated there.
 
-\subsection{Research questions and hypotheses}
+\subsection{Research Questions and Hypotheses}
 
 \textbf{RQ1 (absolute).} Do LLM-generated tests reach endpoint coverage $\geq 90\%$, and
 which endpoint types are most often missed?
-$H_0: \mu \leq 0.90$; $H_1: \mu > 0.90$. The 90\% threshold is bracketed by the
-literature: a floor of 88.6\% route discovery~\cite{restspecit} and a ceiling of 95.5\%
-operation coverage~\cite{restifai}.
+$H_0: \mu \leq 0.90$; $H_1: \mu > 0.90$. The 90\% threshold is bracketed by the literature,
+which spans 88.6\% route discovery~\cite{restspecit} at the low end and 95.5\% operation
+coverage~\cite{restifai} at the high end.
 \emph{Test:} one-sample Wilcoxon signed-rank against 0.90, one-tailed.
 
 \textbf{RQ2 (comparative).} How many pre-seeded faults do LLM tests detect, versus manual
@@ -33,84 +31,97 @@ stricter second reading.
 
 \subsection{Subjects}
 
-We use three REST services from the EvoMaster Benchmark (EMB, LGPL-3.0), the shared corpus
-of the field~\cite{notimetorest,autoresttest}: \texttt{rest-ncs}
-(\RQINcsTotal{} operations), \texttt{rest-scs} (\RQIScsTotal{}), and
-\texttt{features-service} (\RQIFeaturesTotal{}), totalling \RQIopsTotal{} operations.
-Each is deployed locally as a standalone JDK~8 Spring Boot fat jar; the harness and
-EvoMaster run on JDK~17 and communicate with the subjects over HTTP only. Provenance,
-license, and operation counts are recorded in \texttt{data/raw/README.md}.
+We use three REST services from the EvoMaster Benchmark (EMB, LGPL-3.0), the shared corpus of
+the field~\cite{notimetorest,autoresttest}: \texttt{rest-ncs} (\RQINcsTotal{} operations),
+\texttt{rest-scs} (\RQIScsTotal{}), and \texttt{features-service} (\RQIFeaturesTotal{}),
+totalling \RQIopsTotal{} operations. Each is deployed locally as a standalone JDK~8 Spring
+Boot fat jar. The harness and EvoMaster run on JDK~17 and communicate with the subjects over
+HTTP only. Provenance, license and operation counts are recorded in
+\texttt{data/raw/README.md}.
 
-\subsection{Fault seeding and ground truth}
+\subsection{Fault Seeding and Ground Truth}
 \label{sec:method-faults}
 
-Faults are seeded by mutation, which is what supplies the denominator the literature
-lacks. We apply standard PIT/Offutt operator families~\cite{pit,offutt} --- relational
-replacement, arithmetic replacement, and negate/boundary conditionals --- to the
-controller and core-logic classes of each subject, i.e.\ where a fault is observable
-through the HTTP contract. Each mutation is a single-token change, applied in isolation
-and recompiled into its own mutant jar; mutants that fail to compile are discarded, and
-the pristine source is restored before the next.
+Faults are seeded by mutation, which supplies the denominator the literature lacks. We apply
+standard PIT/Offutt operator families~\cite{pit,offutt}, namely relational replacement,
+arithmetic replacement and negate/boundary conditionals, to the controller and core-logic
+classes of each subject, where a fault is observable through the HTTP contract. Each mutation
+is a single-token change, applied in isolation and recompiled into its own mutant jar. Mutants
+that fail to compile are discarded, and the pristine source is restored before the next.
 
-This yields \RQIIn{} compilable mutants (\texttt{rest-ncs} 70, \texttt{rest-scs} 59,
-\texttt{features-service} 4), catalogued with file, line, and operator in
-\texttt{data/faults/<sut>/catalog.json} and exported to
-\texttt{data/full\_ground\_truth.csv}. Because the ground truth is derived from code
-rather than human annotation, no inter-annotator agreement statistic applies.
+This yields \RQIIn{} compilable mutants: 70 in \texttt{rest-ncs}, 59 in \texttt{rest-scs}
+and 4 in \texttt{features-service}. Each is catalogued with file, line and operator in
+\path{data/faults/<sut>/catalog.json} and exported to \path{data/full_ground_truth.csv}.
+The ground truth is derived from code, not from human annotation, so no inter-annotator
+agreement statistic applies.
 
-The \texttt{features-service} imbalance (4 mutants against 70 and 59) is a real property
-of that service's arithmetic-light controller code, not a sampling choice. We report it as
-a generalisation limit rather than repairing it after the fact, which would be
-HARKing-adjacent.
+The \texttt{features-service} imbalance (4 mutants against 70 and 59) is a real property of
+that service's arithmetic-light controller code rather than a sampling choice. We report it as
+a generalisation limit instead of repairing it after the fact.
 
-\subsection{The three arms}
+\subsection{The Three Arms}
 
 All three suites are authored \emph{before} faults are seeded and are blind to the fault
 catalog, so no arm can target a known mutant.
 
 \textbf{LLM.} Claude Sonnet 4.6 (\texttt{claude-sonnet-4-6}), temperature $0$, top\_p $1$,
-max\_tokens $4096$, fixed seed. Input is the OpenAPI specification only --- black-box, with
-no access to source. The prompt is frozen verbatim in
-\texttt{scripts/llm/prompt\_template.md}; per-subject transcripts and the tool-use evidence
+max\_tokens $4096$, fixed seed. Input is the OpenAPI specification only, so the arm is
+black-box with no access to source. The prompt is frozen verbatim in
+\texttt{scripts/llm/prompt\_template.md}. Per-subject transcripts and the tool-use evidence
 establishing spec-only input are in \texttt{llm/transcripts/}. Output is REST-assured JUnit~5
 tests.
 
-\textbf{Manual.} An equivalence-partitioning / boundary-value-analysis suite designed from
-the same specification, blind to faults, per \texttt{manual/methodology.md}.
+\textbf{Manual.} An equivalence-partitioning and boundary-value-analysis suite designed from
+the same specification and blind to faults, with the design procedure recorded in
+\path{manual/methodology.md}. This suite
+was authored by a separate, isolated model session rather than by a human cohort. We treat
+that substitution as a construct-validity threat and discuss it in
+Section~\ref{sec:threats}; throughout this paper the arm is labelled ``independently authored''
+rather than ``human''.
 
-\textbf{EvoMaster 6.0.0}, black-box mode:
-\texttt{-{}-blackBox true -{}-bbSwaggerUrl <spec> -{}-outputFormat JAVA\_JUNIT\_5
--{}-maxTime 120s}, seed 42, three repeats.
+\textbf{EvoMaster 6.0.0}, black-box mode, seed 42, three repeats:
+
+\begin{center}
+\texttt{-{}-blackBox true -{}-bbSwaggerUrl <spec>}\\
+\texttt{-{}-outputFormat JAVA\_JUNIT\_5 -{}-maxTime 120s}
+\end{center}
 
 \subsection{Measurement}
 
-\textbf{Coverage} is operations exercised by at least one test over total operations,
-computed from the specification and the executed request log.
+\textbf{Coverage} is the number of operations exercised by at least one test, divided by the
+total number of operations, and is computed from the specification together with the executed
+request log.
 
-\textbf{Fault Recall} is $\text{killed}/\RQIIn{}$. An arm kills a mutant iff at least one
-test that \emph{passes} on the original subject \emph{fails} on the mutant --- the suite
-observably distinguishes the faulty build from the correct one. Tests already failing on
-the original are excluded as invalid oracles for that arm, which is why we record
+\textbf{Fault Recall} is $\text{killed}/\RQIIn{}$. An arm kills a mutant if at least one test
+that \emph{passes} on the original subject \emph{fails} on the mutant, so that the suite
+observably distinguishes the faulty build from the correct one. Tests already failing on the
+original are excluded as invalid oracles for that arm, which is why we record
 \texttt{n\_oracle} per arm alongside each kill decision.
 
-\textbf{Edge-case count} is the number of distinct negative, boundary, and error-code
-scenarios per endpoint, parsed from \texttt{// SCENARIO type=} tags in the suite source.
+\textbf{Edge-case count} is the number of distinct negative, boundary and error-code scenarios
+per endpoint, parsed from \texttt{// SCENARIO type=} tags in the suite source.
 
-\textbf{Error-surface baseline.} A static analyser
-(\texttt{scripts/error\_surface.py}) enumerates, per endpoint, every source location that
-can emit a non-2xx response, classified as \emph{declared} (explicit
-\texttt{status(4xx/5xx)}), \emph{framework} (typed \texttt{@PathVariable} $\rightarrow$
-Spring auto-400), or \emph{potential} (uncaught exception $\rightarrow$ 500). This gives a
-tool-independent map of what \emph{can} fail, against which each arm's observed behaviour
-is read.
+\textbf{Error-surface baseline.} A static analyser (\texttt{scripts/error\_surface.py})
+enumerates, per endpoint, every source location that can emit a non-2xx response, classified
+as \emph{declared} (explicit \texttt{status(4xx/5xx)}), \emph{framework} (typed
+\texttt{@PathVariable} giving a Spring auto-400), or \emph{potential} (uncaught exception
+giving a 500). Section~\ref{sec:intro} describes what this baseline is for.
+
+\textbf{Error-behaviour key.} Separately from the static baseline, we record which distinct
+(operation, status) behaviours each arm actually elicited at run time
+(\texttt{scripts/error\_profile.py}). The denominator of \PDerrKey{} behaviours is the
+\emph{union} of what the three arms observed, not an independently derived total. An arm that
+scores \PDerrKey{}$/$\PDerrKey{} has therefore observed a superset of the others' behaviours;
+it has not been shown to cover the full error surface. Section~\ref{sec:threats} states the
+consequence for how this metric may be read.
 
 \textbf{Produced versus detected.} Every request each suite issues is replayed through a
 logging proxy against the live subject and its real HTTP status recorded
-(\texttt{results/raw/traffic.csv}). We then report \emph{separately} the number of tests and
+(\texttt{results/raw/traffic.csv}). We then report separately the number of tests and
 scenarios \textbf{produced} and the number of faults and error behaviours actually
-\textbf{detected} (\texttt{results/produced-vs-detected.json}). This separation is not
-cosmetic: Section~\ref{sec:results} shows the two orderings disagree, and conflating them
-is precisely how a suite that finds fewer faults can be reported as the better one.
+\textbf{detected} (\texttt{results/produced-vs-detected.json}). The separation matters because
+Section~\ref{sec:results} shows the two orderings disagree, and conflating them is how a suite
+that finds fewer faults can be reported as the better one.
 
 \subsection{Reproducibility}
 \label{sec:method-repro}
@@ -124,10 +135,12 @@ The pipeline is a chain in which each stage writes a committed artefact:
 \texttt{gen\_paper\_macros.py} $\rightarrow$ this paper
 \end{center}
 
-No statistic in this document is typed by hand. Each is a LaTeX macro bound by
-\texttt{gen\_paper\_macros.py} to a field of \texttt{summary.json}, so a stale number is
-impossible by construction: re-running the experiment moves the paper's text. We verified
-that \texttt{analyze.py} regenerates \texttt{summary.json} byte-identically from the
-committed raw data, and that the analysis notebook survives Restart~\&~Run~All with zero
-errors. Statistics use \texttt{scipy} and \texttt{statsmodels}; the pinned toolchain is
-recorded in \texttt{env/tools.md}.
+Every computed statistic in this document is a LaTeX macro bound by
+\texttt{gen\_paper\_macros.py} to a field of \texttt{summary.json}, so re-running the
+experiment moves the paper's text. A small number of fixed integers are written literally,
+namely the per-subject mutant counts and figures quoted from the Week-7 pilot;
+\texttt{scripts/check\_paper.py} fails the build if any \emph{derived} statistic is
+hardcoded into a results section. We verified that \texttt{analyze.py} regenerates
+\texttt{summary.json} byte-identically from the committed raw data, and that the analysis
+notebook survives Restart~\&~Run~All with zero errors. Statistics use \texttt{scipy} and
+\texttt{statsmodels}, with the pinned toolchain recorded in \texttt{env/tools.md}.

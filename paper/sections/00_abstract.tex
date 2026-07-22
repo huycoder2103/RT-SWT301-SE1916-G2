@@ -1,40 +1,22 @@
 \begin{abstract}
-Large Language Models (LLMs) can read an OpenAPI specification and synthesise REST API
-tests automatically, and a rapidly growing literature reports that they outperform
-search-based tools on live-API error counts. Across \textbf{59} surveyed papers
-(2018--2026) we find, however, that three questions remain unanswered: no study compares
-an LLM generator against \emph{both} a human-style manual suite \emph{and} a mature tool
-on the same APIs; none computes fault-detection \emph{Recall} against a known,
-pre-seeded-fault ground truth (fault counts are reported as raw 500-error tallies on live
-systems); and none reports a per-endpoint edge-case metric.
+Large Language Models can generate REST API tests from an OpenAPI specification, and a
+growing literature reports that they find more errors than search-based tools. Surveying
+59 papers (2018--2026), we find no study comparing an LLM against both a manual suite and
+a mature tool, none computing fault-detection Recall against a known fault population, and
+none reporting a per-endpoint edge-case metric.
 
-We address all three with a controlled, blind comparison of three arms --- an LLM
-(Claude Sonnet 4.6), an independently authored manual EP/BVA suite, and EvoMaster 6.0.0 ---
-on three EvoMaster Benchmark (EMB) REST APIs comprising \RQIopsTotal{} operations, into which
-\RQIIn{} faults are seeded by mutation so that the denominator of Recall is known exactly.
-Our results are pointedly mixed, and the mixture is the contribution. The LLM reaches
-\RQIcoveragePct\% endpoint coverage ($\RQIopsCovered/\RQIopsTotal$, $p=\RQIpvalue$) and
-produces \RQIIItotalLlm{} edge-case scenarios against manual's \RQIIItotalManual{}
-($p=\RQIIIpvalue$, rank-biserial $=\RQIIIrankBiserial$) --- it is decisively more
-\emph{prolific}. On the ground truth the ordering is EvoMaster \RQIIrecallEvo{} $>$ LLM
-\RQIIrecallLlm{} $>$ manual \RQIIrecallManual{}: the LLM significantly out-detects the
-independent human-style suite (McNemar $p=\RQIImcnemarLMp$, its kills a strict superset) yet
-is itself out-detected by a search-based tool from 2019 ($p=\RQIImcnemarLEp$; both hold at
-$\alpha=\alphaRaw$ but not under Bonferroni, so we read them as directional).
+We compare three arms blind: an LLM (Claude Sonnet 4.6), an independently authored manual
+EP/BVA suite, and EvoMaster 6.0.0. The subjects are three EvoMaster Benchmark APIs covering
+\RQIopsTotal{} operations, into which we seed \RQIIn{} faults by mutation, fixing the
+denominator of Recall exactly.
 
-We trace the ordering to two composing mechanisms the coverage-centric literature cannot
-observe. First, oracle \emph{kind}: the LLM's and the manual suite's spec-derived
-status-code oracles accept any response in a plausible class, so they are structurally blind
-to computational faults that alter a returned value while preserving its HTTP status ---
-on the arithmetic-heavy subject both score zero while EvoMaster's recorded-value regression
-oracles catch twelve. Second, within the status-oracle regime, \emph{volume}: where faults
-are status-visible, the LLM's larger suite catches more of them than the leaner independent
-manual suite (its kills a strict subset). Test volume and fault-finding power are thus
-distinct, and per-endpoint scenario counts --- the metric the field is trending toward ---
-actively mislead when reported without a ground-truth Recall alongside them.
+The LLM attains \RQIcoveragePct\% endpoint coverage and writes \RQIIItotalLlm{} edge-case
+scenarios to the manual suite's \RQIIItotalManual{}. Ground-truth Recall nonetheless orders
+the arms EvoMaster \RQIIrecallEvo{} $>$ LLM \RQIIrecallLlm{} $>$ manual \RQIIrecallManual{}.
+The ordering follows from oracle kind: a specification-derived status oracle cannot see a
+fault that changes a computed value while preserving the HTTP status. Scenario counts
+therefore mislead when reported without a ground-truth Recall beside them.
+
+\keywords{REST API testing \and Large language models \and Mutation testing
+\and Test oracles \and Empirical software engineering}
 \end{abstract}
-
-\begin{IEEEkeywords}
-REST API testing, large language models, mutation testing, test oracles, EvoMaster,
-empirical software engineering
-\end{IEEEkeywords}

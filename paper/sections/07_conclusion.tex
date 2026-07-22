@@ -1,47 +1,43 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-We ran the comparison the REST-API-testing literature has not: an LLM generator, a manual
-EP/BVA suite, and EvoMaster, on the same three APIs, against a \emph{known} population of
-\RQIIn{} seeded faults rather than a tally of errors observed on a live system.
+We ran a comparison the REST-API-testing literature has not: an LLM generator, a manual EP/BVA
+suite and EvoMaster, on the same three APIs, against a known population of \RQIIn{} seeded
+faults rather than a tally of errors observed on a live system.
 
-The answer to ``can an LLM out-test a human baseline and a search-based tool'' is: it
-out-tests the human-style baseline and is out-tested by the tool. On every metric the field
-currently reports, the LLM leads both: \RQIcoveragePct\% endpoint coverage ($p=\RQIpvalue$),
-\RQIIItotalLlm{} edge-case scenarios against \RQIIItotalManual{} ($p=\RQIIIpvalue$,
-rank-biserial $\RQIIIrankBiserial$), \PDtestsLlm{} test cases to EvoMaster's \PDtestsEvo{},
-and \PDerrTriggeredLlm{} of \PDerrKey{} documented HTTP error behaviours triggered. On the
-ground truth the ordering is EvoMaster \RQIIrecallEvo{} $>$ LLM \RQIIrecallLlm{} $>$ manual
-\RQIIrecallManual{}: the LLM significantly out-detects an independently authored EP/BVA suite
-($p=\RQIImcnemarLMp$, its kills a strict superset), yet is itself out-detected by EvoMaster
-($p=\RQIImcnemarLEp$; both at the raw threshold, neither under Bonferroni, so directional
-rather than decisive).
+Can an LLM out-test a human-style baseline and a search-based tool? It out-tests the
+human-style baseline and is out-tested by the tool. On the volume metrics the field currently
+reports, the LLM leads: \RQIcoveragePct\% endpoint coverage ($p=\RQIpvalue$),
+\RQIIItotalLlm{} edge-case scenarios against the manual suite's \RQIIItotalManual{}
+($p=\RQIIIpvalue$, rank-biserial $\RQIIIrankBiserial$), and \PDtestsLlm{} test cases to
+EvoMaster's \PDtestsEvo{}. On the ground
+truth the ordering is EvoMaster \RQIIrecallEvo{} $>$ LLM \RQIIrecallLlm{} $>$ manual
+\RQIIrecallManual{}. The LLM significantly out-detects an independently authored EP/BVA suite
+($p=\RQIImcnemarLMp$, with its kills a strict superset), yet is itself out-detected by
+EvoMaster ($p=\RQIImcnemarLEp$). Both results hold at the raw threshold and neither holds under
+Bonferroni, so we read them as directional rather than decisive.
 
 The explanation is not about model capability. A generator that reads a specification writes
-assertions about \emph{status codes}, and a fault that changes a computed value while leaving
-the status intact is invisible to every such assertion, no matter how many are written.
-EvoMaster's recorded-value regression oracles see exactly those faults. The evidence is that
-the arms' ordering tracks fault character rather than generator sophistication: on the
-arithmetic-heavy \texttt{rest-ncs} \emph{both} status-oracle arms score \RQIINcsLlm{} while
-EvoMaster kills \RQIINcsEvo{}; on the validation-heavy \texttt{rest-scs} the LLM leads every
-arm. Two levels compose: oracle \emph{kind} fixes the ceiling (status oracles cannot reach
-EvoMaster on value faults), and within a kind, \emph{volume} decides how much of the
-reachable fault set is caught --- which is why the LLM's \PDtestsLlm{} tests beat the leaner
-independent manual's \PDtestsManual{} where the faults are status-visible.
+assertions about status codes, and a fault that changes a computed value while leaving the
+status intact is invisible to every such assertion, no matter how many are written. EvoMaster's
+recorded-value regression oracles see exactly those faults. The arms' ordering follows fault
+character: on the arithmetic-heavy \texttt{rest-ncs} both status-oracle arms score
+\RQIINcsLlm{} while EvoMaster kills \RQIINcsEvo{}, and on the validation-heavy
+\texttt{rest-scs} the LLM leads every arm. Oracle kind fixes the ceiling; within a kind,
+volume decides how much of the reachable fault set is caught.
 
-Three consequences follow. For practitioners, LLM generation is a breadth instrument that
-complements rather than replaces value-based oracles --- it beats a human-style suite yet
-still missed more than half the faults EvoMaster's regression oracles caught. For the field,
-the metric that ranks the LLM first over EvoMaster (volume) and the metric that ranks it
-below (ground-truth Recall) disagree on the same code, so the comparative claims currently in
-the literature are not measuring what their framing implies. For benchmark design, fault
-populations should be stratified by oracle-observability, because that single axis reorders
-the arms.
+For practitioners, LLM generation complements value-based oracles and does not replace them:
+it beats a human-style suite yet still missed \RQIImcnemarLEc{} faults that EvoMaster's
+regression oracles caught. For the field, the metric that ranks the LLM first over EvoMaster
+(volume) and the metric that ranks it below (ground-truth Recall) disagree on the same code,
+so the comparative claims currently in the literature are not measuring what their framing
+implies. For benchmark design, fault populations should be stratified by
+oracle-observability, because that single axis reorders the arms.
 
-Our principal remaining limitation is that the independent manual baseline is an isolated
-\emph{agent} session, not a human cohort; a human replication against the same \RQIIn{}
-mutants is the highest-value next step, and our pipeline runs it without modification. Beyond
-it, the natural studies are an oracle-controlled comparison that fixes assertion kind and
-varies only the generator, a fault population stratified by oracle-observability, and the
-GAP-T ablation across model families. The pipeline, prompts, fault catalogs, and raw data are
+Our principal remaining limitation is that the independent manual baseline is an isolated agent
+session rather than a human cohort. A human replication against the same \RQIIn{} mutants is
+the highest-value next step, and our pipeline runs it without modification. Beyond that, the
+natural follow-up studies are an oracle-controlled comparison that fixes assertion kind and
+varies only the generator, a fault population stratified by oracle-observability, and the GAP-T
+ablation across model families. The pipeline, prompts, fault catalogs and raw data are
 committed, and every number above regenerates from them by script.

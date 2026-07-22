@@ -2,6 +2,15 @@
 % RBL-5 -- SWT301 Research-Based Learning, Summer 2026
 % Group SE1916-G2
 %
+% FORMAT: EAI FISAT 2026 house style -- Springer LNCS.
+%   Required by the course; the paper is NOT submitted to the conference.
+%   Format .... Springer LNCS (single column, llncs.cls)
+%   Length .... full paper 12-15 pp (short 6-11 pp), excl. refs
+%   Language .. English   Review model: single-blind (author names VISIBLE)
+%
+% llncs.cls and splncs04.bst are on CTAN (CC BY 4.0) and ship with MiKTeX and
+% TeX Live, so no manual template download is needed:  https://ctan.org/pkg/llncs
+%
 % Build:  pdflatex main -> bibtex main -> pdflatex main -> pdflatex main
 %   (or)  latexmk -pdf main.tex
 %
@@ -10,43 +19,53 @@
 %   defined in generated/numbers.tex, which scripts/gen_paper_macros.py
 %   binds to results/stats/summary.json (<- analyze.py <- results/raw/*).
 %   Refresh with:  python scripts/gen_paper_macros.py
+%   Validate with: python scripts/check_paper.py
 % =====================================================================
-\documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
+\documentclass[runningheads]{llncs}
 
-\usepackage{cite}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
-\usepackage{xcolor}
 
-\graphicspath{{figures/}{../figures/}}
+% Long file paths set in \texttt{} overflow the LNCS text block because they
+% contain no breakpoints. \path{} (url package) is verbatim and breaks at "/"
+% and ".", so use it for any path longer than ~25 characters.
+% Urlmuskip defaults to a stretchy space around punctuation, which makes a path
+% render as "a / b . c"; zero it so paths look like ordinary typewriter text.
+\urlstyle{tt}
+\Urlmuskip=0mu plus 1mu
+
+% Figures are kept inside paper/ so this directory is a self-contained submission.
+% scripts/make_rbl4_figures.py writes to ../figures/; copy both PNGs across after
+% regenerating them.
+\graphicspath{{figures/}}
 
 % ---- auto-generated statistics (DO NOT EDIT numbers.tex by hand) ----
 \input{generated/numbers}
 
 \begin{document}
 
-\title{Can an LLM Out-Test a Human Baseline and a Search-Based Tool?\\
-A Ground-Truth Comparison of LLM, Manual, and EvoMaster\\
-REST API Test Generation on Pre-Seeded-Fault Benchmarks}
+\title{LLM, Manual, and Search-Based REST API Test Generation:\\
+A Ground-Truth Comparison on Pre-Seeded Faults}
 
-\author{
-\IEEEauthorblockN{Nguyen Hoang Huy\IEEEauthorrefmark{1},
-Nguyen Tien Dung\IEEEauthorrefmark{2},
-Nguyen Thanh Dat\IEEEauthorrefmark{3},
-Nguyen Le Thuan\IEEEauthorrefmark{4},
-Vo Le Trung Nguyen\IEEEauthorrefmark{5}}
-\IEEEauthorblockA{\textit{FPT University} --- SWT301, Group SE1916-G2, Summer 2026\\
-\IEEEauthorrefmark{1}SE190240, Project Lead \quad
-\IEEEauthorrefmark{2}SE190034, LLM Runner \quad
-\IEEEauthorrefmark{3}SE190239, Data \& Ground Truth\\
-\IEEEauthorrefmark{4}SE190305, Metrics \& Stats \quad
-\IEEEauthorrefmark{5}SE190220, Report Writer\\
-Instructor: L.T.Q.\ Chi}
-}
+\titlerunning{A Ground-Truth Comparison of REST API Test Generation}
+
+% ---------------------------------------------------------------------------
+% ANONYMISED at the instructor's request. To restore, swap the two blocks below.
+%
+% \author{{Nguyen} Hoang Huy \and
+% {Nguyen} Tien Dung \and
+% {Nguyen} Thanh Dat \and
+% {Nguyen} Le Thuan \and
+% {Vo} Le Trung Nguyen}
+% \authorrunning{Nguyen H. H. et al.}
+% \institute{FPT University, Ho Chi Minh City, Vietnam}
+% ---------------------------------------------------------------------------
+\author{}
+\authorrunning{}
+\institute{}
 
 \maketitle
 
@@ -59,7 +78,9 @@ Instructor: L.T.Q.\ Chi}
 \input{sections/06_threats}
 \input{sections/07_conclusion}
 
-\bibliographystyle{IEEEtran}
+\input{sections/08_declarations}
+
+\bibliographystyle{splncs04}
 \bibliography{references}
 
 \end{document}
