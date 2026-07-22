@@ -11,14 +11,22 @@ A stale paper is therefore impossible by construction.
 Owner: MS (Nguyen Le Thuan, SE190305)
 Usage: python scripts/gen_paper_macros.py
 """
+import csv
 import json
 import os
+import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATS = os.path.join(ROOT, "results", "stats", "summary.json")
 PVD = os.path.join(ROOT, "results", "produced-vs-detected.json")
+RAW = os.path.join(ROOT, "results", "raw")
+CATALOG = os.path.join(ROOT, "data", "faults")
 OUT_DIR = os.path.join(ROOT, "paper", "generated")
 OUT = os.path.join(OUT_DIR, "numbers.tex")
+
+# Operators that alter a computed value while leaving the HTTP status untouched.
+# Used to show that EvoMaster's rest-ncs kills are all value faults.
+ARITHMETIC = set("+-*/%")
 
 
 def pval(p):
@@ -127,6 +135,35 @@ def main():
         prod["test_cases"]["llm"] / prod["test_cases"]["evomaster"], 1)
     m["PDkillRatioEvoLlm"] = num(
         det["mutation_faults_killed"]["evomaster"] / det["mutation_faults_killed"]["llm"], 1)
+
+    # ---- rest-ncs kill profile --------------------------------------------
+    # Evidence for the oracle-kind mechanism: on the arithmetic-heavy subject, which
+    # mutants does EvoMaster kill, and how large is each arm's valid-oracle suite?
+    # Derived from the raw kill matrix and the fault catalog rather than summary.json,
+    # which aggregates recall and drops both facts.
+    with open(os.path.join(RAW, "ncs_kills.csv"), encoding="utf-8") as f:
+        ncs_rows = list(csv.DictReader(f))
+    with open(os.path.join(CATALOG, "ncs", "catalog.json"), encoding="utf-8") as f:
+        cat = json.load(f)
+    cat = cat if isinstance(cat, list) else cat.get("mutants", cat.get("faults", []))
+    by_id = {c["id"]: c for c in cat}
+
+    for arm, k in [("llm", "Llm"), ("manual", "Manual"), ("evomaster", "Evo")]:
+        rows = [r for r in ncs_rows if r["arm"] == arm]
+        m[f"NcsOracle{k}"] = str(rows[0]["n_oracle"]) if rows else "0"
+
+    evo_kills = [r["mutant_id"] for r in ncs_rows
+                 if r["arm"] == "evomaster" and r["killed"] == "1"]
+    m["NcsEvoKills"] = str(len(evo_kills))
+    files = {os.path.basename(by_id[i]["file"]) for i in evo_kills if i in by_id}
+    m["NcsEvoKillFiles"] = str(len(files))
+    m["NcsEvoKillFile"] = re.sub(r"\.java$", "", sorted(files)[0]) if len(files) == 1 else "multiple"
+    # An operator is value-changing when it swaps one arithmetic symbol for another.
+    arith = [i for i in evo_kills
+             if i in by_id and set(by_id[i]["operator"]) & ARITHMETIC
+             and "=" not in by_id[i]["operator"].replace("->", "")]
+    m["NcsEvoKillsArith"] = str(len(arith))
+    m["NcsEvoKillsRel"] = str(len(evo_kills) - len(arith))
 
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:

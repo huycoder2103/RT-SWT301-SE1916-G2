@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
-RBL-4 figures (>=300 DPI), additive to LR's rq1/rq2/rq3 pngs.
+RBL-4 figures, additive to LR's rq1/rq2/rq3 pngs.
+
+Springer LNCS requires line art at >=800 dpi at final print size. Both figures are set at
+0.78\textwidth in the paper, i.e. 95.2 mm = 3.75 in wide, so fig1 (figsize 8 in) needs
+>=3000 px and DPI 400 delivers 3200 px = 853 dpi. Do not lower DPI below 400.
 
   figures/fig1_distribution.png  — RQ2 per-SUT/overall Recall distribution across the 3 arms
                                    (boxplot over per-mutant kill outcome, grouped by arm)
@@ -22,7 +26,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "results", "raw")
 FIG = os.path.join(ROOT, "figures")
 EDGE = {"negative", "boundary", "errorcode"}
-DPI = 300
+DPI = 400
 ARMS = ["llm", "manual", "evomaster"]
 
 

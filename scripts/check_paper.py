@@ -43,6 +43,14 @@ KNOWN = {
     "rightarrow", "leftarrow", "Rightarrow", "Leftarrow", "to", "mapsto",
     "abstract", "keywords", "tabular", "table", "figure", "equation", "align",
     "IEEEtran", "textrm", "textsc", "underline", "sout", "footnote", "appendix",
+    # Springer LNCS (llncs.cls) -- target format for EAI FISAT 2026.
+    "titlerunning", "authorrunning", "institute", "email", "inst", "orcidID",
+    "setlength", "tabcolsep", "arraystretch", "href", "subtitle", "spnewtheorem",
+    # url package: \path{} is verbatim and breakable -- used for long file paths
+    # that would otherwise overflow the LNCS text block as \texttt{}.
+    "path", "urlstyle", "Urlmuskip",
+    # llncs: credits environment + its mandatory run-in heading macros
+    "credits", "discintname", "ackname",
 }
 
 # Sections that report OUR measurements -- a bare decimal here must come from numbers.tex.
@@ -90,6 +98,9 @@ def main():
         if os.path.basename(p) in OWN_RESULTS:
             for line in body.splitlines():
                 if line.strip().startswith("%") or "\\newcommand" in line:
+                    continue
+                # Layout lengths (0.85\textwidth, \setlength{...}{1.2pt}) are not statistics.
+                if "\\includegraphics" in line or "\\setlength" in line:
                     continue
                 for lit in re.findall(r"(?<![\w.\\-])(\d+\.\d+)(?![\w.}-])", line):
                     if lit in {"0.90", "4.6"}:   # pre-registered threshold / model name
