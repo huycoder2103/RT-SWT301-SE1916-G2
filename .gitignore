@@ -18,5 +18,14 @@ venv/
 desktop.ini
 Thumbs.db
 
+# LaTeX build artifacts — main.pdf IS committed, the intermediates are not
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz
+
 # Large files (thêm nếu data > 100MB)
 # data/raw/

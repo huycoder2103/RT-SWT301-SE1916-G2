@@ -1,0 +1,48 @@
+% =====================================================================
+% ACTION REQUIRED BEFORE SUBMISSION
+% This section states, on the authors' behalf, how AI tools were used.
+% Springer requires that such use be disclosed and that LLMs are NOT
+% listed as authors. The text below describes the uses visible in the
+% repository. VERIFY EVERY SENTENCE against what the team actually did
+% and edit it to match; an inaccurate disclosure is worse than none.
+% =====================================================================
+
+\section*{Use of AI Tools}
+\label{sec:ai-disclosure}
+
+This study concerns LLM-based test generation, so we separate three distinct roles that
+language models play in it.
+
+\textbf{As an object of study.} Claude Sonnet 4.6 is the subject of the LLM arm. Its
+configuration, prompt and outputs are specified in Section~\ref{sec:method} and committed to
+the replication package.
+
+\textbf{As an instrument in the experiment.} The manual EP/BVA arm was authored by a separate,
+isolated model session rather than by a human cohort, because no human cohort was available.
+We treat this as a construct-validity threat, label the arm ``independently authored'' rather
+than ``human'' throughout, and discuss its consequences in Section~\ref{sec:threats}.
+
+\textbf{In manuscript preparation.} The authors used an LLM assistant to draft and edit prose,
+and to convert the manuscript to this template. All research design, experimental execution,
+data analysis and interpretation were carried out by the authors. Every computed statistic
+reported here is generated from committed raw data by \texttt{scripts/gen\_paper\_macros.py}
+and was not written by a model or transcribed by hand (Section~\ref{sec:method-repro}). The
+authors read,
+verified and take full responsibility for the entire content of this paper. No LLM is listed
+as an author, in line with Springer's authorship policy.
+
+\section*{Data Availability}
+
+The replication package contains the mutation catalogs, the generated test suites for all
+three arms, the raw kill matrices, the analysis scripts and the notebook that regenerates
+every statistic in this paper. Subjects are drawn from the EvoMaster Benchmark (EMB,
+LGPL-3.0); the upstream commit used is recorded in the repository.
+
+% LNCS requires Disclosure of Interests in the `credits' environment, using the
+% \discintname macro for the run-in heading (llncsdoc v2.26 sec. 5). It is mandatory,
+% and must sit immediately before the bibliography.
+\begin{credits}
+\subsubsection{\discintname}
+The authors have no competing interests to declare that are relevant to the content of this
+article.
+\end{credits}

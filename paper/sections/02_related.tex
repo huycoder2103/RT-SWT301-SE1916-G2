@@ -1,19 +1,20 @@
 \section{Related Work}
 \label{sec:related}
 
-Our evidence base is a five-member systematic review merged into \textbf{59} unique papers
-(2018--2026) after de-duplication, screened against pre-registered inclusion/exclusion
+Our evidence base is a five-member systematic review merged into 59 unique papers
+(2018--2026) after de-duplication, screened against pre-registered inclusion and exclusion
 criteria with a PRISMA flow recorded per member. Table~\ref{tab:related} lists the ten
 representative studies that define the state of the art.
 
-\begin{table*}[t]
+\begin{table}[tb]
 \centering
 \caption{Representative studies from the 59-paper merge. Every fault figure in the
 right-hand column is a count on a live system; none is a Recall against a known fault
 population.}
 \label{tab:related}
-\small
-\begin{tabular}{@{}llllp{3.6cm}@{}}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{2.8cm}p{1.6cm}p{1.4cm}p{1.7cm}p{3.85cm}@{}}
 \toprule
 \textbf{Study (year)} & \textbf{Generator} & \textbf{Dataset} & \textbf{Metric} & \textbf{Headline result} \\
 \midrule
@@ -29,51 +30,49 @@ Morest~\cite{morest} (2022)        & model-based          & 6 projects    & cov.
 No-Time-to-Rest~\cite{notimetorest} (2022) & 10 tools     & 20 EMB svcs   & line/branch, 500s  & EvoMaster-WB 52.76\% line \\
 \bottomrule
 \end{tabular}
-\end{table*}
+\end{table}
 
-\subsection{Four patterns}
+\subsection{Four Patterns}
 
 \textbf{1. GPT dominates the LLM line.}
 Nearly every LLM study uses an OpenAI
-model~\cite{kat,restspecit,restgpt,autoresttest,logiagent,restifai,apitestgenie};
-open-source models appear only sporadically~\cite{llamaresttest}. Our use of Claude
-Sonnet 4.6 therefore adds a data point outside the family that supplies almost all current
-evidence --- a partial contribution to GAP-T.
+model~\cite{kat,restspecit,restgpt,autoresttest,logiagent,restifai,apitestgenie}, and
+open-source models appear only sporadically~\cite{llamaresttest}. Our use of Claude Sonnet 4.6
+therefore adds a data point outside the family that supplies almost all current evidence,
+which is a partial contribution to GAP-T.
 
-\textbf{2. Metrics are coverage-plus-error-counts.}
-Semantic and edge-case quality is rarely isolated: only KAT~\cite{kat} splits 2xx from 4xx,
-and only RESTSpecIT~\cite{restspecit} reports 5xx. No study reports edge cases per
-endpoint, so there is no baseline against which a suite's negative-testing breadth can be
-judged.
+\textbf{2. Metrics are coverage plus error counts.}
+Semantic and edge-case quality is rarely isolated. Only KAT~\cite{kat} splits 2xx from 4xx,
+and only RESTSpecIT~\cite{restspecit} reports 5xx. No study reports edge cases per endpoint,
+so there is no baseline against which a suite's negative-testing breadth can be judged.
 
 \textbf{3. Baselines are automated-only.}
 LLM tools are compared against EvoMaster or Morest and reported to beat them on server
 errors~\cite{llamaresttest,autoresttest}. No LLM study includes a manual suite. The single
-manual comparison in the field is EvoMaster's own~\cite{evomaster}, which found the tool
-well below manual (41\% vs 82\%) --- an inconvenient result that, notably, no LLM paper has
-revisited even as the field's rhetoric moved to human parity.
+manual comparison in the field remains EvoMaster's own~\cite{evomaster}, which found the tool
+well below manual (41\% vs 82\%). No subsequent LLM paper has revisited that comparison, even
+as the field's claims moved toward human parity.
 
 \textbf{4. Fault detection has no denominator.}
 Every fault figure in Table~\ref{tab:related} is a count on a live
-API~\cite{llamaresttest,autoresttest,logiagent,notimetorest,evomaster,morest}. This is the
-deepest methodological problem in the area, because error counts and Recall can be ordered
-differently: a suite that hammers one endpoint hard can log many 500s while missing most of
-the fault population. Mutation testing is standard elsewhere in software
-engineering~\cite{pit,offutt}, and its absence here is what leaves the field's central
-comparative claims untestable.
+API~\cite{llamaresttest,autoresttest,logiagent,notimetorest,evomaster,morest}. We regard this
+as the most consequential methodological problem in the area, since error counts and Recall
+can be ordered differently: a suite that hammers one endpoint hard may log many 500s while
+missing most of the fault population. Mutation testing is standard elsewhere in software
+engineering~\cite{pit,offutt}, and its absence here leaves the comparative claims untestable.
 
 \subsection{Positioning}
 Table~\ref{tab:gapmap} maps each gap to the evidence establishing it. Our design targets
-GAP-C and GAP-D jointly --- adding both a manual arm and a known fault population is what
-makes the three-way comparison meaningful --- and treats GAP-M as the metric facet through
-which the result is interpreted.
+GAP-C and GAP-D jointly, since adding both a manual arm and a known fault population is what
+makes the three-way comparison meaningful, and treats GAP-M as the metric facet through which
+the result is interpreted.
 
-\begin{table}[t]
+\begin{table}[tb]
 \centering
 \caption{Gap map: what the 59-paper base does and does not establish.}
 \label{tab:gapmap}
-\small
-\begin{tabular}{@{}p{1.35cm}p{4.1cm}p{1.9cm}@{}}
+\footnotesize
+\begin{tabular}{@{}p{1.5cm}p{7.6cm}p{2.0cm}@{}}
 \toprule
 \textbf{Gap} & \textbf{Evidence} & \textbf{Status} \\
 \midrule
